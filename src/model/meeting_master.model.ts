@@ -11,8 +11,7 @@ export const insertMasterFormModel = async (Json: MasterMeeting) => {
 export const viewMasterFormModel = async (meetingId: string) => {};
 
 export const viewMasterFormModelList = async (username: string) => {
-   const data = await sql<MeetingList[]>`SELECT jsonb_build_object(
-                        'meeting_list',
+   const data = await sql<MeetingList[]>`SELECT 
                         jsonb_agg(
                             jsonb_build_object(
                                 'program_id', subject_details.program_lid,
@@ -21,8 +20,7 @@ export const viewMasterFormModelList = async (username: string) => {
                                 'subject_name', subject_details.subject_name || '(' || subject_details.subject_abbr || ')',
                                 'subject_meeting_details', subject_details.subject_meeting_details
                             )
-                        )
-                    ) AS meeting_json
+                        ) AS meeting_list
                 FROM (
                     SELECT mf.program_lid,
                         mf.subject_lid,
@@ -35,7 +33,8 @@ export const viewMasterFormModelList = async (username: string) => {
                                 'meeting_name', pp.program_name,
                                 'meeting_date', mf.meeting_date,
                                 'acad_session', sm.acad_session, 
-                                'status', ms.status_name
+                                'status', ms.status_name,
+                                'status_abbr', ms.abbr
                             )
                         ) AS subject_meeting_details
                     FROM master_form mf
@@ -47,7 +46,7 @@ export const viewMasterFormModelList = async (username: string) => {
                     WHERE mf.parent_id IS NULL
                     GROUP BY mf.program_lid, mf.subject_lid, pp.program_name, ss.subject_name, ss.subject_abbr
                 ) AS subject_details;`;
-   return data;
+   return data[0].meeting_list;
 };
 
 export const updateMasterFormModel = async (Json: MasterMeeting) => {
