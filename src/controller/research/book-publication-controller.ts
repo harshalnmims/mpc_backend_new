@@ -1,11 +1,11 @@
 import { getLogger } from '$config/logger-context';
 import {
-    getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
-    deleteJournalArticleService} from '$service/research/journal-article-service';
+   getBookPublicationService, insertBookPublicationService, updateBookPublicationService, 
+    deleteBookPublicationService} from '$service/research/book-publication-service';
 import { Request, Response, NextFunction } from 'express';
 
 
-export const getJournalArticle = async (req: Request, res: Response, next: NextFunction) => {
+export const getBookPublication = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT RESEARCH CONTROLLER');
  
@@ -18,7 +18,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
        ...filters
     } = { ...req.body, ...req.params, ...req.query };
  
-    const data = await getJournalArticleService({
+    const data = await getBookPublicationService({
        page,
        limit,
        search,
@@ -35,8 +35,8 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
  
-    const journalDetails = { ...req.body};
-    const data = await insertJournalArticleService(journalDetails);
+    const bookPublicationData = { ...req.body};
+    const data = await insertBookPublicationService(bookPublicationData);
  
     return res.status(200).json(data);
  };
@@ -46,7 +46,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
     logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
  
     const journalDetails = { ...req.body};
-    const data = await updateJournalArticleService(journalDetails);
+    const data = await updateBookPublicationService(journalDetails);
  
     return res.status(200).json(data);
 
@@ -60,7 +60,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
     const journalPaper = { ...req.body};
     const journalPaperId  = journalPaper.journal_paper_id
 
-    const data = await deleteJournalArticleService(journalPaperId);
+    const data = await deleteBookPublicationService(journalPaperId);
 
     return data.status === 200 ? res.status(200).json(data) : res.status(500).json(data);
 

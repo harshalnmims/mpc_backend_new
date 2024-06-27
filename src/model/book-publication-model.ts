@@ -1,6 +1,6 @@
 import { infiniteScrollQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
-import { journalArticleDetails } from 'types/research.types';
+import { BookPublicationDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
 
@@ -35,15 +35,15 @@ export const getBookPublication = async ({ page, limit, sort, order, search, fil
  };
 
 
-export const insertBookPublicationModel = async (journalDetails: journalArticleDetails) => {
-    console.log('journalDetails ===>>>>>', journalDetails)
+export const insertBookPublicationModel = async (bookPublicationData: BookPublicationDetails) => {
+    console.log('bookPublicationData ===>>>>>', bookPublicationData)
     
-    const data = await sql`SELECT * FROM insert_journal_article(${JSON.parse(JSON.stringify(journalDetails))}, '1');`;
+    const data = await sql`SELECT * FROM insert_book_publication(${JSON.parse(JSON.stringify(bookPublicationData))}, '1');`;
     return data;
  }; 
 
 
-export const updateBookPublicationModel = async (updateJournalDetails: journalArticleDetails) => {
+export const updateBookPublicationModel = async (updateJournalDetails: BookPublicationDetails) => {
     console.log('updateJournalDetails in models  ===>>>>>', updateJournalDetails)
     
     const data = await sql`SELECT * FROM upsert_journal_article(${JSON.parse(JSON.stringify(updateJournalDetails))}, '1');`;

@@ -1,10 +1,11 @@
 import { getLogger } from '$config/logger-context';
-import { getBookPublication, insertBookPublicationModel, updateJournalArticleModel,
-    deleteJournalArticleModel
+// import { insertBookPublicationForm } from '$controller/research/book-publication-controller';
+import { getBookPublication, insertBookPublicationModel, deleteBookPublicationModel,
+    updateBookPublicationModel
  } from '$model/book-publication-model';
 import { paginationDefaultType } from 'types/db.default';
 
-import { journalArticleDetails } from 'types/research.types';
+import { BookPublicationDetails } from 'types/research.types';
 
 export const getBookPublicationService = async ({
    page,
@@ -17,7 +18,7 @@ export const getBookPublicationService = async ({
    const logger = getLogger();
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
 
-   const data = await getJournalArticlePublished({
+   const data = await getBookPublication({
       page,
       limit,
       sort,
@@ -29,21 +30,22 @@ export const getBookPublicationService = async ({
    return data;
 };
 
-export const insertBookPublicationService = async (journalDetails: journalArticleDetails) => {
+export const insertBookPublicationService = async (bookPublicationData: BookPublicationDetails) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
+    console.log('bookPublicationData ====>>>>>', bookPublicationData);
  
-    const data = await insertJournalArticleModel(journalDetails);
+    const data = await insertBookPublicationModel(bookPublicationData);
  
     return data;
  }; 
 
 
- export const updateBookPublicationService = async (updateJournalDetails: journalArticleDetails) => {
+ export const updateBookPublicationService = async (updateJournalDetails: BookPublicationDetails) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
  
-    const data = await updateJournalArticleModel(updateJournalDetails);
+    const data = await updateBookPublicationModel(updateJournalDetails);
  
     return data;
  };
@@ -55,7 +57,7 @@ export const insertBookPublicationService = async (journalDetails: journalArticl
 
     console.log('journalPaperId in service ===>>>', journalPaperId);
  
-    const data = await deleteJournalArticleModel(journalPaperId);
+    const data = await deleteBookPublicationModel(journalPaperId);
 
     console.log('data ===>>>>>', data);
     return {

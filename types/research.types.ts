@@ -30,4 +30,25 @@ export type journalArticleDetails = {
     student_authors: number[];
     supporting_documents: string[];
  };
+
+
+ export type BookPublicationDetails = {
+    title: string;
+    edition: string;
+    publish_year: number;
+    volume_no: string;
+    publisher: string;
+    web_link: string;
+    doi_no: string;
+    publication_place: string;
+    isbn_no: string;
+    nmims_authors_count: number;
+    publisher_category: number;
+    nmims_school: string[];
+    nmims_campus: string[];
+    all_authors: number[];
+    nmims_authors: number[];
+    supporting_documents: number[];
+
+ }
  
