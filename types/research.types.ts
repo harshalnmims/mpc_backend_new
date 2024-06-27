@@ -30,4 +30,6 @@ export type journalArticleDetails = {
     student_authors: number[];
     supporting_documents: string[];
  };
+
+ 
  
