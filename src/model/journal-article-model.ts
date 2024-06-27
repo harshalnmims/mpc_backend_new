@@ -1,4 +1,4 @@
-import { infiniteScrollQueryBuilder } from '$utils/db/query-builder';
+import { infiniteScrollQueryBuilder,paginationQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
 import { journalArticleDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
@@ -33,6 +33,40 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
  
     return data;
  };
+
+ export const journalPaginateModal = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+   console.log('filter ',JSON.stringify(filters))
+   const data = await paginationQueryBuilder<Session>({
+      baseQuery: `    SELECT jpa.id, jpa.publisher, jpa.impact_factor, jpa.publish_year, jpa.total_authors,
+      JSON_AGG(DISTINCT js.school_name) AS school_name,
+      JSON_AGG(DISTINCT jc.campus_name) AS campus_name,
+      JSON_AGG(DISTINCT pc.policy_name) AS policy_cadre,
+      jpa.total_authors
+    FROM journal_paper_article jpa 
+    INNER JOIN journal_paper_school js ON js.journal_paper_lid = jpa.id
+    INNER JOIN journal_paper_campus jc ON jc.journal_paper_lid = jpa.id 
+    INNER JOIN journal_policy_cadre jpc ON jpc.journal_paper_lid = jpa.id
+    INNER JOIN policy_cadre pc ON pc.id = jpc.policy_cadre_lid
+    GROUP BY jpa.id
+`,
+
+      filters: {
+         'usi.program_lid': filters.programLid,
+         'usi.session_lid': filters.sessionLid,
+         'usi.subject_lid': filters.subjectLid,
+      },
+      page : page,
+      pageSize: limit,
+      search: search || '',
+      searchColumns: ['jpa.publisher', 'school_name', 'campus_name','policy_cadre','jpa.total_authors'],
+      sort: {
+         column: sort || 'jpa.id',
+         order: order || 'desc',
+      },
+   });
+
+   return data;
+};
 
 
 export const insertJournalArticleModel = async (journalDetails: journalArticleDetails) => {
