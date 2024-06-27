@@ -9,4 +9,5 @@ router.use('/faculty', facultyRouter);
 router.use('/special-user', SpecialUserRouter);
 router.use('/support-admin', supportAdminRouter);
 
+
 export default router;
