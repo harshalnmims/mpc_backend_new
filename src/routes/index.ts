@@ -12,7 +12,7 @@ const router = Router();
 router.use('/faculty', facultyRouter);
 router.use('/special-user', SpecialUserRouter);
 router.use('/support-admin', supportAdminRouter);
-router.use('/research-project', journalDetailsRouter);
+router.use('/', journalDetailsRouter);
 
 
-export default router;
+export default router; 
