@@ -101,3 +101,4 @@ export type subjectListAnalytics = {
    subject_name: string;
    meeting_count: number;
 };
+
