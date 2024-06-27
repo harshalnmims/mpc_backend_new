@@ -35,8 +35,34 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
  };
 
 
- export const insertJournalArticleModel = async (journalDetails: journalArticleDetails) => {
-    const data = await sql`SELECT * FROM create_form_a(${JSON.stringify(journalDetails)}, '1');`;
+export const insertJournalArticleModel = async (journalDetails: journalArticleDetails) => {
+    console.log('journalDetails ===>>>>>', journalDetails)
+    
+    const data = await sql`SELECT * FROM insert_journal_article(${JSON.parse(JSON.stringify(journalDetails))}, '1');`;
+    return data;
+ }; 
+
+
+export const updateJournalArticleModel = async (updateJournalDetails: journalArticleDetails) => {
+    console.log('updateJournalDetails in models  ===>>>>>', updateJournalDetails)
+    
+    const data = await sql`SELECT * FROM upsert_journal_article(${JSON.parse(JSON.stringify(updateJournalDetails))}, '1');`;
     return data;
  };
  
+
+
+ export const deleteJournalArticleModel = async (journalPaperId: number) => {
+    console.log('journalPaperId models  ====>>>>>>', journalPaperId);
+    
+    const data = await sql`UPDATE journal_paper_article SET active = false,modified_date=now(),modified_by='1' WHERE id = ${journalPaperId}`;
+
+    return data.count > 0 ? {
+        status:200,
+        message:'Deleted Successfully !'
+    } : {
+        status:400,
+        message:'Failed To Delete !'
+    }
+   
+};
