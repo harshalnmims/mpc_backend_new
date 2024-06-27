@@ -35,7 +35,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
  
-    const journalDetails = { ...req.body, ...req.params, ...req.query };
+    const journalDetails = { ...req.body};
     const data = await insertJournalArticleService(journalDetails);
  
     return res.status(200).json(data);

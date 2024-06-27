@@ -36,7 +36,7 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
 
 
  export const insertJournalArticleModel = async (journalDetails: journalArticleDetails) => {
-    const data = await sql`SELECT * FROM create_form_a(${JSON.stringify(journalDetails)}, 1);`;
+    const data = await sql`SELECT * FROM create_form_a(${JSON.stringify(journalDetails)}, '1');`;
     return data;
  };
  
