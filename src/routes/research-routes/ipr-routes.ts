@@ -4,7 +4,7 @@ import { Router } from 'express';
 
 const iprRoutes = Router();
 
-iprRoutes.post('/insert-ipr', asyncErrorHandler(insertIpr));
+iprRoutes.get('/insert-ipr', asyncErrorHandler(insertIpr));
 
 
 export default iprRoutes;

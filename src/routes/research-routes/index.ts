@@ -1,17 +1,18 @@
 
-// import { asyncErrorHandler } from '$middleware/error.middleware';
-// import { Router } from 'express';
-// import journalDetailsRouter from './journal-article-routes';
+import { asyncErrorHandler } from '$middleware/error.middleware';
+import { Router } from 'express';
+import journalDetailsRouter from './journal-article-routes';
 
-// import { validate } from '$middleware/validation.middleware';
-// import { filterSchema } from '$validations/base.valid';
+import { validate } from '$middleware/validation.middleware';
+import { filterSchema } from '$validations/base.valid';
 
-// const router = Router();
+const router = Router();
 
-// router.post('/journ')
-
-
-
+router.post('/journ')
+router.get('ipr')
 
 
-// export default router;
+
+
+
+export default router;
