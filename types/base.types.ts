@@ -102,6 +102,3 @@ export type subjectListAnalytics = {
    meeting_count: number;
 };
 
-export type JournalPaper = {
- 
-}
