@@ -17,5 +17,4 @@ router.use('/research-project', journalDetailsRouter);
 router.use('/', iprRoutes);
 
 
-
 export default router;
