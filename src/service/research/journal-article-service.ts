@@ -58,9 +58,6 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
     const data = await deleteJournalArticleModel(journalPaperId);
 
     console.log('data ===>>>>>', data);
-    return {
-        status : data.status,
-        message : data.message
-    };
+    return data
 
  }

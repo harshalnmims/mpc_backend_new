@@ -43,10 +43,10 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
 
  export const updateBookPublicationForm = async (req: Request, res: Response, next: NextFunction)  => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
+    logger.info('INSIDE GET updateBookPublicationFormCONTROLLER');
  
-    const journalDetails = { ...req.body};
-    const data = await updateBookPublicationService(journalDetails);
+    const updateBookDetails = { ...req.body};
+    const data = await updateBookPublicationService(updateBookDetails);
  
     return res.status(200).json(data);
 
@@ -57,11 +57,11 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT Journal article CONTROLLER');
  
-    const journalPaper = { ...req.body};
-    const journalPaperId  = journalPaper.journal_paper_id
+    const bookPublication = { ...req.body};
+    const bookPublicationId  = bookPublication.book_publication_id
 
-    const data = await deleteBookPublicationService(journalPaperId);
+    const data = await deleteBookPublicationService(bookPublicationId);
 
-    return data.status === 200 ? res.status(200).json(data) : res.status(500).json(data);
+    return  res.status(200).json(data)
 
  }
