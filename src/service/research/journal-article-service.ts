@@ -1,6 +1,6 @@
 import { getLogger } from '$config/logger-context';
 import { getJournalArticlePublished, insertJournalArticleModel, updateJournalArticleModel,
-    deleteJournalArticleModel
+    deleteJournalArticleModel,journalPaginateModal
  } from '$model/journal-article-model';
 import { paginationDefaultType } from 'types/db.default';
 
@@ -18,6 +18,29 @@ export const getJournalArticleService = async ({
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
 
    const data = await getJournalArticlePublished({
+      page,
+      limit,
+      sort,
+      order,
+      search,
+      ...filters,
+   });
+
+   return data;
+};
+
+export const journalPaginateService = async ({
+   page,
+   limit,
+   sort,
+   order,
+   search,
+   ...filters
+}: paginationDefaultType) => {
+   const logger = getLogger();
+   logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
+
+   const data = await journalPaginateModal({
       page,
       limit,
       sort,
