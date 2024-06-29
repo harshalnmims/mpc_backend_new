@@ -41,28 +41,25 @@ export const insertBookPublicationService = async (bookPublicationData: BookPubl
  }; 
 
 
- export const updateBookPublicationService = async (updateJournalDetails: BookPublicationDetails) => {
+ export const updateBookPublicationService = async (updateBookDetails: BookPublicationDetails) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
+    logger.info('INSIDE GET updateBookPublicationService SERVICES');
+    console.log('updateBookDetails ===>>>>>', updateBookDetails);
  
-    const data = await updateBookPublicationModel(updateJournalDetails);
+    const data = await updateBookPublicationModel(updateBookDetails);
  
     return data;
  };
 
 
- export const deleteBookPublicationService = async(journalPaperId : number) => {
+ export const deleteBookPublicationService = async(bookPublicationId : number) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
 
-    console.log('journalPaperId in service ===>>>', journalPaperId);
+    console.log('bookPublicationId in service ===>>>', bookPublicationId);
  
-    const data = await deleteBookPublicationModel(journalPaperId);
+    const data = await deleteBookPublicationModel(bookPublicationId);
 
     console.log('data ===>>>>>', data);
-    return {
-        status : data.status,
-        message : data.message
-    };
-
+    
  }

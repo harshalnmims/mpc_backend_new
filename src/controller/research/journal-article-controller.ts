@@ -65,7 +65,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
     const data = await deleteJournalArticleService(journalPaperId);
 
-    return data.status === 200 ? res.status(200).json(data) : res.status(500).json(data);
+    return  res.status(200).json(data)
 
  }
 
