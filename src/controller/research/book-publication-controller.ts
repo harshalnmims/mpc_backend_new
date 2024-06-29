@@ -60,8 +60,8 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
     const bookPublication = { ...req.body};
     const bookPublicationId  = bookPublication.book_publication_id
 
-    const data = await deleteBookPublicationService(journalPaperId);
+    const data = await deleteBookPublicationService(bookPublicationId);
 
-    return data.status === 200 ? res.status(200).json(data) : res.status(500).json(data);
+    return res.status(200).json(data);
 
  }
