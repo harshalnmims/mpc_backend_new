@@ -32,7 +32,7 @@ process.env.NODE_ENV === 'production' &&
 app.use(requestLogger);
 app.use(addChildLogger);
 
-app.use('/api/v1', addSessionUserToRequest, router);
+app.use('/research', addSessionUserToRequest, router);
 
 app.use(customErrorHandler);
 
