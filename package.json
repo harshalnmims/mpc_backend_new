@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --env-file=.env dist/server.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon  -r tsconfig-paths/register -r ts-node/register --env-file .env -q dist/server.js\"",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon  --quiet  -r tsconfig-paths/register -r ts-node/register --env-file .env -q dist/server.js\"",
     "format": "prettier --plugin-search-dir . --write \"./**/*.{js,ts}\"",
     "build": "tsc && tsc-alias"
   },

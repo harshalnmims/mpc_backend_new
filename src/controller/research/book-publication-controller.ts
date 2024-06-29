@@ -61,7 +61,6 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
     const journalPaperId  = journalPaper.journal_paper_id
 
     const data = await deleteBookPublicationService(journalPaperId);
-
     return data.status === 200 ? res.status(200).json(data) : res.status(500).json(data);
 
  }

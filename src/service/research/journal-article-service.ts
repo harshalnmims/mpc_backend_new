@@ -38,7 +38,7 @@ export const journalPaginateService = async ({
    ...filters
 }: paginationDefaultType) => {
    const logger = getLogger();
-   logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
+   logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
 
    const data = await journalPaginateModal({
       page,

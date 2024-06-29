@@ -83,7 +83,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
        } = { ...req.body, ...req.params, ...req.query };
 
    const data = await journalPaginateService({
-       page,
+       page ,
        limit,
        search,  
        sort,
