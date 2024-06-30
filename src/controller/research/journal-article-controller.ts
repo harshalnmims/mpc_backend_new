@@ -1,7 +1,7 @@
 import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
-    deleteJournalArticleService,journalPaginateService} from '$service/research/journal-article-service';
+    deleteJournalArticleService,journalPaginateService,journalRenderService} from '$service/research/journal-article-service';
 import { Request, Response, NextFunction } from 'express';
 
 
@@ -36,12 +36,21 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
  export const insertJournalArticleForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
+    logger.info('INSIDE journal CONTROLLER',JSON.stringify(req.body));
+
+    const files = req.files as Express.Multer.File[];
+    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+    if (!files.every(file => allowedTypes.includes(file.mimetype))) {
+        return res.status(400).json({ message: 'Only .pdf, .docx formats are supported' });
+    }
  
     const journalDetails = { ...req.body};
-    const data = await insertJournalArticleService(journalDetails);
+    console.log('journal details ',JSON.stringify(journalDetails))
+    console.log('journal documents ',JSON.stringify(req.body.supporting_documents))
+   //  const data = await insertJournalArticleService(journalDetails);
  
-    return res.status(200).json(data);
+    return res.status(200).json({data:'Inserted Successfully'});
  };
 
  export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
@@ -117,4 +126,11 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
    //       order: order || 'desc',
    //    },
    //}
+ }
+
+ export const journalRenderData = async (req : Request , res : Response , next  : NextFunction) => {
+
+   const data = await journalRenderService();
+   console.log('journal data ',JSON.stringify(data));
+   return res.status(200).json(data);
  }

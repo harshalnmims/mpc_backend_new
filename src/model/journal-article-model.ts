@@ -140,3 +140,4 @@ export const updateJournalArticleModel = async (updateJournalDetails: journalArt
     }
    
 };
+

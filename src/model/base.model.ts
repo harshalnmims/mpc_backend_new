@@ -1,6 +1,7 @@
 import { infiniteScrollQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
 import { paginationDefaultType } from 'types/db.default';
+import sql from '$config/db';
 
 export const getProgramsModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
    const data = await infiniteScrollQueryBuilder<Program>({
