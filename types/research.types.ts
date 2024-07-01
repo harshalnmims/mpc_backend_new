@@ -1,3 +1,5 @@
+import { string } from "zod";
+
 export type journalArticleDetails = {
     journal_name: string;
     title: string;
@@ -31,9 +33,7 @@ export type journalArticleDetails = {
     supporting_documents: string[];
  };
 
-
  export type BookPublicationDetails = {
-    title: string;
     edition: string;
     publish_year: number;
     volume_no: string;
@@ -122,3 +122,34 @@ export type journalArticleDetails = {
    conference_documents: string[];
    award_documents: string[];
  }
+
+ export type IPRDetails = {
+   
+   ipr_id:number;
+   title: string;
+   appln_no: number
+   filed_date:string;
+   grant_date:string;  
+   published_date: string;
+   publication_no: number;
+   granted_no: number;
+   institue_affiliation: string;
+   patent_status: number;
+   invention_type : number[];
+   sdg_goals : number[];
+   applicant_names :number[];
+   nmims_school : string[];
+   nmims_campus:string[];  
+   inventors_id: number[];
+   supporting_documents:string[];
+}
+
+export type EContent = {
+   faculty_name: string;
+   module: string;
+   module_platform: string;
+   launching_date: string;
+   document_link: string;
+   media_link: string;
+   facilitylist: string;
+}
