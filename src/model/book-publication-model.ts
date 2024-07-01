@@ -43,19 +43,19 @@ export const insertBookPublicationModel = async (bookPublicationData: BookPublic
  }; 
 
 
-export const updateBookPublicationModel = async (updateJournalDetails: BookPublicationDetails) => {
-    console.log('updateJournalDetails in models  ===>>>>>', updateJournalDetails)
+export const updateBookPublicationModel = async (updateBookDetails: BookPublicationDetails) => {
+    console.log('updateBookDetails in models  ===>>>>>', updateBookDetails)
     
-    const data = await sql`SELECT * FROM upsert_journal_article(${JSON.parse(JSON.stringify(updateJournalDetails))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_book_publication(${JSON.parse(JSON.stringify(updateBookDetails))}, '1');`;
     return data;
  };
  
 
 
- export const deleteBookPublicationModel = async (journalPaperId: number) => {
-    console.log('journalPaperId models  ====>>>>>>', journalPaperId);
+ export const deleteBookPublicationModel = async (bookPublicationId: number) => {
+    console.log('bookPublicationId models  ====>>>>>>', bookPublicationId);
     
-    const data = await sql`UPDATE journal_paper_article SET active = false,modified_date=now(),modified_by='1' WHERE id = ${journalPaperId}`;
+    const data = await sql`UPDATE book_publication SET active = false,modified_date=now(),modified_by='1' WHERE id = ${bookPublicationId}`;
 
     return data.count > 0 ? {
         status:200,

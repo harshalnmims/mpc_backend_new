@@ -34,33 +34,73 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
     return data;
  };
 
- export const journalPaginateModal = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
-   console.log('filter ',JSON.stringify(filters))
+ export const journalPaginateModal = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+   console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
+
    const data = await paginationQueryBuilder<Session>({
-      baseQuery: `    SELECT jpa.id, jpa.publisher, jpa.impact_factor, jpa.publish_year, jpa.total_authors,
-      JSON_AGG(DISTINCT js.school_name) AS school_name,
-      JSON_AGG(DISTINCT jc.campus_name) AS campus_name,
-      JSON_AGG(DISTINCT pc.policy_name) AS policy_cadre,
-      jpa.total_authors
-    FROM journal_paper_article jpa 
-    INNER JOIN journal_paper_school js ON js.journal_paper_lid = jpa.id
-    INNER JOIN journal_paper_campus jc ON jc.journal_paper_lid = jpa.id 
-    INNER JOIN journal_policy_cadre jpc ON jpc.journal_paper_lid = jpa.id
-    INNER JOIN policy_cadre pc ON pc.id = jpc.policy_cadre_lid
-    GROUP BY jpa.id
+      baseQuery: `WITH paper_details AS (
+                     SELECT 
+                        jpa.id,
+                        jpa.journal_name,
+                        jpa.publisher,
+                        jpa.impact_factor,
+                        jpa.publish_year,
+                        jpa.total_authors
+                     FROM journal_paper_article jpa
+                  ),
+                  school_details AS (
+                     SELECT
+                        jpa.id AS paper_id,
+                        JSON_AGG(DISTINCT js.school_name) AS nmims_school
+                     FROM journal_paper_article jpa
+                     INNER JOIN journal_paper_school js ON js.journal_paper_lid = jpa.id
+                     GROUP BY jpa.id
+                  ),
+                  campus_details AS (
+                     SELECT
+                        jpa.id AS paper_id,
+                        JSON_AGG(DISTINCT jc.campus_name) AS nmims_campus
+                     FROM journal_paper_article jpa
+                     INNER JOIN journal_paper_campus jc ON jc.journal_paper_lid = jpa.id
+                     GROUP BY jpa.id
+                  ),
+                  policy_details AS (
+                     SELECT
+                        jpa.id AS paper_id,
+                        JSON_AGG(DISTINCT pc.policy_name) AS policy_cadre
+                     FROM journal_paper_article jpa
+                     INNER JOIN journal_policy_cadre jpc ON jpc.journal_paper_lid = jpa.id
+                     INNER JOIN policy_cadre pc ON pc.id = jpc.policy_cadre_lid
+                     GROUP BY jpa.id
+                  )
+
+                  SELECT
+                     pd.id,
+                     pd.journal_name,
+                     pd.publisher,
+                     pd.impact_factor,
+                     pd.publish_year,
+                     pd.total_authors,
+                     sd.nmims_school,
+                     cd.nmims_campus,
+                     pcd.policy_cadre
+                  FROM paper_details pd
+                  LEFT JOIN school_details sd ON pd.id = sd.paper_id
+                  LEFT JOIN campus_details cd ON pd.id = cd.paper_id
+                  LEFT JOIN policy_details pcd ON pd.id = pcd.paper_id
 `,
 
       filters: {
-         'usi.program_lid': filters.programLid,
-         'usi.session_lid': filters.sessionLid,
-         'usi.subject_lid': filters.subjectLid,
+         // 'usi.program_lid': filters.programLid,
+         // 'usi.session_lid': filters.sessionLid,
+         // 'usi.subject_lid': filters.subjectLid,
       },
       page : page,
-      pageSize: limit,
+      pageSize: 10 ,
       search: search || '',
-      searchColumns: ['jpa.publisher', 'school_name', 'campus_name','policy_cadre','jpa.total_authors'],
+      searchColumns: ['pd.publisher', 'sd.nmims_school', 'cd.nmims_campus','pcd.policy_cadre','pd.total_authors','pd.publish_year','pd.journal_name'],
       sort: {
-         column: sort || 'jpa.id',
+         column: sort || 'pd.id',
          order: order || 'desc',
       },
    });
@@ -100,3 +140,4 @@ export const updateJournalArticleModel = async (updateJournalDetails: journalArt
     }
    
 };
+

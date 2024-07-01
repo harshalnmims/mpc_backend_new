@@ -6,7 +6,9 @@ import supportAdminRouter from './support-admin';
 import journalDetailsRouter from './research-routes/journal-article-routes'
 import iprRoutes from './research-routes/ipr-routes'
 import bookPublicationRoutes from './research-routes/book-publication.routes'
-import eContentRoute from './research-routes/e-content-routes'
+import editedbookRoutes from './research-routes/edited-book-routes';
+import bookChapterRoutes from './research-routes/book-chapter-routes';
+import confereRoutes from './research-routes/conference-routes';
 
 //ankit
 
@@ -19,7 +21,9 @@ router.use('/research-project', journalDetailsRouter);
 router.use('/', iprRoutes);
 router.use('/', journalDetailsRouter);
 router.use('/', bookPublicationRoutes);
-router.use('/', eContentRoute);
+router.use('/', editedbookRoutes);
+router.use('/', bookChapterRoutes);
+router.use('/', confereRoutes);
 
 
 export default router; 

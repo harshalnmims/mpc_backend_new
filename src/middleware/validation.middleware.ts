@@ -7,6 +7,8 @@ import { invalidRequestError } from '$utils/error/error';
 
 export const validate = (schema: AnyZodObject) => async (req: Request, res: Response, next: NextFunction) => {
    try {
+
+
       await schema.parseAsync({
          body: req.body,
          query: req.query,

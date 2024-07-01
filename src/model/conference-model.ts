@@ -1,11 +1,12 @@
 import { infiniteScrollQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
-import { EditedBookPublicationDetails } from 'types/research.types';
+import { conferenceDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
-import sql from '$config/db';
-import editedbookRoutes from '$routes/research-routes/edited-book-routes';
+import sql from '$config/db'; 
+import { number } from 'zod';
 
-export const getEditedBookPublicationModels = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+
+export const getBookConference = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
     const data = await infiniteScrollQueryBuilder<Session>({
        baseQuery: `select distinct concat(pu.first_name,' ',pu.last_name) AS full_name, pu.id as user_lid, pu.username 
                        from mpc_user_role mur 
@@ -35,26 +36,26 @@ export const getEditedBookPublicationModels = async ({ page, limit, sort, order,
     return data;
  };
 
-
-export const insertEditedBookPublicationModel = async (editedBookPublicationData: EditedBookPublicationDetails) => {
-    console.log('editedBookPublicationData ===>>>>>', editedBookPublicationData)
+export const insertConferenceModel = async(conferenceData : conferenceDetails) => {
+    console.log('conferenceData ===>>>>>', conferenceData)
     
-    const data = await sql`SELECT * FROM insert_edited_publications(${JSON.parse(JSON.stringify(editedBookPublicationData))}, '1');`;
+    const data = await sql`SELECT * FROM insert_conference(${JSON.parse(JSON.stringify(conferenceData))}, '1');`;
     return data;
- }; 
-
-export const updateEditedBookModel = async (updateEditedBookPublicationData: EditedBookPublicationDetails) => {
-    console.log('updateEditedBookPublicationData ===>>>>>', updateEditedBookPublicationData)
-    
-    const data = await sql`SELECT * FROM upsert_edited_publication(${JSON.parse(JSON.stringify(updateEditedBookPublicationData))}, '1');`;
-    return data;
-
  }
 
-export const deleteEditedBookModel = async (editedbookId : number) => {
-    console.log('editedbookId models  ====>>>>>>', editedbookId);
+
+export const updateConferencemodels = async(updateConferenceData : conferenceDetails) => {
+    console.log('updateConferenceData in models  ===>>>>>', updateConferenceData)
     
-    const data = await sql`UPDATE edited_book_publication SET active = false,modified_date=now(),modified_by='1' WHERE id = ${editedbookId}`;
+    const data = await sql`SELECT * FROM upsert_conference(${JSON.parse(JSON.stringify(updateConferenceData))}, '1');`;
+    return data;
+
+}
+
+export const deleteConferenceModel = async(conferenceId : number) => {
+    console.log('conferenceId models  ====>>>>>>', conferenceId);
+    
+    const data = await sql`UPDATE conference SET active = false,modified_date=now(),modified_by='1' WHERE id = ${conferenceId}`;
 
     return data.count > 0 ? {
         status:200,

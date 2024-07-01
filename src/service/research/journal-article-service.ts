@@ -3,8 +3,10 @@ import { getJournalArticlePublished, insertJournalArticleModel, updateJournalArt
     deleteJournalArticleModel,journalPaginateModal
  } from '$model/journal-article-model';
 import { paginationDefaultType } from 'types/db.default';
-
 import { journalArticleDetails } from 'types/research.types';
+import {renderModal,getPolicyCadre,getNmimsAuthors,getAllAuthors,getAbdcIndexed, getPaperType,
+   getSchool,getCampus
+} from '$model/master-model';
 
 export const getJournalArticleService = async ({
    page,
@@ -38,7 +40,7 @@ export const journalPaginateService = async ({
    ...filters
 }: paginationDefaultType) => {
    const logger = getLogger();
-   logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
+   logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
 
    const data = await journalPaginateModal({
       page,
@@ -81,9 +83,24 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
     const data = await deleteJournalArticleModel(journalPaperId);
 
     console.log('data ===>>>>>', data);
-    return {
-        status : data.status,
-        message : data.message
-    };
+    return data
 
+ }
+
+ export const journalRenderService = async () => {
+   const logger = getLogger();
+   
+   const foreignAuthors =  await renderModal('fa');
+   const StudentAuthors =  await renderModal('sa');
+   const otherAuthors = await renderModal('oa');
+   const policyCadre = await getPolicyCadre();
+   const nmimsAuthors = await getNmimsAuthors();
+   const allAuthors = await getAllAuthors();
+   const abdcIndexed = await getAbdcIndexed();
+   const paperType = await getPaperType();
+   const school = await getSchool();
+   const campus = await getCampus();
+   return {
+      foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus
+   };
  }

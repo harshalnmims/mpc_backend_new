@@ -31,13 +31,15 @@ export const paginationQueryBuilder = async <T>({
    baseQuery,
    filters = {},
    sort,
-   page = 1,
-   pageSize = 10,
+   page ,
+   pageSize ,
    search,
    searchColumns = [],
 }: PaginationQueryBuilderType): Promise<{ data: T[]; total: number }> => {
    let query = baseQuery;
    const values: (string | number)[] = [];
+
+   console.log('page limits of data ',values)
 
    // Adding filters
    const filterConditions = buildFilterConditions(filters, values);
@@ -62,12 +64,15 @@ export const paginationQueryBuilder = async <T>({
    // Adding pagination
    const offset = (page - 1) * pageSize;
    values.push(pageSize, offset);
+   console.log("values>>>>>>>>>>", values);
+   
    query += ` LIMIT $${values.length - 1} OFFSET $${values.length}`;
 
+   const countValues = values.slice(0, values.length - 2);
    // Execute both queries concurrently
    const [dataRes, countRes] = await Promise.all([
       sql.unsafe<T[]>(query, values),
-      sql.unsafe<Count[]>(totalCountQuery, values),
+      sql.unsafe<Count[]>(totalCountQuery, countValues),
    ]);
 
    return {
