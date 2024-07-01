@@ -3,6 +3,9 @@ import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
     deleteJournalArticleService,journalPaginateService,journalRenderService} from '$service/research/journal-article-service';
 import { Request, Response, NextFunction } from 'express';
+import { validateWithZod } from '$middleware/validation.middleware';
+import { filesArraySchema } from '$validations/research.valid';
+import { journalPaper } from '$validations/research.valid';
 
 
 export const getJournalArticle = async (req: Request, res: Response, next: NextFunction) => {
@@ -36,13 +39,21 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
  export const insertJournalArticleForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE journal CONTROLLER',req.body);
+    
+     let journalDetails = JSON.parse(req.body.journal_paper);
+     const documents = [req.files];
 
-     const journalDetails = { ...req.body.journal_paper};
-  
-   //   const documents = journalDetails.supporting_documents;
-   //   console.log('journal details ',journalDetails);
-    const data = await insertJournalArticleService(journalDetails);
+     let result = validateWithZod(journalPaper,journalDetails);
+     let fileResult = validateWithZod(filesArraySchema, documents);
+     console.log('zod result ',JSON.stringify(fileResult))
+ 
+   //   documents.forEach(async file => {
+   //    let fileval = await fileSchema.parseAsync(file);
+   //    console.log('file val ',JSON.stringify(fileval))
+   //   })
+
+     console.log('json body ',JSON.stringify(journalDetails),documents[0])
+   //   const data = await insertJournalArticleService(journalData);
      return res.status(200).json({data:'Inserted Successfully'});
  };
 

@@ -1,8 +1,8 @@
 import * as z from 'zod'
 
 export const journalPaper = z.object({
-	body: z.object({
-     journal_paper : z.object({
+	// body: z.object({
+    //  journal_paper : z.object({
     nmims_school : z.array(z.string()).min(1,{message:'School Is Required'}),
     nmims_campus : z.array(z.string()).min(1,{message:'Campus Is Required'}),
 	publish_year: z.number().refine((data) => {
@@ -36,12 +36,24 @@ export const journalPaper = z.object({
 	foreign_authors: z.array(z.number()),
 	student_authors_count: z.number(),
 	student_authors: z.array(z.number()),
-	supporting_documents : z.array(z.object({
-		name : z.string(),
-		content:z.string()
-	})),
-	})
-  })
+	// supporting_documents : z.array(),
+	// })
+//   })
 });
 
+const singleFileSchema = z.object({
+	fieldname: z.string(),
+	originalname: z.string(),
+	encoding: z.string(),
+	mimetype: z.string().refine(
+	  (mimetype) => ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(mimetype),
+	  {
+		message: 'Only PDF and DOCX files are allowed!',
+	  }
+	),
+	buffer: z.instanceof(Buffer),
+	size: z.number()
+  });
+  
+  export const filesArraySchema = z.array(singleFileSchema);
 
