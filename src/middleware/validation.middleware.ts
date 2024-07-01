@@ -7,8 +7,10 @@ import { invalidRequestError } from '$utils/error/error';
 
 export const validate = (schema: AnyZodObject) => async (req: Request, res: Response, next: NextFunction) => {
    try {
-
-
+      // upload.array('supporting_documents')
+      // req.body = JSON.parse(req.body);
+      console.log('journal json ', JSON.stringify(req.body));
+      
       await schema.parseAsync({
          body: req.body,
          query: req.query,

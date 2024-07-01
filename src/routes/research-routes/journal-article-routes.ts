@@ -5,14 +5,13 @@ import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
 import { validate } from '$middleware/validation.middleware';
 import { journalPaper } from '$validations/research.valid';
-import multer from 'multer';
 
 
 const journalDetailsRouter = Router();
+import multer from 'multer';
 const upload = multer();
 
-
-journalDetailsRouter.post('/journal-article-insert' ,upload.array('journal_paper[supporting_documents]', 5),asyncErrorHandler(validate(journalPaper)), asyncErrorHandler(insertJournalArticleForm));
+journalDetailsRouter.post('/journal-article-insert' ,asyncErrorHandler(validate(journalPaper)),asyncErrorHandler(insertJournalArticleForm));
 journalDetailsRouter.post('/journal-article-update', asyncErrorHandler(updateJournalArticleForm));
 journalDetailsRouter.post('/journal-article-delete', asyncErrorHandler(deleteJournalArticleForm));
 journalDetailsRouter.get('/journal-paginate',asyncErrorHandler(journalPaginate));

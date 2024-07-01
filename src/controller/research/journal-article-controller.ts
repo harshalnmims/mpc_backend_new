@@ -36,21 +36,14 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
  export const insertJournalArticleForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE journal CONTROLLER',JSON.stringify(req.body));
+    logger.info('INSIDE journal CONTROLLER',req.body);
 
-    const files = req.files as Express.Multer.File[];
-    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-
-    if (!files.every(file => allowedTypes.includes(file.mimetype))) {
-        return res.status(400).json({ message: 'Only .pdf, .docx formats are supported' });
-    }
- 
-    const journalDetails = { ...req.body};
-    console.log('journal details ',JSON.stringify(journalDetails))
-    console.log('journal documents ',JSON.stringify(req.body.supporting_documents))
-   //  const data = await insertJournalArticleService(journalDetails);
- 
-    return res.status(200).json({data:'Inserted Successfully'});
+     const journalDetails = { ...req.body.journal_paper};
+  
+   //   const documents = journalDetails.supporting_documents;
+   //   console.log('journal details ',journalDetails);
+    const data = await insertJournalArticleService(journalDetails);
+     return res.status(200).json({data:'Inserted Successfully'});
  };
 
  export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {

@@ -7,6 +7,9 @@ import { journalArticleDetails } from 'types/research.types';
 import {renderModal,getPolicyCadre,getNmimsAuthors,getAllAuthors,getAbdcIndexed, getPaperType,
    getSchool,getCampus
 } from '$model/master-model';
+import {uploadFile} from '$middleware/fileupload.middleware'
+import { string } from 'zod';
+
 
 export const getJournalArticleService = async ({
    page,
@@ -57,10 +60,14 @@ export const journalPaginateService = async ({
 export const insertJournalArticleService = async (journalDetails: journalArticleDetails) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
+
+    const documents = journalDetails.supporting_documents;
+    console.log('journal details ',documents)
+    await uploadFile(documents);
+
+   //  const data = await insertJournalArticleModel(journalDetails);
  
-    const data = await insertJournalArticleModel(journalDetails);
- 
-    return data;
+    return {data : 'Insert' };
  }; 
 
 
