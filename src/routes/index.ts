@@ -14,6 +14,11 @@ import researchProjectRoutes from './research-routes/research-project-routes';
 import researchAwardRoutes from './research-routes/research-award-routes';
 import researchSeminarRoutes from './research-routes/research-seminar-routes'
 import caseStudyRoutes from './research-routes/case-study-routes'; 
+import teachingRoutes from './research-routes/teaching-excellance-routes';
+import meetingRoutes from './research-routes/meeting-stackholders-routes';
+import brandingRoutes from './research-routes/branding-advertising-routes';
+
+
 
 //ankit
 
@@ -34,6 +39,9 @@ router.use('/', researchProjectRoutes);
 router.use('/', researchAwardRoutes);
 router.use('/', researchSeminarRoutes);
 router.use('/', caseStudyRoutes);
+router.use('/', teachingRoutes);
+router.use('/', meetingRoutes);
+router.use('/', brandingRoutes);
 
 
 export default router; 
