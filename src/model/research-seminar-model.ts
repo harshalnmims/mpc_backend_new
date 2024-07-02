@@ -1,11 +1,11 @@
 import { infiniteScrollQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
-import { researchAwardDetails } from 'types/research.types';
+import { seminarDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db'; 
 import { number } from 'zod'; 
 
-export const getResearchAwardModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+export const getResearchSeminarModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
     const data = await infiniteScrollQueryBuilder<Session>({
        baseQuery: `select distinct concat(pu.first_name,' ',pu.last_name) AS full_name, pu.id as user_lid, pu.username 
                        from mpc_user_role mur 
@@ -35,27 +35,26 @@ export const getResearchAwardModel = async ({ page, limit, sort, order, search, 
     return data;
  };
 
-
-export const insertResearchAwardModel = async(researchAwardData : researchAwardDetails) => {
-    console.log('researchAwardData ===>>>>>', researchAwardData)
+export const insertResearchSeminarModel = async(researchSeminarData : seminarDetails) => {
+    console.log('researchSeminarData ===>>>>>', researchSeminarData)
     
-    const data = await sql`SELECT * FROM insert_research_award(${JSON.parse(JSON.stringify(researchAwardData))}, '1');`;
+    const data = await sql`SELECT * FROM insert_research_seminar(${JSON.parse(JSON.stringify(researchSeminarData))}, '1');`;
     return data;
 
 } 
 
-export const updateResearchAwardModel = async(updateResearchAwardData : researchAwardDetails) => {
-    console.log('updateResearchAwardData ===>>>>>', updateResearchAwardData)
+export const updateResearchSeminarModel = async(updateResearchSeminarData : seminarDetails) => {
+    console.log('updateResearchSeminarData ===>>>>>', updateResearchSeminarData)
     
-    const data = await sql`SELECT * FROM upsert_research_award(${JSON.parse(JSON.stringify(updateResearchAwardData))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_research_seminar(${JSON.parse(JSON.stringify(updateResearchSeminarData))}, '1');`;
     return data;
 
-} 
+};
 
-export const deleteResearchAwardModel = async(awardId : number) => {
-    console.log('awardId in  models  ====>>>>>>', awardId);
+export const deleteResearchSeminarModel = async (seminarId : number) => {
+    console.log('seminarId in  models  ====>>>>>>', seminarId);
     
-    const data = await sql`UPDATE research_award SET active = false,modified_date=now(),modified_by='1' WHERE id = ${awardId}`;
+    const data = await sql`UPDATE research_seminar SET active = false,modified_date=now(),modified_by='1' WHERE id = ${seminarId}`;
 
     return data.count > 0 ? {
         status:200,
@@ -64,6 +63,4 @@ export const deleteResearchAwardModel = async(awardId : number) => {
         status:400,
         message:'Failed To Delete !'
     }
-
-
 }

@@ -187,3 +187,59 @@ export type EContent = {
    media_link: string;
    facility_list: string;
 }
+
+
+export type researchAwardDetails = {
+   award_name: string;
+   award_details: string;
+   award_date: string;
+   award_organization: string;
+   award_place: string;
+   award_category: number;
+   faculty_name: string;
+   supporting_documents: string[];
+
+};
+
+export type seminarDetails = {
+   topic: string;
+   resource_person: string;
+   paper_title: string;
+   journal_name: string;
+   publisher: string;
+   publisher_category: number;
+   publication_date: string;
+   research_date: string;
+   uid: string;
+   doi_no: string;
+   volume_no: string;
+   issn_no: string;
+   scopus_site_score: string;
+   gs_indexed: string;
+   ugc_indexed: string;
+   scs_indexed: string;
+   wos_indexed: string;
+   impact_factor: string;
+   nmims_school: string[];
+   nmims_campus: string[];
+   supporting_documents: string[];
+   abdc_indexed: number;
+   nmims_authors: number[];
+}
+
+export type caseStudyDetails = {
+   title: string;
+   edition: string;
+   publish_year: number;
+   publisher: string;
+   publisher_category: number;
+   volume_no: string;
+   page_no: string;
+   url: string;
+   nmims_authors_count: number;
+   nmims_school: string[];
+   nmims_campus: string[];
+   all_authors: number[];
+   nmims_authors: number[];
+   supporting_documents: string[];
+}

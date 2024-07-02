@@ -10,6 +10,10 @@ import editedbookRoutes from './research-routes/edited-book-routes';
 import bookChapterRoutes from './research-routes/book-chapter-routes';
 import confereRoutes from './research-routes/conference-routes';
 import patentRoutes from './research-routes/patent-submission-routes';
+import researchProjectRoutes from './research-routes/research-project-routes';
+import researchAwardRoutes from './research-routes/research-award-routes';
+import researchSeminarRoutes from './research-routes/research-seminar-routes'
+import caseStudyRoutes from './research-routes/case-study-routes'; 
 
 //ankit
 
@@ -26,6 +30,10 @@ router.use('/', editedbookRoutes);
 router.use('/', bookChapterRoutes);
 router.use('/', confereRoutes);
 router.use('/', patentRoutes);
+router.use('/', researchProjectRoutes);
+router.use('/', researchAwardRoutes);
+router.use('/', researchSeminarRoutes);
+router.use('/', caseStudyRoutes);
 
 
 export default router; 

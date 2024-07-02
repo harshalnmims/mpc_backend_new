@@ -37,7 +37,7 @@ export const getResearchProjectModel = async ({ page, limit, sort, order, search
  };
 
 
- export const insertResearchProjectModel = async(researchData : researchProjectDetails) => {
+export const insertResearchProjectModel = async(researchData : researchProjectDetails) => {
     console.log('researchData ===>>>>>', researchData)
     
     const data = await sql`SELECT * FROM insert_research_project(${JSON.parse(JSON.stringify(researchData))}, '1');`;
