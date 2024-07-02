@@ -62,6 +62,6 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
 
     const data = await deleteBookPublicationService(bookPublicationId);
 
-    return  res.status(200).json(data)
+    return res.status(200).json(data);
 
  }

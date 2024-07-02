@@ -6,12 +6,12 @@ import Analyticsrouter from './analytics';
 import formARouter from './formA';
 import formBRouter from './formB';
 import materFormRouter from './master';
-import { validate } from '$middleware/validation.middleware';
+// import { validate } from '$middleware/validation.middleware';
 import { filterSchema } from '$validations/base.valid';
 
 const router = Router();
 
-router.get('/campus',asyncErrorHandler(validate(filterSchema)), asyncErrorHandler(getCampus));
+// router.get('/campus',asyncErrorHandler(validate(filterSchema)), asyncErrorHandler(getCampus));
 router.get('/programs', asyncErrorHandler(getPrograms));
 router.get('/acad-session', asyncErrorHandler(getSession));
 router.get('/subject', asyncErrorHandler(getSubject));

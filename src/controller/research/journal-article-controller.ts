@@ -1,8 +1,11 @@
 import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
-    deleteJournalArticleService,journalPaginateService} from '$service/research/journal-article-service';
+    deleteJournalArticleService,journalPaginateService,journalRenderService} from '$service/research/journal-article-service';
 import { Request, Response, NextFunction } from 'express';
+import { validateWithZod } from '$middleware/validation.middleware';
+import { filesArraySchema } from '$validations/research.valid';
+import { journalPaper } from '$validations/research.valid';
 
 
 export const getJournalArticle = async (req: Request, res: Response, next: NextFunction) => {
@@ -36,12 +39,22 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
  export const insertJournalArticleForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
+    
+     let journalDetails = JSON.parse(req.body.journal_paper);
+     const documents = [req.files];
+
+     let result = validateWithZod(journalPaper,journalDetails);
+     let fileResult = validateWithZod(filesArraySchema, documents);
+     console.log('zod result ',JSON.stringify(fileResult))
  
-    const journalDetails = { ...req.body};
-    const data = await insertJournalArticleService(journalDetails);
- 
-    return res.status(200).json(data);
+   //   documents.forEach(async file => {
+   //    let fileval = await fileSchema.parseAsync(file);
+   //    console.log('file val ',JSON.stringify(fileval))
+   //   })
+
+     console.log('json body ',JSON.stringify(journalDetails),documents[0])
+   //   const data = await insertJournalArticleService(journalData);
+     return res.status(200).json({data:'Inserted Successfully'});
  };
 
  export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
@@ -83,7 +96,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
        } = { ...req.body, ...req.params, ...req.query };
 
    const data = await journalPaginateService({
-       page,
+       page ,
        limit,
        search,  
        sort,
@@ -117,4 +130,11 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
    //       order: order || 'desc',
    //    },
    //}
+ }
+
+ export const journalRenderData = async (req : Request , res : Response , next  : NextFunction) => {
+
+   const data = await journalRenderService();
+   console.log('journal data ',JSON.stringify(data));
+   return res.status(200).json(data);
  }

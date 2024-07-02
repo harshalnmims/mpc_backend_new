@@ -6,6 +6,8 @@ import logger from '$config/logger';
 import { addSessionUserToRequest } from '$middleware/index.middleware';
 import router from '$routes/index';
 import { main } from 'kafka';
+import dotenv from 'dotenv'; 
+dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT;

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --env-file=.env dist/server.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon  -r tsconfig-paths/register -r ts-node/register --env-file .env -q dist/server.js\"",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon  --quiet  -r tsconfig-paths/register -r ts-node/register --env-file .env -q dist/server.js\"",
     "format": "prettier --plugin-search-dir . --write \"./**/*.{js,ts}\"",
     "build": "tsc && tsc-alias"
   },
@@ -16,6 +16,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/multer": "^1.4.11",
     "@types/node": "^20.14.2",
     "@types/node-cron": "^3.0.11",
     "@types/pg": "^8.11.6",
@@ -32,11 +33,15 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-winston": "^4.2.0",
+    "form-data": "^4.0.0",
+    "formdata-node": "^6.0.3",
     "kafkajs": "^2.2.4",
+    "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
     "postgres": "^3.4.4",
     "winston": "^3.13.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-form-data": "^2.0.2"
   }
 }
