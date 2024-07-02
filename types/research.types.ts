@@ -31,7 +31,7 @@ export type journalArticleDetails = {
     foreign_authors: number[];
     other_authors: number[];
     student_authors: number[];
-    supporting_documents ?: SupportingDocument;
+    supporting_documents ?: SupportingDocument ;
  };
 
  export type BookPublicationDetails = {

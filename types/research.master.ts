@@ -1,4 +1,4 @@
-export type SupportingDocument = [{
+export type SupportingDocument = {
     path: string;
     filename: string | undefined;
-}];
+}[];

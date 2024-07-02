@@ -3,6 +3,7 @@ import AWS from 'aws-sdk';
 import crypto from 'crypto';
 import { AwsData } from 'types/base.types';
 import { string } from 'zod';
+import { SupportingDocument } from 'types/research.master';
 
  const config =  {
     "accessKeyId": process.env.accessKeyId,
@@ -17,10 +18,10 @@ import { string } from 'zod';
 
    const s3 = new AWS.S3();
 
-export async function uploadFile(documents : any)  {
+export async function uploadFile(documents : any) : Promise<SupportingDocument> {
  try {
     
-     let filepaths: object[]  = [];
+     let filepaths: SupportingDocument  = [];
 
      await documents.forEach(async (doc: any) => {
         

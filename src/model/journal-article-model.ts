@@ -177,7 +177,8 @@ export const journalViewData = async (journalpaperId:number) => {
     JSON_AGG(DISTINCT ffa.name) FILTER (WHERE jfa.author_lid IS NOT NULL) AS foreign_authors,
     JSON_AGG(DISTINCT o.name) FILTER (WHERE joa.author_lid IS NOT NULL AND joa.active = TRUE) AS other_authors,
     JSON_AGG(DISTINCT sa.name) FILTER (WHERE jsa.author_lid IS NOT NULL AND jsa.active = TRUE) AS student_authors,
-    JSON_AGG(DISTINCT jsd.document_name) FILTER (WHERE jsd.active = TRUE) AS supporting_documents
+    JSON_AGG(DISTINCT jsd.document_name) FILTER (WHERE jsd.active = TRUE) AS supporting_documents,
+    JSON_AGG(DISTINCT jsd.filename) FILTER (WHERE jsd.active = TRUE) AS filename
 FROM
     journal_paper_article jpa
 LEFT JOIN
@@ -231,3 +232,7 @@ GROUP BY
    return data;
 }
 
+export const journalFiles = async (journalPaperId:number) => {
+    const data = await sql`SELECT * FROM journal_supporting_documents WHERE journal_paper_lid = ${journalPaperId}`;
+    return data;
+}

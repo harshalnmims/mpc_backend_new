@@ -1,7 +1,8 @@
 import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
-    deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService} from '$service/research/journal-article-service';
+    deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService,
+    journalDownloadFileService} from '$service/research/journal-article-service';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
 import { filesArraySchema } from '$validations/research.valid';
@@ -138,5 +139,12 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  export const journalViewController = async (req : Request , res : Response , next  : NextFunction) => {
     const id  = req.query.id ;
     const data = await journalViewService(Number(id));
+    return res.status(200).json(data);
+ }
+
+ export const journalDownloadFile = async (req : Request , res : Response , next  : NextFunction) => {
+     const id  = req.body.id;
+
+    const data = await journalDownloadFileService(id);
     return res.status(200).json(data);
  }
