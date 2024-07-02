@@ -1,4 +1,5 @@
 import { string } from "zod";
+import {SupportingDocument} from "types/research.master"
 
 export type journalArticleDetails = {
     journal_name: string;
@@ -30,7 +31,7 @@ export type journalArticleDetails = {
     foreign_authors: number[];
     other_authors: number[];
     student_authors: number[];
-    supporting_documents: string[];
+    supporting_documents ?: SupportingDocument;
  };
 
  export type BookPublicationDetails = {

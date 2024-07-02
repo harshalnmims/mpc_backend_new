@@ -102,3 +102,11 @@ export type subjectListAnalytics = {
    meeting_count: number;
 };
 
+export type AwsData = {
+    ETag: string,
+    ServerSideEncryption?: string; 
+    Location: string,       
+    key: string,
+    Key: string,
+    Bucket: string
+}

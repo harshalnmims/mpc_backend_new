@@ -1,58 +1,79 @@
-// import { promises as fs } from 'fs'; 
+import { promises as fs } from 'fs'; 
+import AWS from 'aws-sdk';
+import crypto from 'crypto';
+import { AwsData } from 'types/base.types';
+import { string } from 'zod';
 
+ const config =  {
+    "accessKeyId": process.env.accessKeyId,
+    "secretAccessKey": process.env.secretAccessKey,
+    "bucketName" :  process.env.bucketName
+   };
 
-// export async function uploadFile(documents : any) {
-//  try {
+   AWS.config.update({
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey,
+   });
 
-//     const accessKeyId = process.env.accessKeyId;
-//     const secretAccessKey = process.env.secretAccessKey;
-//     const bucketName = process.env.bucketName;
+   const s3 = new AWS.S3();
 
-//      console.log('aws ',accessKeyId,secretAccessKey,bucketName)
+export async function uploadFile(documents : any)  {
+ try {
+    
+     let filepaths: object[]  = [];
 
-//      documents.forEach((doc: { name: any; content: any; }) => {
-//         const { name, content } = doc;
-//         const base64Data = content.split(',')[1]; // Remove the data URL prefix
-//         const buffer = Buffer.from(base64Data, 'base64');
+     await documents.forEach(async (doc: any) => {
+        
+     const buffer = doc.buffer;
+     const filename = 'data/research/' + crypto.randomUUID() + doc.originalname;
+     filepaths.push({path:filename,filename:doc.originalname});
 
-//         const imageName = `NMIMSQP/Testing`;
-//         const awsData = Promise.all([uploadResearchToS3(imageName, buffer)]);
+   
+     const awsData : AwsData  = await uploadResearchToS3(filename , buffer);
+     let path : string = String(awsData.key)
+     console.log('aws return data',awsData)
+  
+    });
 
-//         // Save the file (this is just an example, make sure to handle paths and errors correctly)
-//         // const filePath = `./uploads/${name}`;
-//         // require('fs').writeFileSync(filePath, buffer);
-//         // console.log(`Saved ${name} to ${filePath}`);
-//     });
+    return filepaths;
 
-//   } catch (error) {
-//     console.error(`Error saving file`, error);
-//     throw error; 
-//   }
-// }
+  } catch (error) {
+    console.error(`Error saving file`, error);
+    throw error; 
+  }
+}
 
-// function uploadResearchToS3(imageName: string, fileContent: Buffer) {
-//     return new Promise((resolve,reject)=>{
+async function uploadResearchToS3(filename: string, fileContent: Buffer) : Promise<AwsData> {
+    return new Promise((resolve,reject)=>{
 
-//     const params = {
-//         Bucket: process.env.bucketName,
-//         Key: imageName,
-//         Body: fileContent
-//     };
+    const params : AWS.S3.PutObjectRequest = {
+        Bucket: process.env.bucketName || '',
+        Key: filename,
+        Body: fileContent
+    };
 
-//     console.log("BucketXXXXX",params);
+    console.log("BucketXXXXX",params);
 
-//     // Upload the image to the S3 bucket
-//     s3.upload(params, function(err: any, data: unknown) {
-//         if (err) {
-//         console.log('Error uploading image:', err);
-//             reject(err)
-//         } else {
-//             console.log('Image uploaded successfully. Location:', data);
-//             resolve(data)
-//         }
-//     });
+    // Upload the image to the S3 bucket
+    s3.upload(params, function(err: Error, data: AWS.S3.ManagedUpload.SendData) {
+        if (err) {
+            console.log('Error uploading image:', err);
+            reject(err)
+        } else {
+            console.log('File uploaded successfully. Location:', data);
+            let awsData: AwsData = {
+                    ETag: data.ETag ??  '',
+                    ServerSideEncryption: '', 
+                    Location: data.Location ?? '',
+                    key: data.Key ?? '',
+                    Key: data.Key ?? '',
+                    Bucket: data.Bucket ?? '',
+                };
+                resolve(awsData);
+        }
+    });
 
   
-// })
+})
 
-// }
+}

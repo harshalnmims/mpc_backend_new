@@ -1,7 +1,7 @@
 import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
-    deleteJournalArticleService,journalPaginateService,journalRenderService} from '$service/research/journal-article-service';
+    deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService} from '$service/research/journal-article-service';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
 import { filesArraySchema } from '$validations/research.valid';
@@ -41,20 +41,16 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
     const logger = getLogger();
     
      let journalDetails = JSON.parse(req.body.journal_paper);
-     const documents = [req.files];
+     let data;
+     let documents = req.files;
 
      let result = validateWithZod(journalPaper,journalDetails);
      let fileResult = validateWithZod(filesArraySchema, documents);
-     console.log('zod result ',JSON.stringify(fileResult))
- 
-   //   documents.forEach(async file => {
-   //    let fileval = await fileSchema.parseAsync(file);
-   //    console.log('file val ',JSON.stringify(fileval))
-   //   })
 
-     console.log('json body ',JSON.stringify(journalDetails),documents[0])
-   //   const data = await insertJournalArticleService(journalData);
-     return res.status(200).json({data:'Inserted Successfully'});
+     if(fileResult.success && result.success){
+      data = await insertJournalArticleService(journalDetails,documents);
+     }
+     return res.status(200).json(data);
  };
 
  export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
@@ -63,7 +59,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  
     const journalDetails = { ...req.body};
     const data = await updateJournalArticleService(journalDetails);
- 
+    
     return res.status(200).json(data);
 
  } 
@@ -137,4 +133,10 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
    const data = await journalRenderService();
    console.log('journal data ',JSON.stringify(data));
    return res.status(200).json(data);
+ }
+
+ export const journalViewController = async (req : Request , res : Response , next  : NextFunction) => {
+    const id  = req.query.id ;
+    const data = await journalViewService(Number(id));
+    return res.status(200).json(data);
  }
