@@ -132,4 +132,58 @@ export type journalArticleDetails = {
    faculty_id: number[];
    sdg_goals: number[];
    supporting_documents: string[];
- }
+ } 
+
+
+ export type researchProjectDetails = { 
+   title: string;
+   grant_proposal: number;
+   grant_type: number;
+   thrust_area: string;
+   grant_date: string;
+   funding_amount: number;
+   funding_agency: number;
+   duration: string;
+   scheme: number;
+   payment_date: string;
+   received_amount: number;
+   research_status: number;
+   faculty_id: number[];
+   supporting_documents: string[];
+   nmims_school: string[];
+   nmims_campus: string[];
+
+ } 
+
+
+ export type IPRDetails = {
+   
+   ipr_id:number;
+   title: string;
+   appln_no: number
+   filed_date:string;
+   grant_date:string;  
+   published_date: string;
+   publication_no: number;
+   granted_no: number;
+   institue_affiliation: string;
+   patent_status: number;
+   invention_type : number[];
+   sdg_goals : number[];
+   applicant_names :number[];
+   nmims_school : string[];
+   nmims_campus:string[];  
+   inventors_id: number[];
+   supporting_documents:string[];
+}
+
+export type EContent = {
+   eContentId: number
+   faculty_name: string;
+   module: string;
+   module_platform: string;
+   launching_date: string;
+   document_link: string;
+   media_link: string;
+   facility_list: string;
+}

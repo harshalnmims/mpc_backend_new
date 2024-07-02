@@ -35,6 +35,7 @@ export const insertPatentSubmissionForm = async(req : Request, res : Response, n
     logger.info('INSIDE GET PATENT SUBMISSION AND GRANT CONTROLLER');
 
     const patentData = {...req.body};
+    console.log('patentData ===>>>>>', patentData);
 
     const data = await insertPatentSubmissionService(patentData);
 
