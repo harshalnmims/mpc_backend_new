@@ -122,3 +122,14 @@ export type journalArticleDetails = {
    conference_documents: string[];
    award_documents: string[];
  }
+
+ export type patentDetails = {
+   title: string;
+   appln_no: number;
+   publication_date: number;
+   patent_stage: number;
+   invention_type: number[];
+   faculty_id: number[];
+   sdg_goals: number[];
+   supporting_documents: string[];
+ }
