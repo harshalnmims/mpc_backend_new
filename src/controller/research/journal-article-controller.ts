@@ -43,7 +43,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
 
  export const insertJournalArticleForm = async (req: Request, res: Response, next: NextFunction) => {
-    const logger = getLogger();
+   //  const logger = getLogger();
     
      let journalDetails = JSON.parse(req.body.journal_paper);
      let data;
@@ -59,13 +59,24 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  };
 
  export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
-    const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
- 
-    const journalDetails = { ...req.body};
-    const data = await updateJournalArticleService(journalDetails);
-    
-    return res.status(200).json(data);
+   //  const logger = getLogger();
+   //  logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
+
+    let journalDetails = JSON.parse(req.body.journal_paper);
+    let journalId = JSON.parse(req.body.journal_id);
+
+    let data;
+    let documents = req.files;
+
+    console.log('json for update ',JSON.stringify(journalDetails),documents)
+    let result = validateWithZod(journalPaper,journalDetails);
+    let fileResult = validateWithZod(filesArraySchema, documents);
+
+    if(fileResult.success && result.success){
+      data = await updateJournalArticleService(journalDetails,documents,Number(journalId));
+     }
+     console.log('final json ',JSON.stringify(data))
+     return res.status(200).json(data);
 
  } 
 

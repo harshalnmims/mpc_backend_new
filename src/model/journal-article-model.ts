@@ -233,7 +233,7 @@ GROUP BY
 }
 
 export const journalFiles = async (journalPaperId:number) => {
-    const data = await sql`SELECT * FROM journal_supporting_documents WHERE journal_paper_lid = ${journalPaperId}`;
+    const data = await sql`SELECT * FROM journal_supporting_documents WHERE journal_paper_lid = ${journalPaperId} AND active=TRUE`;
     return data;
 }
 
@@ -244,7 +244,7 @@ export const journalUpdateViewData = async (journalId : number) => {
     jpas.title,
     jpas.publish_year,
     jpas.total_authors,
-    jpas.nmims_authors,
+    jpas.nmims_authors AS nmims_authors_count,
     jpas.uid,
     jpas.publisher,
     jpas.publishing_date,
@@ -260,6 +260,8 @@ export const journalUpdateViewData = async (journalId : number) => {
     jpas.student_authors_count,
     jpas.impact_factor,
     jpas.doi_no,
+	JSON_AGG(DISTINCT jps.school_name) AS nmims_school,
+	JSON_AGG(DISTINCT jpc.campus_name) AS nmims_campus,
     (SELECT 
         JSONB_AGG(row_to_json(policy_data))
     FROM (
@@ -400,7 +402,10 @@ export const journalUpdateViewData = async (journalId : number) => {
 	
 FROM 
     journal_paper_article jpas
+	INNER JOIN journal_paper_school jps ON jps.journal_paper_lid = jpas.id
+	INNER JOIN journal_paper_campus jpc ON jpc.journal_paper_lid = jpas.id
 WHERE 
-    jpas.id = ${journalId} AND jpas.active=TRUE;`
+    jpas.id = ${journalId} AND jpas.active=TRUE AND jpc.active = TRUE AND jps.active=TRUE
+GROUP BY jpas.id;`
     return data;
 }

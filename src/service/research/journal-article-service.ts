@@ -74,12 +74,15 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
  }; 
 
 
- export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
+ export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails,documents : { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,journalId :number) => {
+   //  const logger = getLogger();
+   //  logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
  
+    let uploadDocuments = await uploadFile(documents);
+    updateJournalDetails.supporting_documents  = uploadDocuments.map(data =>  data);
+    updateJournalDetails.journal_paper_id = journalId;
+
     const data = await updateJournalArticleModel(updateJournalDetails);
- 
     return data;
  };
 
