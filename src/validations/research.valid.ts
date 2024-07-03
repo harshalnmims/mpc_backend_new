@@ -10,11 +10,9 @@ export const journalPaper = z.object({
 	}, {
 	  message: 'Invalid Year'
 	}),
-	policy_cadre: z.array(z.number().min(1, 'Policy cadre is required')),
 	all_authors: z.array(z.number().min(1, 'All authors are required')),
-	total_authors: z.number().min(1, {message:'Total author count is required'}),
 	nmims_authors: z.array(z.number()).min(1, {message:'NMIMS authors are required'}),
-	nmims_author_count: z.number().min(1, { message: 'Author count is required' }),
+	nmims_authors_count: z.number().min(1, { message: 'Author count is required' }),
 	journal_name: z.string().min(1, 'Journal name is required'),
 	uid: z.string().min(1, 'UID is required'),
 	publisher: z.string().min(1, 'Publisher is required'),
@@ -40,6 +38,30 @@ export const journalPaper = z.object({
 	// })
 //   })
 });
+
+
+export const bookPublication = z.object({
+	nmims_school : z.array(z.string()).min(1,{message:'School Is Required'}),
+    nmims_campus : z.array(z.string()).min(1,{message:'Campus Is Required'}),
+	all_authors: z.array(z.number().min(1, 'All authors are required')),
+	nmims_authors: z.array(z.number()).min(1, {message:'NMIMS authors are required'}),
+	title: z.string().min(1, 'Title is required'),
+	edition: z.string().min(1, 'Edition is required'),
+	volume_no: z.string().min(1, 'Volume number is required'),
+	publisher_category : z.number(),
+	publish_year: z.number().refine((data) => {
+		return data >= 1900 && data <= 3000;
+	  }, {
+		message: 'Invalid Year'
+	  }),
+	web_link: z.string().min(1, 'Website link  is required'),
+	publisher: z.string().min(1, 'Publisher Name is required'),
+	isbn_no: z.string().min(1, 'ISBN Number is required'),
+	doi_no: z.string().min(1, 'WebLink /DOI No. is required'),
+	publication_place: z.string().min(1, 'Place Of Publication is rquired'),
+	nmims_authors_count: z.number(),
+
+})
 
 const singleFileSchema = z.object({
 	fieldname: z.string(),

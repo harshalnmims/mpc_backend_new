@@ -57,7 +57,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
      return res.status(200).json({data:'Inserted Successfully'});
  };
 
- export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
+export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
  
@@ -69,7 +69,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  } 
 
 
- export const deleteJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
+export const deleteJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT Journal article CONTROLLER');
  
@@ -82,7 +82,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
  }
 
- export const journalPaginate =  async (req : Request,res : Response , next : NextFunction) => {
+export const journalPaginate =  async (req : Request,res : Response , next : NextFunction) => {
    // const data = { ...req.body, ...req.params, ...req.query };
    // console.log('data ',JSON.stringify(data)) 
    
@@ -103,6 +103,8 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
        order,
        filters,
     });
+
+    console.log('data in controller comming from backend ===>>>>', data)
  
     return res.status(200).json(data); 
    // {

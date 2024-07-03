@@ -34,6 +34,7 @@ export type journalArticleDetails = {
  };
 
  export type BookPublicationDetails = {
+    title: string;
     edition: string;
     publish_year: number;
     volume_no: string;
@@ -48,7 +49,7 @@ export type journalArticleDetails = {
     nmims_campus: string[];
     all_authors: number[];
     nmims_authors: number[];
-    supporting_documents: number[];
+    supporting_documents: string[];
 
  } 
 

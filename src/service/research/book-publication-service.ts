@@ -1,11 +1,13 @@
 import { getLogger } from '$config/logger-context';
 // import { insertBookPublicationForm } from '$controller/research/book-publication-controller';
 import { getBookPublication, insertBookPublicationModel, deleteBookPublicationModel,
-    updateBookPublicationModel
+    updateBookPublicationModel, getBookDetailsPaginateModel
  } from '$model/book-publication-model';
 import { paginationDefaultType } from 'types/db.default';
 
 import { BookPublicationDetails } from 'types/research.types';
+
+
 
 export const getBookPublicationService = async ({
    page,
@@ -18,7 +20,7 @@ export const getBookPublicationService = async ({
    const logger = getLogger();
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
 
-   const data = await getBookPublication({
+   const data = await getBookDetailsPaginateModel({
       page,
       limit,
       sort,
@@ -32,7 +34,7 @@ export const getBookPublicationService = async ({
 
 export const insertBookPublicationService = async (bookPublicationData: BookPublicationDetails) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
+    logger.info('INSIDE GET SUBJECT BOOK PUBLICATION  SERVICES');
     console.log('bookPublicationData ====>>>>>', bookPublicationData);
  
     const data = await insertBookPublicationModel(bookPublicationData);
