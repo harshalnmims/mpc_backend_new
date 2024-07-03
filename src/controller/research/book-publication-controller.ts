@@ -71,17 +71,18 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
 
     let bookPublicationData = JSON.parse(req.body.book_publication);
     console.log('bookPublicationData ankit ===>>>>>', bookPublicationData)
-    const documents = [req.files];
+    let data;
+     let documents = req.files;
 
     console.log('documents in controller ====>>>', documents);
 
     let result = validateWithZod(bookPublication,bookPublicationData);
     console.log('result ===>>>>>>', result)
-     let fileResult = validateWithZod(filesArraySchema, documents);
-     console.log('zod result ',JSON.stringify(fileResult))
+    let fileResult = validateWithZod(filesArraySchema, documents);
+    console.log('zod result ',JSON.stringify(fileResult))
  
 
-    const data = await insertBookPublicationService(bookPublicationData, documents);
+    data = await insertBookPublicationService(bookPublicationData, documents);
 
     return res.status(200).json(data);
  };

@@ -158,28 +158,9 @@ export type journalArticleDetails = {
  } 
 
 
- export type IPRDetails = {
-=======
-   appln_no: number
-   filed_date:string;
-   grant_date:string;  
-   published_date: string;
-   publication_no: number;
-   granted_no: number;
-   institue_affiliation: string;
-   patent_status: number;
-   invention_type : number[];
-   sdg_goals : number[];
-   applicant_names :number[];
-   nmims_school : string[];
-   nmims_campus:string[];  
-   inventors_id: number[];
-   supporting_documents:string[];
-}
 
-export type IPRDetails = {
->>>>>>> a728c2ad257eda88dbd1393ed3eb6895d161ce24
-   
+
+export type IPRDetails = {   
    ipr_id:number;
    title: string;
    appln_no: number
@@ -338,6 +319,5 @@ export type brandingDetails = {
    organizing_conference_documents: string[];
    student_event_documents: string[];
    newspaper_article_documents: string[];
-=======
->>>>>>> a728c2ad257eda88dbd1393ed3eb6895d161ce24
+
 }

@@ -4,6 +4,7 @@ import { getBookPublication, insertBookPublicationModel, deleteBookPublicationMo
     updateBookPublicationModel, getBookDetailsPaginateModel
  } from '$model/book-publication-model';
 import { paginationDefaultType } from 'types/db.default';
+import {uploadFile} from '$middleware/fileupload.middleware'
 
 import { BookPublicationDetails } from 'types/research.types';
 
@@ -32,10 +33,14 @@ export const getBookPublicationService = async ({
    return data;
 };
 
-export const insertBookPublicationService = async (bookPublicationData: BookPublicationDetails) => {
+export const insertBookPublicationService = async (bookPublicationData: BookPublicationDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT BOOK PUBLICATION  SERVICES');
+   //  logger.info('INSIDE GET SUBJECT BOOK PUBLICATION  SERVICES');
     console.log('bookPublicationData ====>>>>>', bookPublicationData);
+    let uploadDocuments = await uploadFile(documents);
+    bookPublicationData.supporting_documents  = uploadDocuments.map(data =>  data);
+
+    console.log('bookPublicationData with the file in service ====>>>>>', bookPublicationData);
  
     const data = await insertBookPublicationModel(bookPublicationData);
  
