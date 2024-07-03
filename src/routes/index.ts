@@ -4,7 +4,7 @@ import SpecialUserRouter from './special-user';
 import supportAdminRouter from './support-admin';
 
 import journalDetailsRouter from './research-routes/journal-article-routes'
-import iprRoutes from './research-routes/ipr-routes'
+// import iprRoutes from './research-routes/ipr-routes'
 import bookPublicationRoutes from './research-routes/book-publication.routes'
 import editedbookRoutes from './research-routes/edited-book-routes';
 import bookChapterRoutes from './research-routes/book-chapter-routes';
@@ -28,7 +28,7 @@ router.use('/faculty', facultyRouter);
 router.use('/special-user', SpecialUserRouter);
 router.use('/support-admin', supportAdminRouter);
 router.use('/research-project', journalDetailsRouter);
-router.use('/', iprRoutes);
+// router.use('/', iprRoutes);
 router.use('/', journalDetailsRouter);
 router.use('/', bookPublicationRoutes);
 router.use('/', editedbookRoutes);

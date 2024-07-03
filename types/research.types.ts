@@ -1,4 +1,5 @@
 import { string } from "zod";
+import {SupportingDocument} from "types/research.master"
 
 export type journalArticleDetails = {
     journal_name: string;
@@ -30,7 +31,7 @@ export type journalArticleDetails = {
     foreign_authors: number[];
     other_authors: number[];
     student_authors: number[];
-    supporting_documents: string[];
+    supporting_documents ?: SupportingDocument ;
  };
 
  export type BookPublicationDetails = {
@@ -49,7 +50,7 @@ export type journalArticleDetails = {
     nmims_campus: string[];
     all_authors: number[];
     nmims_authors: number[];
-    supporting_documents: string[];
+    supporting_documents ?: SupportingDocument ;
 
  } 
 
@@ -158,6 +159,26 @@ export type journalArticleDetails = {
 
 
  export type IPRDetails = {
+=======
+   appln_no: number
+   filed_date:string;
+   grant_date:string;  
+   published_date: string;
+   publication_no: number;
+   granted_no: number;
+   institue_affiliation: string;
+   patent_status: number;
+   invention_type : number[];
+   sdg_goals : number[];
+   applicant_names :number[];
+   nmims_school : string[];
+   nmims_campus:string[];  
+   inventors_id: number[];
+   supporting_documents:string[];
+}
+
+export type IPRDetails = {
+>>>>>>> a728c2ad257eda88dbd1393ed3eb6895d161ce24
    
    ipr_id:number;
    title: string;
@@ -179,7 +200,7 @@ export type journalArticleDetails = {
 }
 
 export type EContent = {
-   eContentId: number
+   eContentId: number;
    faculty_name: string;
    module: string;
    module_platform: string;
@@ -187,6 +208,7 @@ export type EContent = {
    document_link: string;
    media_link: string;
    facility_list: string;
+
 }
 
 
@@ -316,4 +338,6 @@ export type brandingDetails = {
    organizing_conference_documents: string[];
    student_event_documents: string[];
    newspaper_article_documents: string[];
+=======
+>>>>>>> a728c2ad257eda88dbd1393ed3eb6895d161ce24
 }
