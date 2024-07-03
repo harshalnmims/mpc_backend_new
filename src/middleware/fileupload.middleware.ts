@@ -4,6 +4,11 @@ import crypto from 'crypto';
 import { AwsData } from 'types/base.types';
 import { string } from 'zod';
 import { SupportingDocument } from 'types/research.master';
+import { Request, Response } from 'express';
+import AdmZip from 'adm-zip';
+
+
+
 
  const config =  {
     "accessKeyId": process.env.accessKeyId,
@@ -15,6 +20,8 @@ import { SupportingDocument } from 'types/research.master';
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
    });
+
+   
 
    const s3 = new AWS.S3();
 
@@ -78,3 +85,51 @@ async function uploadResearchToS3(filename: string, fileContent: Buffer) : Promi
 })
 
 }
+
+
+
+export async function downloadFile(filenames: string[], req: Request, res: Response) {
+    if (!filenames || filenames.length === 0) {
+        return res.status(400).send('No filenames provided');
+    }
+
+    try {
+        // Create a new zip instance
+        const zip = new AdmZip();
+
+        // Fetch each file from S3 and add to the zip
+        for (const filename of filenames) {
+            const params: AWS.S3.GetObjectRequest = {
+                Bucket: process.env.bucketName || '',
+                Key: filename,
+            };
+
+            // Fetch file from S3
+            const data = await s3.getObject(params).promise();
+
+            if (data.Body) {
+                const buffer = Buffer.isBuffer(data.Body) ? data.Body : Buffer.from(data.Body as string);
+                zip.addFile(filename, buffer);
+            } else {
+                console.warn(`File not found: ${filename}`);
+            }
+        }
+
+        // Generate the zip file buffer
+        const zipBuffer = zip.toBuffer();
+
+        // Set headers for the zip file
+        const zipFileName = 'downloaded_files.zip';
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename=${zipFileName}`);
+        res.setHeader('Content-Length', zipBuffer.length.toString());
+
+        // Send the zip file buffer
+        res.end(zipBuffer);
+    } catch (err) {
+        console.error('Error processing request:', err);
+        res.status(500).send('Error processing request');
+    }
+}
+
+

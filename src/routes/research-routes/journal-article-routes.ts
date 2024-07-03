@@ -1,5 +1,5 @@
 import { getJournalArticle, insertJournalArticleForm , updateJournalArticleForm, 
-    deleteJournalArticleForm,journalPaginate,journalRenderData,journalViewController,journalDownloadFile
+    deleteJournalArticleForm,journalPaginate,journalRenderData,journalViewController,journalDownloadFile,journalUpdateViewController
 } from '$controller/research/journal-article-controller';
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
@@ -17,7 +17,9 @@ journalDetailsRouter.post('/journal-article-delete', asyncErrorHandler(deleteJou
 journalDetailsRouter.get('/journal-paginate',asyncErrorHandler(journalPaginate));
 journalDetailsRouter.get('/journal-render-data',asyncErrorHandler(journalRenderData));
 journalDetailsRouter.get('/journal-view-data',asyncErrorHandler(journalViewController));
-journalDetailsRouter.post('/journal-download-files',asyncErrorHandler(journalDownloadFile))
+journalDetailsRouter.get('/journal-download-files',asyncErrorHandler(journalDownloadFile))
+journalDetailsRouter.get('/journal-update-view',asyncErrorHandler(journalUpdateViewController))
+
 
 
 export default journalDetailsRouter;
