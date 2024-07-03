@@ -1,8 +1,12 @@
 import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
-    deleteJournalArticleService,journalPaginateService,journalRenderService} from '$service/research/journal-article-service';
+    deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService,
+    journalDownloadFileService} from '$service/research/journal-article-service';
 import { Request, Response, NextFunction } from 'express';
+import { validateWithZod } from '$middleware/validation.middleware';
+import { filesArraySchema } from '$validations/research.valid';
+import { journalPaper } from '$validations/research.valid';
 
 
 export const getJournalArticle = async (req: Request, res: Response, next: NextFunction) => {
@@ -36,21 +40,18 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
  export const insertJournalArticleForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE journal CONTROLLER',JSON.stringify(req.body));
+    
+     let journalDetails = JSON.parse(req.body.journal_paper);
+     let data;
+     let documents = req.files;
 
-    const files = req.files as Express.Multer.File[];
-    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+     let result = validateWithZod(journalPaper,journalDetails);
+     let fileResult = validateWithZod(filesArraySchema, documents);
 
-    if (!files.every(file => allowedTypes.includes(file.mimetype))) {
-        return res.status(400).json({ message: 'Only .pdf, .docx formats are supported' });
-    }
- 
-    const journalDetails = { ...req.body};
-    console.log('journal details ',JSON.stringify(journalDetails))
-    console.log('journal documents ',JSON.stringify(req.body.supporting_documents))
-   //  const data = await insertJournalArticleService(journalDetails);
- 
-    return res.status(200).json({data:'Inserted Successfully'});
+     if(fileResult.success && result.success){
+      data = await insertJournalArticleService(journalDetails,documents);
+     }
+     return res.status(200).json(data);
  };
 
  export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
@@ -59,7 +60,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  
     const journalDetails = { ...req.body};
     const data = await updateJournalArticleService(journalDetails);
- 
+    
     return res.status(200).json(data);
 
  } 
@@ -133,4 +134,17 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
    const data = await journalRenderService();
    console.log('journal data ',JSON.stringify(data));
    return res.status(200).json(data);
+ }
+
+ export const journalViewController = async (req : Request , res : Response , next  : NextFunction) => {
+    const id  = req.query.id ;
+    const data = await journalViewService(Number(id));
+    return res.status(200).json(data);
+ }
+
+ export const journalDownloadFile = async (req : Request , res : Response , next  : NextFunction) => {
+     const id  = req.body.id;
+
+    const data = await journalDownloadFileService(id);
+    return res.status(200).json(data);
  }

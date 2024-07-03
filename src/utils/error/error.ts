@@ -3,7 +3,7 @@ import { CustomError } from './customError';
 
 export const invalidRequestError = (moduleName: string, message: string) => {
    throw new CustomError({
-      moduleName: moduleName || 'Unknown Module',
+      moduleName: moduleName || 'Unknown Module' || 'validate',
       message: message || 'Invalid Request',
       status: HTTP_STATUS.BAD_REQUEST,
    });

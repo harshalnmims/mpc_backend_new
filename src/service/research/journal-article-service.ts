@@ -1,12 +1,15 @@
 import { getLogger } from '$config/logger-context';
 import { getJournalArticlePublished, insertJournalArticleModel, updateJournalArticleModel,
-    deleteJournalArticleModel,journalPaginateModal
+    deleteJournalArticleModel,journalPaginateModal,journalViewData,journalFiles
  } from '$model/journal-article-model';
 import { paginationDefaultType } from 'types/db.default';
 import { journalArticleDetails } from 'types/research.types';
 import {renderModal,getPolicyCadre,getNmimsAuthors,getAllAuthors,getAbdcIndexed, getPaperType,
    getSchool,getCampus
 } from '$model/master-model';
+import {uploadFile} from '$middleware/fileupload.middleware'
+import { string } from 'zod';
+
 
 export const getJournalArticleService = async ({
    page,
@@ -54,13 +57,18 @@ export const journalPaginateService = async ({
    return data;
 };
 
-export const insertJournalArticleService = async (journalDetails: journalArticleDetails) => {
+export const insertJournalArticleService = async (journalDetails: journalArticleDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
- 
-    const data = await insertJournalArticleModel(journalDetails);
- 
-    return data;
+   //  logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
+
+       console.log('json data journal ',JSON.stringify(journalDetails))
+         
+       let uploadDocuments = await uploadFile(documents);
+       journalDetails.supporting_documents  = uploadDocuments.map(data =>  data);
+
+       const data  = await insertJournalArticleModel(journalDetails);
+       console.log('final journal json ',JSON.stringify(data))
+       return data;
  }; 
 
 
@@ -103,4 +111,19 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
    return {
       foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus
    };
+ }
+
+ export const journalViewService = async (journalPaperId : number) => {
+   const logger = getLogger();
+
+   const data = await journalViewData(journalPaperId);
+   return data;
+ }
+
+ export const journalDownloadFileService = async (journalPaperId : number) => {
+   const logger = getLogger();
+
+   const data = await journalFiles(journalPaperId);
+   console.log('files data ',JSON.stringify(data))
+   return data;
  }
