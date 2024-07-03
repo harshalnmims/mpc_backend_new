@@ -145,11 +145,12 @@ export type journalArticleDetails = {
 }
 
 export type EContent = {
+   eContentId: number
    faculty_name: string;
    module: string;
    module_platform: string;
    launching_date: string;
    document_link: string;
    media_link: string;
-   facilitylist: string;
+   facility_list: string;
 }
