@@ -2,6 +2,7 @@ import { string } from "zod";
 import {SupportingDocument} from "types/research.master"
 
 export type journalArticleDetails = {
+    journal_paper_id ?: number;
     journal_name: string;
     title: string;
     publish_year: number;

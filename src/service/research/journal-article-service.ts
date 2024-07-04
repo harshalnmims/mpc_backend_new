@@ -74,12 +74,11 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
  }; 
 
 
-export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails) => {
+ export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
  
     const data = await updateJournalArticleModel(updateJournalDetails);
- 
     return data;
  };
 

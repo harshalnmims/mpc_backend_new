@@ -43,7 +43,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
 
  export const insertJournalArticleForm = async (req: Request, res: Response, next: NextFunction) => {
-    const logger = getLogger();
+   //  const logger = getLogger();
     
      let journalDetails = JSON.parse(req.body.journal_paper);
      let data;
@@ -58,7 +58,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
      return res.status(200).json(data);
  };
 
-export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
+ export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
  
