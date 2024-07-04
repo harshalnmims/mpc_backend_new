@@ -106,6 +106,7 @@ export async function downloadFile(filenames: string[], req: Request, res: Respo
 
             // Fetch file from S3
             const data = await s3.getObject(params).promise();
+            console.log('file names ',filename,data)
 
             if (data.Body) {
                 const buffer = Buffer.isBuffer(data.Body) ? data.Body : Buffer.from(data.Body as string);

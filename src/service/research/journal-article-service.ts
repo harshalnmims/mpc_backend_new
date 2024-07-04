@@ -74,10 +74,21 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
  }; 
 
 
- export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
+ export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails,documents : { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,journalId :number) => {
+   //  const logger = getLogger();
+   //  logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
  
+    let uploadDocuments = await uploadFile(documents);
+    
+    if(uploadDocuments.length > 0){
+    updateJournalDetails.supporting_documents  = uploadDocuments.map(data =>  data);
+    }else{
+    updateJournalDetails.supporting_documents = [];  
+    }
+
+    updateJournalDetails.journal_paper_id = journalId;
+    console.log('upload documents ',uploadDocuments)
+
     const data = await updateJournalArticleModel(updateJournalDetails);
     return data;
  };
@@ -122,7 +133,7 @@ export const journalRenderService = async () => {
  }
 
  export const journalDownloadFileService = async (journalPaperId : number,req:Request,res:Response) => {
-   const logger = getLogger();
+   // const logger = getLogger();
 
    const data = await journalFiles(journalPaperId);
 
