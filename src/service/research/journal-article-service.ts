@@ -79,8 +79,15 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
    //  logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
  
     let uploadDocuments = await uploadFile(documents);
+    
+    if(uploadDocuments.length > 0){
     updateJournalDetails.supporting_documents  = uploadDocuments.map(data =>  data);
+    }else{
+    updateJournalDetails.supporting_documents = [];  
+    }
+
     updateJournalDetails.journal_paper_id = journalId;
+    console.log('upload documents ',uploadDocuments)
 
     const data = await updateJournalArticleModel(updateJournalDetails);
     return data;
@@ -126,7 +133,7 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
  }
 
  export const journalDownloadFileService = async (journalPaperId : number,req:Request,res:Response) => {
-   const logger = getLogger();
+   // const logger = getLogger();
 
    const data = await journalFiles(journalPaperId);
 
