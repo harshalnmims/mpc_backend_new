@@ -1,12 +1,16 @@
 import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
-    deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService,
+    deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService,journalUpdateViewService,
     journalDownloadFileService} from '$service/research/journal-article-service';
+import { journalFiles } from '$model/journal-article-model';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
 import { filesArraySchema } from '$validations/research.valid';
 import { journalPaper } from '$validations/research.valid';
+import AWS from 'aws-sdk';
+import { AwsData } from 'types/base.types';
+
 
 
 export const getJournalArticle = async (req: Request, res: Response, next: NextFunction) => {
@@ -145,8 +149,17 @@ export const journalPaginate =  async (req : Request,res : Response , next : Nex
  }
 
  export const journalDownloadFile = async (req : Request , res : Response , next  : NextFunction) => {
-     const id  = req.body.id;
+   const id = req.query.id;
+   console.log('id ',id)
 
-    const data = await journalDownloadFileService(id);
-    return res.status(200).json(data);
+    await journalDownloadFileService(Number(id),req,res);
+ 
  }
+
+ export const journalUpdateViewController = async (req : Request , res : Response , next  : NextFunction) => {
+    const id  = req.query.id ;
+    const data = await journalUpdateViewService(Number(id));
+    return res.status(200).json(data);
+ 
+ }
+

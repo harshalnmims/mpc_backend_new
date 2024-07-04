@@ -1,6 +1,6 @@
 import { getLogger } from '$config/logger-context';
 import { getJournalArticlePublished, insertJournalArticleModel, updateJournalArticleModel,
-    deleteJournalArticleModel,journalPaginateModal,journalViewData,journalFiles
+    deleteJournalArticleModel,journalPaginateModal,journalViewData,journalFiles,journalUpdateViewData
  } from '$model/journal-article-model';
 import { paginationDefaultType } from 'types/db.default';
 import { journalArticleDetails } from 'types/research.types';
@@ -8,6 +8,8 @@ import {renderModal,getPolicyCadre,getNmimsAuthors,getAllAuthors,getAbdcIndexed,
    getSchool,getCampus
 } from '$model/master-model';
 import {uploadFile} from '$middleware/fileupload.middleware'
+import { Request,Response } from 'express';
+import { downloadFile } from '$middleware/fileupload.middleware';
 import { string } from 'zod';
 
 
@@ -120,10 +122,28 @@ export const journalRenderService = async () => {
    return data;
  }
 
- export const journalDownloadFileService = async (journalPaperId : number) => {
+ export const journalDownloadFileService = async (journalPaperId : number,req:Request,res:Response) => {
    const logger = getLogger();
 
    const data = await journalFiles(journalPaperId);
-   console.log('files data ',JSON.stringify(data))
-   return data;
+
+  let files : string[] = data.map(dt => dt.document_name); 
+   await downloadFile(files, req,res);
+ }
+
+ export const journalUpdateViewService = async (journalId :number) => {
+   const journalData = await journalUpdateViewData(journalId);
+   const foreignAuthors =  await renderModal('fa');
+   const StudentAuthors =  await renderModal('sa');
+   const otherAuthors = await renderModal('oa');
+   const policyCadre = await getPolicyCadre();
+   const nmimsAuthors = await getNmimsAuthors();
+   const allAuthors = await getAllAuthors();
+   const abdcIndexed = await getAbdcIndexed();
+   const paperType = await getPaperType();
+   const school = await getSchool();
+   const campus = await getCampus();
+   return {
+      foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus,journalData
+   };
  }

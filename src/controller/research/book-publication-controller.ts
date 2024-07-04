@@ -65,7 +65,8 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
  };
 
 
- export const insertBookPublicationForm = async (req: Request, res: Response, next: NextFunction) => {
+
+export const insertBookPublicationForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
    //  logger.info('INSIDE GET BOOK PUBLICATION CONTROLLER');
 
@@ -86,6 +87,14 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
 
     return res.status(200).json(data);
  };
+
+export const editBookPublication = async (req: Request, res: Response, next: NextFunction) => {
+   const logger = getLogger();
+   const bookPublicationId = { ...req.body};
+   console.log('bookPublicationId in controoler comming from frontend ====>>>>>', bookPublicationId);
+
+
+}
 
  export const updateBookPublicationForm = async (req: Request, res: Response, next: NextFunction)  => {
     const logger = getLogger();

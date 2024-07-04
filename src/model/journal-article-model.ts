@@ -236,3 +236,171 @@ export const journalFiles = async (journalPaperId:number) => {
     const data = await sql`SELECT * FROM journal_supporting_documents WHERE journal_paper_lid = ${journalPaperId}`;
     return data;
 }
+
+export const journalUpdateViewData = async (journalId : number) => {
+   const data = await sql`SELECT 
+    jpas.id AS journal_paper_id,
+    jpas.journal_name,
+    jpas.title,
+    jpas.publish_year,
+    jpas.total_authors,
+    jpas.nmims_authors,
+    jpas.uid,
+    jpas.publisher,
+    jpas.publishing_date,
+    jpas.issn_no,
+    jpas.scopus_site_score,
+    jpas.gs_indexed,
+    jpas.journal_type,
+    jpas.ugc_indexed,
+    jpas.scs_indexed,
+    jpas.wos_indexed,
+    jpas.page_no,
+    jpas.foreign_authors_count,
+    jpas.student_authors_count,
+    jpas.impact_factor,
+    jpas.doi_no,
+    (SELECT 
+        JSONB_AGG(row_to_json(policy_data))
+    FROM (
+        SELECT 
+            pc.id,
+            pc.policy_name
+        FROM 
+            journal_policy_cadre jpc
+        INNER JOIN 
+            policy_cadre pc 
+        ON 
+            jpc.policy_cadre_lid = pc.id
+        WHERE 
+            jpc.journal_paper_lid = jpas.id
+            AND jpc.active = TRUE
+            AND pc.active = TRUE
+    ) AS policy_data) AS policy_names,
+    
+    (SELECT 
+        JSONB_AGG(row_to_json(author_data))
+    FROM (
+        SELECT 
+            f.id,
+            f.faculty_name
+        FROM 
+            journal_all_authors jaa
+        INNER JOIN 
+            faculties f 
+        ON 
+            jaa.faculty_lid = f.id
+        WHERE 
+            jaa.journal_paper_lid = jpas.id
+            AND jaa.active = TRUE
+            AND f.active = TRUE
+    ) AS author_data) AS all_authors,
+	
+	(SELECT JSONB_AGG(row_to_json(nmims_data))
+    FROM (
+        SELECT 
+            f.id,
+            f.faculty_name
+        FROM 
+            journal_nmims_authors jna
+        INNER JOIN 
+            faculties f 
+        ON 
+            jna.faculty_lid = f.id
+        WHERE 
+            jna.journal_paper_lid = jpas.id
+            AND jna.active = TRUE
+            AND f.active = TRUE
+    ) AS nmims_data) AS nmims_authors,
+	
+	(SELECT JSONB_AGG(row_to_json(foreign_data))
+    FROM (
+        SELECT 
+            ma.id,
+            ma.name
+        FROM 
+            journal_foreign_authors jfa
+        INNER JOIN 
+            master_input_data ma 
+        ON 
+            jfa.author_lid = ma.id
+        WHERE 
+            jfa.journal_paper_lid = jpas.id
+            AND jfa.active = TRUE
+            AND ma.active = TRUE
+    ) AS foreign_data) AS foreign_authors,
+	
+	(SELECT JSONB_AGG(row_to_json(student_data))
+    FROM (
+        SELECT 
+            ma.id,
+            ma.name
+        FROM 
+            journal_student_authors jsa
+        INNER JOIN 
+            master_input_data ma 
+        ON 
+            jsa.author_lid = ma.id
+        WHERE 
+            jsa.journal_paper_lid = jpas.id
+            AND jsa.active = TRUE
+            AND ma.active = TRUE
+    ) AS student_data) AS student_authors,
+	
+	(SELECT JSONB_AGG(row_to_json(other_data))
+    FROM (
+        SELECT 
+            ma.id,
+            ma.name
+        FROM 
+            journal_other_authors joa
+        INNER JOIN 
+            master_input_data ma 
+        ON 
+            joa.author_lid = ma.id
+        WHERE 
+            joa.journal_paper_lid = jpas.id
+            AND joa.active = TRUE
+            AND ma.active = TRUE
+    ) AS other_data) AS other_authors,
+	
+	(SELECT JSONB_AGG(row_to_json(abdc))
+    FROM (
+        SELECT 
+            at.id,
+            at.abdc_type
+        FROM 
+            journal_paper_article jpa
+        INNER JOIN 
+            abdc_types at 
+        ON 
+            at.id = jpa.abdc_indexed
+        WHERE 
+            jpa.id = jpas.id
+            AND jpa.active = TRUE
+            AND at.active = TRUE
+    ) AS abdc) AS abdc_indexed,
+	
+	(SELECT JSONB_AGG(row_to_json(paper))
+    FROM (
+        SELECT 
+            pt.id,
+            pt.paper_name
+        FROM 
+            journal_paper_article jpa
+        INNER JOIN 
+            paper_type pt 
+        ON 
+            pt.id = jpa.paper_type
+        WHERE 
+            jpa.id = jpas.id
+            AND jpa.active = TRUE
+            AND pt.active = TRUE
+    ) AS paper) AS paper_type
+	
+FROM 
+    journal_paper_article jpas
+WHERE 
+    jpas.id = ${journalId} AND jpas.active=TRUE;`
+    return data;
+}
