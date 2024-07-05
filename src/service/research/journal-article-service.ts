@@ -90,7 +90,9 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
     console.log('upload documents ',uploadDocuments)
 
     const data = await updateJournalArticleModel(updateJournalDetails);
-    return data;
+    const viewData = await journalUpdateViewData(journalId);
+
+    return  {data,viewData};
  };
 
 
