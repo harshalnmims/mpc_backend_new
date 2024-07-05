@@ -40,7 +40,19 @@ export const getBookPublicationService = async ({
    });
 
    return data;
-};
+}; 
+
+
+export const renderBookPublicationService  = async() => {
+   const nmimsAuthors = await getNmimsAuthors();
+   const allAuthors = await getAllAuthors();
+   const school = await getSchool();
+   const campus = await getCampus();
+   return {
+    nmimsAuthors,allAuthors,school,campus
+   };
+   
+}
 
 export const insertBookPublicationService = async (bookPublicationData: BookPublicationDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
     const logger = getLogger();
@@ -55,6 +67,7 @@ export const insertBookPublicationService = async (bookPublicationData: BookPubl
  
     return data;
  }; 
+
 
 
 export const updateBookPublicationService = async (bookPublicationId : number, bookPublicationData : BookPublicationDetails, documents :  { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
@@ -88,7 +101,8 @@ export const updateBookPublicationService = async (bookPublicationId : number, b
  
     const data = await deleteBookPublicationModel(bookPublicationId);
 
-    console.log('data ===>>>>>', data);
+    return data
+
     
  }
 

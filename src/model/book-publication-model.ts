@@ -234,7 +234,7 @@ export const bookPublicationFormviewModel = async(bookPublicationId : number) =>
     COALESCE(JSON_AGG(DISTINCT bpc.campus_name), '[]'::json) AS nmims_campus,
     COALESCE(JSON_AGG(DISTINCT fa.faculty_name), '[]'::json) AS all_authors,
     COALESCE(JSON_AGG(DISTINCT fa.faculty_name) FILTER (WHERE bpa2.author_lid IS NOT NULL AND fa.active = TRUE), '[]'::json) AS nmims_authors,
-    COALESCE(JSON_AGG(DISTINCT bpd.document_name), '[]'::json) AS supporting_documents
+    COALESCE(JSON_AGG(DISTINCT bpd.filename), '[]'::json) AS supporting_documents
 FROM 
     book_publication bp
 LEFT JOIN book_publication_school bps ON bp.id = bps.publication_lid

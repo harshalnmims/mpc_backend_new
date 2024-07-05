@@ -1,7 +1,7 @@
 import { getLogger } from '$config/logger-context';
 import {
    getBookPublicationService, insertBookPublicationService, updateBookPublicationService, 
-    deleteBookPublicationService, bookPublicationEditViewService, 
+    deleteBookPublicationService, bookPublicationEditViewService, renderBookPublicationService,
     bookPublicationFormViewService, bookPublicationDownloadFileService} from '$service/research/book-publication-service';
 import { Request, Response, NextFunction } from 'express';
 
@@ -67,6 +67,11 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
  };
 
 
+ export const renderBookPublicationList = async(req: Request, res: Response, next: NextFunction) => {
+   const logger = getLogger();
+   const data = await renderBookPublicationService();
+   return res.status(200).json(data);
+ }
 
 export const insertBookPublicationForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
@@ -136,6 +141,7 @@ export const bookPublicationEditviewForm = async (req: Request, res: Response, n
    const id = Number(bookPublicationId);
 
     const data = await deleteBookPublicationService(id);
+    console.log('data  responce in controller===>>>>>', data);
 
     return res.status(200).json(data);
 
