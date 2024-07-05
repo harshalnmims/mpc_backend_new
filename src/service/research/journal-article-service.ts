@@ -157,3 +157,5 @@ export const journalRenderService = async () => {
       foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus,journalData
    };
  }
+
+ 

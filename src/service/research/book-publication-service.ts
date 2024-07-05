@@ -1,7 +1,8 @@
 import { getLogger } from '$config/logger-context';
 // import { insertBookPublicationForm } from '$controller/research/book-publication-controller';
 import { getBookPublication, insertBookPublicationModel, deleteBookPublicationModel,
-    updateBookPublicationModel, getBookDetailsPaginateModel, bookPublicationEditViewModel
+    updateBookPublicationModel, getBookDetailsPaginateModel, bookPublicationEditViewModel,
+    bookPublicationFormviewModel, bookPublicationFiles
  } from '$model/book-publication-model';
 import { paginationDefaultType } from 'types/db.default';
 import {uploadFile} from '$middleware/fileupload.middleware';
@@ -9,8 +10,12 @@ import {renderModal,getNmimsAuthors,getAllAuthors,
    getSchool,getCampus
 } from '$model/master-model';
 
+import { Request,Response } from 'express';
+
 import { BookPublicationDetails } from 'types/research.types';
 import { bookPublication } from '$validations/research.valid';
+import { downloadFile } from '$middleware/fileupload.middleware';
+
 
 
 
@@ -78,7 +83,6 @@ export const updateBookPublicationService = async (bookPublicationId : number, b
 
  export const deleteBookPublicationService = async(bookPublicationId : number) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
 
     console.log('bookPublicationId in service ===>>>', bookPublicationId);
  
@@ -102,3 +106,18 @@ export const bookPublicationEditViewService = async(bookPublicationId : number) 
    
 }
 
+
+export const  bookPublicationFormViewService = async(bookPublicationId : number) => {
+   
+   const data = await bookPublicationFormviewModel(bookPublicationId);
+   return data
+}
+
+export const bookPublicationDownloadFileService = async (publicationId : number,req:Request,res:Response) => {
+   // const logger = getLogger();
+
+   const data = await bookPublicationFiles(publicationId);
+
+   let files : string[] = data.map(dt => dt.document_name); 
+   await downloadFile(files, req,res);
+ }

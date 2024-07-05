@@ -1,7 +1,8 @@
 import { getLogger } from '$config/logger-context';
 import {
    getBookPublicationService, insertBookPublicationService, updateBookPublicationService, 
-    deleteBookPublicationService, bookPublicationEditViewService} from '$service/research/book-publication-service';
+    deleteBookPublicationService, bookPublicationEditViewService, 
+    bookPublicationFormViewService, bookPublicationDownloadFileService} from '$service/research/book-publication-service';
 import { Request, Response, NextFunction } from 'express';
 
 import { validateWithZod } from '$middleware/validation.middleware';
@@ -128,13 +129,37 @@ export const bookPublicationEditviewForm = async (req: Request, res: Response, n
 
  export const deleteBookPublicationForm = async (req: Request, res: Response, next: NextFunction)  => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT Journal article CONTROLLER');
+   //  logger.info('INSIDE GET SUBJECT Journal article CONTROLLER');
  
-    const bookPublication = { ...req.body};
-    const bookPublicationId  = bookPublication.book_publication_id
+   const bookPublicationId =  req.query.id;
+   console.log('bookPublicationId Ankit Mishra====>>>>>>>', bookPublicationId);
+   const id = Number(bookPublicationId);
 
-    const data = await deleteBookPublicationService(bookPublicationId);
+    const data = await deleteBookPublicationService(id);
 
     return res.status(200).json(data);
+
+ }
+
+
+ export const bookPublicationViewForm = async (req: Request, res: Response, next: NextFunction) => {
+   const logger = getLogger();
+   const bookPublicationId =  req.query.id;
+   const id = Number(bookPublicationId);
+
+   console.log('id in controoler  book publicationcomming from frontend ====>>>>>', id);
+   const data = await bookPublicationFormViewService(id);
+   console.log('data data responce in controller ===>>>>', data)
+   return res.status(200).json(data);
+
+}
+
+
+export const downloadPublicationFiles = async (req : Request , res : Response , next  : NextFunction) => {
+
+   const id = req.query.id;
+   console.log('id ',id)
+
+    await bookPublicationDownloadFileService(Number(id), req, res);
 
  }
