@@ -114,10 +114,10 @@ export const insertBookPublicationModel = async (bookPublicationData: BookPublic
  }; 
 
 
-export const updateBookPublicationModel = async (updateBookDetails: BookPublicationDetails) => {
-    console.log('updateBookDetails in models  ===>>>>>', updateBookDetails)
+export const updateBookPublicationModel = async (bookPublicationData: BookPublicationDetails) => {
+    console.log('bookPublicationData in models  ===>>>>>', bookPublicationData)
     
-    const data = await sql`SELECT * FROM upsert_book_publication(${JSON.parse(JSON.stringify(updateBookDetails))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_book_publication(${JSON.parse(JSON.stringify(bookPublicationData))}, '1');`;
     return data;
  };
  
@@ -137,3 +137,71 @@ export const updateBookPublicationModel = async (updateBookDetails: BookPublicat
     }
    
 };
+
+
+export const bookPublicationEditViewModel = async(bookPublicationId : number) => {
+   const data = await sql`SELECT 
+    bp.id AS book_pulication_id,
+    bp.title,
+    bp.edition,
+    bp.volume_no,
+    bp.publisher,
+    bp.publish_year,
+    bp.publisher_category,
+    bp.web_link,
+    bp.isbn_no,
+    bp.doi_no,
+    bp.publication_place,
+    bp.nmims_authors_count,
+    JSON_AGG(DISTINCT bps.school_name) AS nmims_school,
+    JSON_AGG(DISTINCT bpc.campus_name) AS nmims_campus,
+    (SELECT 
+        JSONB_AGG(row_to_json(author_data))
+    FROM (
+        SELECT 
+            f.id,
+            f.faculty_name
+        FROM 
+            book_publication_all_authors bpaa
+        INNER JOIN 
+            faculties f 
+        ON 
+            bpaa.author_lid = f.id
+        WHERE 
+            bpaa.publication_lid = bp.id
+            AND bpaa.active = TRUE
+            AND f.active = TRUE
+    ) AS author_data) AS all_authors,
+    (SELECT JSONB_AGG(row_to_json(nmims_data))
+    FROM (
+        SELECT 
+            f.id,
+            f.faculty_name
+        FROM 
+            book_publication_authors bpna
+        INNER JOIN 
+            faculties f 
+        ON 
+            bpna.author_lid = f.id
+        WHERE 
+            bpna.publication_lid = bp.id
+            AND bpna.active = TRUE
+            AND f.active = TRUE
+    ) AS nmims_data) AS nmims_authors
+FROM 
+    book_publication bp
+INNER JOIN 
+    book_publication_school bps ON bps.publication_lid = bp.id
+INNER JOIN 
+    book_publication_campus bpc ON bpc.publication_lid = bp.id
+WHERE 
+    bp.id = ${bookPublicationId}
+    AND bp.active = TRUE 
+    AND bpc.active = TRUE 
+    AND bps.active = TRUE
+GROUP BY 
+    bp.id;`
+    return data;
+}
+
+
