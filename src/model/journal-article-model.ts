@@ -49,6 +49,7 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
                         jpa.publish_year,
                         jpa.total_authors
                      FROM journal_paper_article jpa
+                     WHERE jpa.active=TRUE
                   ),
                   school_details AS (
                      SELECT
@@ -56,6 +57,7 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
                         JSON_AGG(DISTINCT js.school_name) AS nmims_school
                      FROM journal_paper_article jpa
                      INNER JOIN journal_paper_school js ON js.journal_paper_lid = jpa.id
+                     WHERE jpa.active=TRUE AND js.active=TRUE
                      GROUP BY jpa.id
                   ),
                   campus_details AS (
@@ -64,6 +66,7 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
                         JSON_AGG(DISTINCT jc.campus_name) AS nmims_campus
                      FROM journal_paper_article jpa
                      INNER JOIN journal_paper_campus jc ON jc.journal_paper_lid = jpa.id
+                     WHERE jpa.active=TRUE AND jc.active=TRUE
                      GROUP BY jpa.id
                   ),
                   policy_details AS (
@@ -73,6 +76,7 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
                      FROM journal_paper_article jpa
                      INNER JOIN journal_policy_cadre jpc ON jpc.journal_paper_lid = jpa.id
                      INNER JOIN policy_cadre pc ON pc.id = jpc.policy_cadre_lid
+                     WHERE jpa.active=TRUE AND jpc.active=TRUE AND pc.active=TRUE
                      GROUP BY jpa.id
                   )
 

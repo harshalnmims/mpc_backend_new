@@ -13,7 +13,7 @@ const upload = multer();
 
 journalDetailsRouter.post('/journal-article-insert',upload.array("supporting_documents"),asyncErrorHandler(insertJournalArticleForm));
 journalDetailsRouter.post('/journal-article-update',upload.array("supporting_documents"), asyncErrorHandler(updateJournalArticleForm));
-journalDetailsRouter.post('/journal-article-delete', asyncErrorHandler(deleteJournalArticleForm));
+journalDetailsRouter.get('/journal-article-delete', asyncErrorHandler(deleteJournalArticleForm));
 journalDetailsRouter.get('/journal-paginate',asyncErrorHandler(journalPaginate));
 journalDetailsRouter.get('/journal-render-data',asyncErrorHandler(journalRenderData));
 journalDetailsRouter.get('/journal-view-data',asyncErrorHandler(journalViewController));

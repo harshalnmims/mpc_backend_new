@@ -74,10 +74,9 @@ export const deleteJournalArticleForm = async (req: Request, res: Response, next
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT Journal article CONTROLLER');
  
-    const journalPaper = { ...req.body};
-    const journalPaperId  = journalPaper.journal_paper_id
-
-    const data = await deleteJournalArticleService(journalPaperId);
+   //  const journalPaper = { ...req.body};
+    const journalPaperId  = req.query.id
+    const data = await deleteJournalArticleService(Number(journalPaperId));
 
     return  res.status(200).json(data)
 
