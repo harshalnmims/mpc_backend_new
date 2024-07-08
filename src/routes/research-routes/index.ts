@@ -7,7 +7,7 @@ import { Router } from 'express';
 // import { filterSchema } from '$validations/base.valid';
 import { filterSchema } from '$validations/base.valid';
 
-// const router = Router();
+const router = Router();
 
 router.get('/input-render-data',asyncErrorHandler(getInputData))
 router.get('/input-view-data',asyncErrorHandler(getViewData));

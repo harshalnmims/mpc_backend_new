@@ -80,7 +80,7 @@ export const insertBookPublicationForm = async (req: Request, res: Response, nex
     let bookPublicationData = JSON.parse(req.body.book_publication);
     console.log('bookPublicationData ankit ===>>>>>', bookPublicationData)
     let data;
-   let documents = req.files;
+    let documents = req.files;
 
     console.log('documents in controller ====>>>', documents);
 

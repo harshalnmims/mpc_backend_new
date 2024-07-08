@@ -63,6 +63,33 @@ export const bookPublication = z.object({
 
 })
 
+export const bookChapterPublication = z.object({
+	nmims_school : z.array(z.string()).min(1,{message:'School Is Required'}),
+    nmims_campus : z.array(z.string()).min(1,{message:'Campus Is Required'}),
+	all_authors: z.array(z.number().min(1, 'All authors are required')),
+	nmims_authors: z.array(z.number()).min(1, {message:'NMIMS authors are required'}),
+	book_editors: z.array(z.number()).min(1, {message:'Book  Editors are required'}),
+	book_title: z.string().min(1, 'Book title is required'),
+	chapter_title: z.string().min(1, 'Chapter title is required'),
+	edition: z.string().min(1, 'Edition is required'),
+	volume_no: z.string().min(1, 'Volume number is required'),
+	chapter_page_no: z.string().min(1, 'Page number is required'),
+	publisher_category : z.number(),
+	publish_year: z.number().refine((data) => {
+		return data >= 1900 && data <= 3000;
+	  }, {
+		message: 'Invalid Year'
+	  }),
+	web_link: z.string().min(1, 'Website link  is required'),
+	publisher: z.string().min(1, 'Publisher Name is required'),
+	isbn_no: z.string().min(1, 'ISBN Number is required'),
+	doi_no: z.string().min(1, 'WebLink /DOI No. is required'),
+	publication_place: z.string().min(1, 'Place Of Publication is rquired'),
+	nmims_authors_count: z.number(),
+
+})
+
+
 const singleFileSchema = z.object({
 	fieldname: z.string(),
 	originalname: z.string(),

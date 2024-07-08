@@ -21,7 +21,7 @@ export type journalArticleDetails = {
     foreign_authors_count: number;
     student_authors_count: number;
     impact_factor: number;
-    page_no: number;
+    chapter_page_no: number;
     paper_type: number;
     nmims_school: string[];
     nmims_campus: string[];
@@ -79,6 +79,7 @@ export type journalArticleDetails = {
 
 
  export type EditedBookPublicationDetails = {
+   book_chapter_id ?: number
     edition: string;
     title: string;
     publish_year: number;
@@ -102,6 +103,7 @@ export type journalArticleDetails = {
  
 
  export type bookChapterDetails = {
+   book_chapter_id ?: number
     edition: string;
     book_title: string;
     chapter_title: string;
@@ -120,8 +122,7 @@ export type journalArticleDetails = {
     book_editors: number[];
     nmims_school: string[];
     nmims_campus: string[];
-    supporting_documents: string[];
-
+    supporting_documents ?: SupportingDocument ;
  }
 
  export type conferenceDetails = {
