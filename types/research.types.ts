@@ -1,5 +1,5 @@
 import { string } from "zod";
-import {SupportingDocument} from "types/research.master"
+import {SupportingDocument , MultiFieldDocument} from "types/research.master"
 
 export type journalArticleDetails = {
     journal_paper_id ?: number;
@@ -174,4 +174,61 @@ export type EContent = {
    document_link: string;
    media_link: string;
    facility_list: string;
+}
+
+export type TeachingExcellance = {
+   teaching_id ?:  number;
+   pedagogy_innovation : string | null;
+   pedagogy_link: string | null;
+   fdp_program: string | null;
+   fdp_link: string | null;
+   student_workshops: string | null;
+   workshop_link: string | null;
+   niche: string | null;
+   niche_link: string | null;
+   program_orientation : string | null;
+   program_orientation_link: string | null;
+   documents : SupportingDocument;
+}
+
+export type MeetingStakeholders = {
+   meeting_id ?: number ;
+   ranking : string | null;
+   ranking_link : string | null;
+   accreditation : string | null;
+   accreditation_link : string | null;
+   achievements : string | null;
+   achievements_link : string | null;
+   convocation :string | null;
+   convocation_link : string | null;
+   inaugral_program : string | null;
+   inaugral_program_link : string | null;
+   events : string | null;
+   events_link : string | null;
+   documents : SupportingDocument;
+}
+
+export type BrandingAdvertisement = {
+   branding_id ?: number ;
+   faculty_recognition : string | null;
+   faculty_recognition_link : string | null;
+   faculty_awards : string | null;
+   faculty_awards_link : string | null;
+   staff_awards : string | null;
+   staff_awards_link : string | null;
+   alumni_awards :string | null;
+   alumni_awards_link : string | null;
+   student_awards : string | null;
+   student_awards_link : string | null;
+   international_ventures : string | null;
+   international_ventures_link : string | null;
+   conference_participation : string | null;
+   conference_participation_link : string | null;
+   organizing_conference : string | null;
+   organizing_conference_link : string| null;
+   student_event : string | null;
+   student_event_link : string | null;
+   newspaper_article : string  | null ;
+   newspaper_article_link : string | null;
+   documents : SupportingDocument;
 }
