@@ -96,3 +96,15 @@ export const renderModal = async (abbr : string) => {
         message:'Failed To Fetch!'
     }
  }
+
+ export const inputRenderedData = async () => {
+    const data = await sql`select * from module_inputs where active=TRUE`;
+    return data.count > 0 ? {
+        status:200,
+        message:data
+    } : {
+        status:400,
+        message:'Failed To Fetch!'
+    }
+ }
+

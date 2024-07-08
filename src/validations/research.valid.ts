@@ -25,9 +25,9 @@ export const journalPaper = z.object({
     publication_date: z.string().nullable().refine((date) => date!= null, 'Publication date is required'),
 	title: z.string().min(1, 'Title is required'),
 	gs_indexed: z.string().optional(),
-	paper_type: z.number().min(1, 'Paper type is required'),
+	paper_type: z.number().min(1, 'Paper type is required').refine(data => data!=0,'Paper Type Is Required'),
 	wos_indexed: z.boolean({ required_error: 'WOS indexed is required' }),
-	abdc_indexed: z.number().min(1, 'ABDC indexed is required'),
+	abdc_indexed: z.number().min(1, 'ABDC indexed is required').refine(data => data!=0,'ABDC indexed Is Required'),
 	ugc_indexed: z.boolean({ required_error: 'UGC indexed is required' }),
 	scs_indexed: z.boolean({ required_error: 'SCS indexed is required' }),
 	foreign_authors_count: z.number().optional(),
@@ -68,9 +68,11 @@ const singleFileSchema = z.object({
 	originalname: z.string(),
 	encoding: z.string(),
 	mimetype: z.string().refine(
-	  (mimetype) => ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(mimetype),
+	  (mimetype) => ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+	  ].includes(mimetype),
 	  {
-		message: 'Only PDF and DOCX files are allowed!',
+		message: 'Only PDF and DOCX and Excel files are allowed!',
 	  }
 	),
 	buffer: z.instanceof(Buffer),
