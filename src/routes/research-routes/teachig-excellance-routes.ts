@@ -1,6 +1,7 @@
 import { 
 getTeachingPaginate,
-insertTeachingController,deleteTeachingController 
+insertTeachingController,deleteTeachingController, 
+updateViewController,updateTeachingController
 } from '$controller/research/teaching-excellance-controller';
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
@@ -12,5 +13,8 @@ const upload = multer();
  teachingRouter.get('/teaching-paginate',asyncErrorHandler(getTeachingPaginate));
  teachingRouter.post('/insert-teaching-data',upload.any(),asyncErrorHandler(insertTeachingController))
  teachingRouter.get('/teaching-excellance-delete',asyncErrorHandler(deleteTeachingController));
+ teachingRouter.get('/update-teach-view-data',asyncErrorHandler(updateViewController));
+ teachingRouter.post('/update-teaching-data',upload.any(),asyncErrorHandler(updateTeachingController))
+
 
  export default teachingRouter;

@@ -55,6 +55,13 @@ export const insertMeetingModel = async (meetingDetails : MeetingStakeholders) =
    return data;
 }
 
+export const updateMeetingModel = async (meetingDetails : MeetingStakeholders) => {
+   const data = await sql`SELECT * FROM upsert_meeting_stackholder(${JSON.parse(JSON.stringify(meetingDetails))}, '1');`
+   console.log('inserted data ',JSON.stringify(data))
+
+   return data;
+}
+
 export const deleteMeetingModel =  async(meetingId :number) => {
    const data = await sql`UPDATE meeting_stackholders SET active=false WHERE id=${meetingId};`;
    return data.count > 0 ? 
@@ -66,4 +73,15 @@ export const deleteMeetingModel =  async(meetingId :number) => {
     status:403,
     message:'Failed To Delete!'
    }
+}
+
+export const updateViewData = async(meetingId : number) => {
+   const data = await sql`SELECT ranking,ranking_link,accreditation,accreditation_link,achievements,achievements_link,
+   convocation,convocation_link,inaugral_program,inaugral_program_link,events,events_link FROM meeting_stackholders WHERE active=TRUE AND id=${meetingId}`;
+   return data;
+} 
+
+export const getParticularInputs = async (type: string) => {
+   const data = await sql`SELECT * FROM meeting_stackholders_inputs WHERE abbr=${type}`;
+   return data;
 }

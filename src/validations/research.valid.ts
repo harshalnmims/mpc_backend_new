@@ -83,5 +83,5 @@ const singleFileSchema = z.object({
 	size: z.number()
   });
   
-  export const filesArraySchema = z.array(singleFileSchema).min(1,'Files are required');
+  export const filesArraySchema = z.array(singleFileSchema);
 

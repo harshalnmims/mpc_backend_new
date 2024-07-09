@@ -54,6 +54,13 @@ export const insertTeachingModel = async (teachingDetails : TeachingExcellance) 
    return data;
 }
 
+export const updateTeachingModel = async (teachingDetails : TeachingExcellance) => {
+   const data = await sql`SELECT * FROM upsert_teaching_excellance(${JSON.parse(JSON.stringify(teachingDetails))}, '1');`
+   console.log('updated data ',JSON.stringify(data))
+
+   return data;
+}
+
 export const deleteTeachingModel = async (teachingId : number) => {
    const data = await sql`UPDATE teaching_excellance SET active = false WHERE id=${teachingId}`;
    return data.count > 0 ? 
@@ -64,4 +71,15 @@ export const deleteTeachingModel = async (teachingId : number) => {
      status : 403,
      message : 'Failed To Delete!'
    }
+}
+
+export const updateViewData = async(teachingId : number) => {
+   const data = await sql`SELECT pedagogy_innovation,pedagogy_link,fdp_program,fdp_link,student_workshops,workshop_link,
+niche,niche_link,program_orientation,orientation_link FROM teaching_excellance WHERE active=TRUE AND id=${teachingId}`;
+   return data;
+} 
+
+export const getParticularInputs = async (type: string) => {
+   const data = await sql`SELECT * FROM teaching_excellance_inputs WHERE abbr=${type}`;
+   return data;
 }

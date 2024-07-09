@@ -61,6 +61,13 @@ export const insertBrandingModel = async (brandingDetails : BrandingAdvertisemen
    return data;
 }
 
+export const updateBrandingModel = async (brandingDetails : BrandingAdvertisement) => {
+   const data = await sql`SELECT * FROM upsert_branding_advertisement(${JSON.parse(JSON.stringify(brandingDetails))}, '1');`
+   console.log('inserted data ',JSON.stringify(data))
+
+   return data;
+}
+
 export const deleteBrandingModel = async (brandingId :number) => {
    const data = await sql`UPDATE branding_advertisement SET active = false WHERE id = ${brandingId};`
    return data.count > 0 ?
@@ -73,4 +80,18 @@ export const deleteBrandingModel = async (brandingId :number) => {
      status : 403,
      message : 'Failed To Delete!'
    }
+}
+
+export const updateViewData = async(brandingId : number) => {
+   const data = await sql`SELECT faculty_recognition,faculty_recognition_link,faculty_awards,faculty_awards_link,
+   staff_awards,staff_awards_link,alumni_awards,alumni_awards_link,student_awards,student_awards_link,
+   international_ventures,international_ventures_link,conference_participation,conference_participation_link
+   organizing_conference,organizing_conference_link,student_event,student_event_link,newspaper_article,newspaper_article_link
+   FROM branding_advertisement WHERE active=TRUE AND id=${brandingId}`;
+   return data;
+} 
+
+export const getParticularInputs = async (type: string) => {
+   const data = await sql`SELECT * FROM branding_advertisement_inputs WHERE abbr=${type}`;
+   return data;
 }
