@@ -1,6 +1,7 @@
 import { getLogger } from '$config/logger-context';
 import { getBookChapterPublication, insertBookChapterModel, updateBookChapterModel, 
-    deleteBookChapterModel, booChapterEditViewModel, bookChapterPublicationFormviewModel
+    deleteBookChapterModel, booChapterEditViewModel, bookChapterPublicationFormviewModel,
+    bookChapterPublicationFiles
  } from '$model/book-chapter-model';
 import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
@@ -101,7 +102,6 @@ export const updateBookChapterService = async(bookChapterData : bookChapterDetai
 
 export const deleteBookChapterService = async(bookChapterId : number) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
     console.log('bookChapterId in service ====>>>>>', bookChapterId);
  
     const data = await deleteBookChapterModel(bookChapterId);
@@ -117,3 +117,12 @@ export const bookChapterViewService = async(booChapterId : number) => {
    return data
 
 }
+
+export const bookChapterPublicationDownloadFileService = async (bookChapterId : number,req:Request,res:Response) => {
+   // const logger = getLogger();
+
+   const data = await bookChapterPublicationFiles(bookChapterId);
+
+   let files : string[] = data.map(dt => dt.document_name); 
+   await downloadFile(files, req,res);
+ }

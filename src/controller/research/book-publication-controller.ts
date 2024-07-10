@@ -113,20 +113,22 @@ export const bookPublicationEditviewForm = async (req: Request, res: Response, n
  
     let bookPublicationData = JSON.parse(req.body.update_book_publication);
     console.log('bookPublicationData ankit ===>>>>>', bookPublicationData);
-    let bookPublicationId = JSON.parse(req.body.book_pulication_id);
+    let bookPublicationId = JSON.parse(req.body.book_publication_id);
     console.log('bookPublicationId in controller update ===>>>>>', bookPublicationId);
     let documents = req.files;
+    let data
     console.log('documents ===>>>>>', documents);
     console.log('documents in controller ====>>>', documents);
 
     let result = validateWithZod(bookPublication,bookPublicationData);
     console.log('result ===>>>>>>', result)
-    let fileResult = documents ?  validateWithZod(filesArraySchema, documents) : [];
+    let fileResult = validateWithZod(filesArraySchema, documents);
     console.log('zod result ',JSON.stringify(fileResult));
 
 
-    const data = await updateBookPublicationService(bookPublicationId, bookPublicationData, documents);
- 
+    if(result.success && fileResult.success){   
+    data = await updateBookPublicationService(bookPublicationId, bookPublicationData, documents);
+    }
     return res.status(200).json(data);
 
  } 

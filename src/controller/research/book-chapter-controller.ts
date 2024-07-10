@@ -2,7 +2,7 @@ import { getLogger } from '$config/logger-context';
 import {
     getBookChapterService, insertBookChapterService, updateBookChapterService,
     deleteBookChapterService, renderBookChapterLists, bookChapterPublicationEditViewService,
-    bookChapterViewService
+    bookChapterViewService,bookChapterPublicationDownloadFileService
    } from '$service/research/book-chapter-service';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
@@ -85,14 +85,18 @@ export const updateBookChapterForm = async (req: Request, res: Response , next: 
     let booChapterId = JSON.parse(req.body.book_chapter_id);
     console.log('booChapterId in controller update ===>>>>>', booChapterId);
     let documents = req.files;
+    let data;
     console.log('documents ===>>>>>', documents);
 
     let result = validateWithZod(bookChapterPublication,bookChapterData);
     console.log('result ===>>>>>>', result)
-    let fileResult = documents ?  validateWithZod(filesArraySchema, documents) : [];
+    let fileResult = validateWithZod(filesArraySchema, documents);
+    
     console.log('fileResult ===>>>>>',fileResult);
+    if(result.success && fileResult.success){
+        data = await updateBookChapterService(bookChapterData,documents,Number(booChapterId));
 
-    const data = await updateBookChapterService(bookChapterData,documents,Number(booChapterId));
+    }
        
     console.log('data responce in controller ',data);
     return res.status(200).json(data);
@@ -103,14 +107,14 @@ export const updateBookChapterForm = async (req: Request, res: Response , next: 
 
 export const deleteBookChapterForm = async (req: Request, res: Response , next: NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE deleteBookChapterForm CONTROLLER ');
 
-    const bookChapterData = { ...req.body};
-    console.log('data comming from frontend ===>', bookChapterData);
 
-    const bookChapterId = bookChapterData.book_chapter_id;
+    const id =  req.query.id;
+    const booChapterId = Number(id);  
+    console.log('booChapterId ==>>>>', booChapterId)
 
-    const data = await deleteBookChapterService(bookChapterId);
+
+    const data = await deleteBookChapterService(booChapterId);
 
     console.log('data responce in controller ===>>>>', data);
     return res.status(200).json(data);
@@ -124,7 +128,17 @@ export const viewBookChapterformView = async(req: Request, res: Response , next:
     const id = Number(booChapterId);
  
     console.log('id in controoler comming from frontend ====>>>>>', id);
-    const data = await bookChapterViewService(id);
-    console.log('data data responce in controller ===>>>>', data)
+    const data = await bookChapterViewService(Number(id));
+    console.log('bookChapterPublicationFormviewModel Controller ===>>>>', JSON.stringify(data))
     return res.status(200).json(data);
 }
+
+
+export const downloadPublicationFiles = async (req : Request , res : Response , next  : NextFunction) => {
+
+    const id = req.query.id;
+    console.log('id ',id)
+ 
+     await bookChapterPublicationDownloadFileService(Number(id), req, res);
+ 
+  }

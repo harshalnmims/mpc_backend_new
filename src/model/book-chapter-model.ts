@@ -256,3 +256,10 @@ export const bookChapterPublicationFormviewModel = async(bookChapterId : number)
     return data
  
  }
+
+
+
+ export const bookChapterPublicationFiles = async (bookChapterId:number) => {
+    const data = await sql`SELECT * FROM bookchapter_publication_documents WHERE publication_lid = ${bookChapterId} AND active=TRUE`;
+    return data;
+ }
