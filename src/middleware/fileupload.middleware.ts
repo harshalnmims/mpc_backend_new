@@ -51,6 +51,33 @@ export async function uploadFile(documents : any) : Promise<SupportingDocument> 
   }
 }
 
+export async function uploadMultiFile(documents : any) : Promise<SupportingDocument> {
+    try {
+       
+        let filepaths: SupportingDocument  = [];
+   
+        await documents.forEach(async (doc: any) => {
+           
+        const buffer = doc.buffer;
+        const filename = 'data/research/' + crypto.randomUUID() + doc.originalname;
+        filepaths.push({path:filename,filename:doc.originalname,input_abbr:doc.fieldname}
+        );
+   
+      
+        const awsData : AwsData  = await uploadResearchToS3(filename , buffer);
+        let path : string = String(awsData.key)
+        console.log('aws return data',awsData)
+     
+       });
+   
+       return filepaths;
+   
+     } catch (error) {
+       console.error(`Error saving file`, error);
+       throw error; 
+     }
+   }
+
 async function uploadResearchToS3(filename: string, fileContent: Buffer) : Promise<AwsData> {
     return new Promise((resolve,reject)=>{
 

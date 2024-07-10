@@ -1,5 +1,5 @@
 import { string } from "zod";
-import {SupportingDocument} from "types/research.master"
+import {SupportingDocument , MultiFieldDocument} from "types/research.master"
 
 export type journalArticleDetails = {
     journal_paper_id ?: number;
@@ -213,8 +213,65 @@ export type EContent = {
    document_link: string;
    media_link: string;
    facility_list: string;
-
 }
+
+export type TeachingExcellance = {
+   teaching_id ?:  number;
+   pedagogy_innovation : string | null;
+   pedagogy_link: string | null;
+   fdp_program: string | null;
+   fdp_link: string | null;
+   student_workshops: string | null;
+   workshop_link: string | null;
+   niche: string | null;
+   niche_link: string | null;
+   program_orientation : string | null;
+   program_orientation_link: string | null;
+   documents : SupportingDocument;
+}
+
+export type MeetingStakeholders = {
+   meeting_id ?: number ;
+   ranking : string | null;
+   ranking_link : string | null;
+   accreditation : string | null;
+   accreditation_link : string | null;
+   achievements : string | null;
+   achievements_link : string | null;
+   convocation :string | null;
+   convocation_link : string | null;
+   inaugral_program : string | null;
+   inaugral_program_link : string | null;
+   events : string | null;
+   events_link : string | null;
+   documents : SupportingDocument;
+}
+
+export type BrandingAdvertisement = {
+   branding_id ?: number ;
+   faculty_recognition : string | null;
+   faculty_recognition_link : string | null;
+   faculty_awards : string | null;
+   faculty_awards_link : string | null;
+   staff_awards : string | null;
+   staff_awards_link : string | null;
+   alumni_awards :string | null;
+   alumni_awards_link : string | null;
+   student_awards : string | null;
+   student_awards_link : string | null;
+   international_ventures : string | null;
+   international_ventures_link : string | null;
+   conference_participation : string | null;
+   conference_participation_link : string | null;
+   organizing_conference : string | null;
+   organizing_conference_link : string| null;
+   student_event : string | null;
+   student_event_link : string | null;
+   newspaper_article : string  | null ;
+   newspaper_article_link : string | null;
+   documents : SupportingDocument;
+}
+
 
 
 export type researchAwardDetails = {
@@ -228,6 +285,25 @@ export type researchAwardDetails = {
    supporting_documents: string[];
 
 };
+
+
+export type caseStudyDetails = {
+   title: string;
+   edition: string;
+   publish_year: number;
+   publisher: string;
+   publisher_category: number;
+   volume_no: string;
+   page_no: string;
+   url: string;
+   nmims_authors_count: number;
+   nmims_school: string[];
+   nmims_campus: string[];
+   all_authors: number[];
+   nmims_authors: number[];
+   supporting_documents: string[];
+}
+
 
 export type seminarDetails = {
    topic: string;
@@ -253,95 +329,4 @@ export type seminarDetails = {
    supporting_documents: string[];
    abdc_indexed: number;
    nmims_authors: number[];
-}
-
-export type caseStudyDetails = {
-   title: string;
-   edition: string;
-   publish_year: number;
-   publisher: string;
-   publisher_category: number;
-   volume_no: string;
-   page_no: string;
-   url: string;
-   nmims_authors_count: number;
-   nmims_school: string[];
-   nmims_campus: string[];
-   all_authors: number[];
-   nmims_authors: number[];
-   supporting_documents: string[];
-}
-
-export type teachingDetails = {
-   pedagogy_innovation: string;
-   pedagogy_link: string;
-   fdp_program: string;
-   fdp_link: string;
-   student_workshops: string;
-   workshop_link: string;
-   niche: string;
-   niche_link: string;
-   program_orientation: string;
-   orientation_link: string;
-   pedagogy_innovation_documents: string[];
-   fdp_program_documents: string[];
-   students_workshops_documents: string[];
-   niche_documents: string[];
-   program_orientation_documents: string[];
-};
-
-
-export type meetingDetails = {
-   ranking: string;
-   ranking_link: string;
-   accreditation: string;
-   accreditation_link: string;
-   achievements: string;
-   achievements_link: string;
-   convocation: string;
-   convocation_link: string;
-   inaugral_program: string;
-   inaugral_program_link: string;
-   events: string;
-   events_link: string;
-   ranking_documents: string[];
-   accreditation_documents: string[];
-   achievements_documents: string[];
-   convocation_documents: string[];
-   inaugural_documents: string[];
-   events_documents: string[];
-}
-
-export type brandingDetails = {
-   faculty_recognition: string;
-   faculty_recognition_link: string;
-   faculty_awards: string;
-   faculty_awards_link: string;
-   staff_awards: string;
-   staff_awards_link: string;
-   alumni_awards: string;
-   alumni_awards_link: string;
-   student_awards: string;
-   student_awards_link: string;
-   international_ventures: string;
-   international_ventures_link: string;
-   conference_participation: string;
-   conference_participation_link: string;
-   organizing_conference: string;
-   organizing_conference_link: string;
-   student_event: string;
-   student_event_link: string;
-   newspaper_article: string;
-   newspaper_article_link: string;
-   faculty_recognition_documents: string[];
-   faculty_awards_documents: string[];
-   staff_awards_documents: string[];
-   student_awards_documents: string[];
-   alumni_awards_documents: string[];
-   international_ventures_documents: string[];
-   conference_participation_documents: string[];
-   organizing_conference_documents: string[];
-   student_event_documents: string[];
-   newspaper_article_documents: string[];
-
 }

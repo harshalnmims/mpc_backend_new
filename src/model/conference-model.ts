@@ -1,4 +1,4 @@
-import { infiniteScrollQueryBuilder } from '$utils/db/query-builder';
+import { infiniteScrollQueryBuilder,paginationQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
 import { conferenceDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
@@ -6,35 +6,66 @@ import sql from '$config/db';
 import { number } from 'zod';
 
 
-export const getBookConference = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
-    const data = await infiniteScrollQueryBuilder<Session>({
-       baseQuery: `select distinct concat(pu.first_name,' ',pu.last_name) AS full_name, pu.id as user_lid, pu.username 
-                       from mpc_user_role mur 
-                      INNER JOIN user_session_info usi on usi.user_lid = mur.user_lid 
-                      INNER JOIN mpc_role mr ON mr.id = mur.mpc_role_lid
-                      INNER JOIN public.user pu on pu.id = usi.user_lid
-                      WHERE mr.abbr = 'ca' `,
+
+export const getConferenceModel = async({ page, limit, sort, order, search, filters }: paginationDefaultType) =>{
+    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
+    const data = await paginationQueryBuilder<Session>({
+       baseQuery: `WITH conference_details AS (
+                            SELECT 
+                                c.id,
+                                c.paper_title,
+                                c.conference_name,
+                                c.proceeding_published,
+                                c.issn_no
+                            FROM conference c
+                            WHERE c.active = true
+                        ),
+                        school_details AS (
+                            SELECT
+                                c.id AS conference_id,
+                                JSON_AGG(DISTINCT cs.school_name) AS nmims_school
+                            FROM conference c
+                            INNER JOIN conference_school cs ON cs.conference_lid = c.id
+                            WHERE cs.active = true AND c.active = true
+                            GROUP BY c.id
+                        ),
+                        campus_details AS (
+                            SELECT
+                                c.id AS conference_id,
+                                JSON_AGG(DISTINCT cnc.campus_name) AS nmims_campus
+                            FROM conference c
+                            INNER JOIN conference_campus cnc ON cnc.conference_lid = c.id
+                            WHERE cnc.active = true AND c.active = true
+                            GROUP BY c.id
+                        )
+                        SELECT 
+                            cnd.id,
+                            cnd.paper_title,
+                            cnd.conference_name,
+                            cnd.proceeding_published,
+                            cnd.issn_no,
+                            sd.nmims_school,
+                            cd.nmims_campus
+                        FROM conference_details cnd
+                        LEFT JOIN school_details sd ON sd.conference_id = cnd.id
+                        LEFT JOIN campus_details cd ON cd.conference_id = cnd.id
+                                        `,
        filters: {
-          'usi.program_lid': filters.programLid,
-          'usi.session_lid': filters.sessionLid,
-          'usi.subject_lid': filters.subjectLid,
+     
        },
-       cursor: {
-          column: 'pu.id',
-          value: Number(filters.cursor)
-       },
-       limit: limit.toString(),
+       page: page || 1,
+       pageSize: limit || 10,
        search: search || '',
-       searchColumns: ['pu.username', 'pu.first_name', 'pu.last_name'],
+       searchColumns: ['cnd.paper_title', 'sd.nmims_school', 'cd.nmims_campus', 'cnd.isbn_no', 'cnd.conference_name', 'cnd.proceeding_published'],
        sort: {
-          column: sort || 'pu.id',
+          column: sort || 'cnd.id',
           order: order || 'desc',
        },
     });
  
     return data;
- };
+ }
 
 export const insertConferenceModel = async(conferenceData : conferenceDetails) => {
     console.log('conferenceData ===>>>>>', conferenceData)

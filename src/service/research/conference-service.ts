@@ -1,13 +1,19 @@
 import { getLogger } from '$config/logger-context';
-import {getBookConference, insertConferenceModel, updateConferencemodels, deleteConferenceModel
+import {getConferenceModel, insertConferenceModel, updateConferencemodels, deleteConferenceModel,
+    
  } from '$model/conference-model';
+ import { paginationDefaultType } from 'types/db.default';
+import {uploadFile} from '$middleware/fileupload.middleware';
+import {renderModal,getNmimsAuthors,getAllAuthors,
+   getSchool,getCampus
+} from '$model/master-model';
 import exp from 'constants';
-import { paginationDefaultType } from 'types/db.default';
 
 import { conferenceDetails} from 'types/research.types';
 import { number } from 'zod';
 
-export const getConferenceService = async ({
+
+ export const getConferenceService = async ({
     page,
     limit,
     sort,
@@ -16,9 +22,9 @@ export const getConferenceService = async ({
     ...filters
  }: paginationDefaultType) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT CONFERENCE SERVICES');
+    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
  
-    const data = await getBookConference({
+    const data = await getConferenceModel({
        page,
        limit,
        sort,
@@ -28,7 +34,20 @@ export const getConferenceService = async ({
     });
  
     return data;
- };
+ }; 
+
+export const renderConferenceListsService  = async() => {
+    const nmimsAuthors = await getNmimsAuthors();
+    const allAuthors = await getAllAuthors();
+    const school = await getSchool();
+    const campus = await getCampus();
+    return {
+     nmimsAuthors,allAuthors,school,campus
+    };
+    
+ }
+ 
+
 
 export const insertConferenceService = async(conferenceData : conferenceDetails) => {
     const logger = getLogger();

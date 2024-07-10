@@ -39,6 +39,31 @@ export const journalPaper = z.object({
 //   })
 });
 
+const teachingItemSchema = z.object({
+	input_type: z.string().min(1,{message:'Teaching Excellance Type Is Required'}),
+	description: z.string().min(1,{message:'Description Is Required'}),
+	link: z.string().min(1,{message:'Link Is Required'}),
+  });
+
+export const teachingItemsSchema = z.array(teachingItemSchema);
+
+const meetingItemSchema = z.object({
+	input_type: z.string().min(1,{message:'Teaching Excellance Type Is Required'}),
+	description: z.string().min(1,{message:'Description Is Required'}),
+	link: z.string().min(1,{message:'Link Is Required'}),
+  });
+
+export const meetingItemsSchema = z.array(meetingItemSchema);
+
+
+const brandingItemSchema = z.object({
+	input_type: z.string().min(1,{message:'Teaching Excellance Type Is Required'}),
+	description: z.string().min(1,{message:'Description Is Required'}),
+	link: z.string().min(1,{message:'Link Is Required'}),
+  });
+
+export const brandingItemsSchema = z.array(brandingItemSchema);
+
 
 export const bookPublication = z.object({
 	nmims_school : z.array(z.string()).min(1,{message:'School Is Required'}),
@@ -99,7 +124,7 @@ const singleFileSchema = z.object({
 		'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 	  ].includes(mimetype),
 	  {
-		message: 'Only PDF and DOCX and Excel files are allowed!',
+		message: 'Only PDF,DOCX and Excel files are allowed!',
 	  }
 	),
 	buffer: z.instanceof(Buffer),

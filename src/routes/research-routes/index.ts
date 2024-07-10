@@ -13,4 +13,4 @@ router.get('/input-render-data',asyncErrorHandler(getInputData))
 router.get('/input-view-data',asyncErrorHandler(getViewData));
 
 
-// export default router;
+export default router;

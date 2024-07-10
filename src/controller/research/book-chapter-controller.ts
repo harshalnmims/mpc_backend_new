@@ -91,7 +91,6 @@ export const updateBookChapterForm = async (req: Request, res: Response , next: 
     let result = validateWithZod(bookChapterPublication,bookChapterData);
     console.log('result ===>>>>>>', result)
     let fileResult = validateWithZod(filesArraySchema, documents);
-    
     console.log('fileResult ===>>>>>',fileResult);
     if(result.success && fileResult.success){
         data = await updateBookChapterService(bookChapterData,documents,Number(booChapterId));

@@ -1,12 +1,13 @@
 import { getLogger } from '$config/logger-context';
-import {getConferenceService, insertConferenceService, updateConferenceService, deleteConferenceService
+import {getConferenceService, renderConferenceListsService, insertConferenceService, updateConferenceService, deleteConferenceService
    } from '$service/research/conference-service'
 import exp from 'constants';
 import { Request, Response, NextFunction } from 'express';
 
+
 export const getConference = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE GET getBookChapter CONTROLLER');
+    logger.info('INSIDE GET SUBJECT RESEARCH CONTROLLER');
  
     const {
        page = 1,
@@ -25,9 +26,13 @@ export const getConference = async (req: Request, res: Response, next: NextFunct
        order,
        filters,
     });
+
+    console.log('data in controller after render ===>>>>>>', data);
  
     return res.status(200).json(data);
-}
+ };
+
+
 
 export const insertConferenceForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
@@ -42,6 +47,12 @@ export const insertConferenceForm = async (req: Request, res: Response, next: Ne
     return res.status(200).json(data);
 
 }
+
+export const renderConferenceLists = async(req: Request, res: Response, next: NextFunction) => {
+    const logger = getLogger();
+    const data = await renderConferenceListsService();
+    return res.status(200).json(data);
+  }
 
 export const updateConferenceForm = async  (req: Request, res: Response, next: NextFunction) =>{
     const logger = getLogger();

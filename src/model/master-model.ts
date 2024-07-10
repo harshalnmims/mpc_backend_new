@@ -122,3 +122,17 @@ export const renderModal = async (abbr : string) => {
     }
  }
 
+
+ export const getExternalauthors = async() => {
+
+    const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
+    WHERE ft.abbr= 'int' AND f.active=TRUE AND ft.active=TRUE`;
+ 
+    return data.count > 0 ? {
+       status:200,
+       message:data
+   } : {
+       status:400,
+       message:'Failed To Fetch!'
+   }
+ }
