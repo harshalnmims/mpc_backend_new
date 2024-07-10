@@ -95,3 +95,9 @@ export const getParticularInputs = async (type: string) => {
    const data = await sql`SELECT * FROM branding_advertisement_inputs WHERE abbr=${type}`;
    return data;
 }
+
+export const brandingFiles = async (brandingId: number,abbr:string) => {
+   const data = await sql`SELECT * FROM branding_advertisement_documents WHERE branding_lid=${brandingId} AND input_lid IN (SELECT id FROM branding_advertisement_inputs 
+   WHERE abbr=${abbr} AND active = TRUE) AND active = TRUE`;
+   return data;
+}

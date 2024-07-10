@@ -4,7 +4,7 @@ import {uploadMultiFile} from '$middleware/fileupload.middleware'
 import { Request,Response } from 'express';
 import { downloadFile } from '$middleware/fileupload.middleware';
 import { MeetingStakeholders } from 'types/research.types';
-import {insertMeetingModel,deleteMeetingModel,updateMeetingModel} from '$model/meeting.model';
+import {insertMeetingModel,deleteMeetingModel,updateMeetingModel,meetingFiles} from '$model/meeting.model';
 import { DropdownValue, MeetingStakeholderDb, Module } from 'types/research.master';
 
 export const getPaginateService = async ( 
@@ -191,3 +191,11 @@ export const updateViewService = async (meetingId : number) => {
       console.log('dropdown items ',JSON.stringify(item))
       return item ? { value: item[0].abbr, label: item[0].input } : null;
     }
+
+    export const meetingDownloadFileService = async (meetingId : number,abbr:string,req:Request,res:Response) => {
+   // const logger = getLogger();
+
+   const data = await meetingFiles(meetingId,abbr);
+   let files : string[] = data.map((dt) => dt.document_name); 
+   await downloadFile(files, req,res);
+ } 

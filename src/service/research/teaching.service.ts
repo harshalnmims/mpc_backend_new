@@ -5,7 +5,7 @@ import { Request,Response } from 'express';
 import { downloadFile } from '$middleware/fileupload.middleware';
 import { TeachingExcellance } from 'types/research.types';
 import {insertTeachingModel,deleteTeachingModel,updateViewData,teachingViewData,getParticularInputs,
-updateTeachingModel
+updateTeachingModel,teachingFiles
 } from '$model/teaching.model';
 import { DropdownValue, Module, TeachingExcellanceInput, UpdateViewType , TeachingExcellanceDb} from 'types/research.master';
 import { stringify } from 'querystring';
@@ -188,3 +188,12 @@ export const teachingViewService = async (teachingId : number) => {
   return {teachingId : teachingId,type_abbr:'te',teaching_data : modules};
 
 }
+
+
+export const teachingDownloadFileService = async (teachingId : number,abbr:string,req:Request,res:Response) => {
+   // const logger = getLogger();
+
+   const data = await teachingFiles(teachingId,abbr);
+   let files : string[] = data.map((dt) => dt.document_name); 
+   await downloadFile(files, req,res);
+ } 

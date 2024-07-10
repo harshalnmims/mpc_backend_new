@@ -1,11 +1,12 @@
-import { uploadMultiFile } from '$middleware/fileupload.middleware';
+import { downloadFile, uploadMultiFile } from '$middleware/fileupload.middleware';
 import {getPaginateModel,insertBrandingModel,deleteBrandingModel, brandingViewData,
     getParticularInputs,
-    updateViewData,updateBrandingModel
+    updateViewData,updateBrandingModel,brandingFiles
 } from '$model/branding.model';
 import { paginationDefaultType } from 'types/db.default';
 import { BrandingAdvertisementDb, DropdownValue, Module } from 'types/research.master';
 import { BrandingAdvertisement } from 'types/research.types';
+import { Request,Response } from 'express';
 
 
 export const getPaginateService = async ( 
@@ -215,4 +216,12 @@ export const updateViewService = async (brandingId : number) => {
       const item : any = await getParticularInputs(typeName);
       console.log('dropdown items ',JSON.stringify(item))
       return item ? { value: item[0].abbr, label: item[0].input } : null;
+    }
+
+    export const brandingDownloadFileService = async (brandingId : number,abbr:string,req:Request,res:Response) => {
+   // const logger = getLogger();
+
+      const data = await brandingFiles(brandingId,abbr);
+      let files : string[] = data.map((dt) => dt.document_name); 
+      await downloadFile(files,req,res);
     }
