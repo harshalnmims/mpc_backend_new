@@ -1,5 +1,4 @@
 import { 
-    getTeachingExecellance    
 getTeachingPaginate,
 insertTeachingController,deleteTeachingController, 
 updateViewController,updateTeachingController,teachingViewController,teachingDownloadFiles
@@ -11,7 +10,6 @@ const teachingRouter = Router();
 import multer from 'multer';
 const upload = multer();
 
- teachingRouter.get('/teaching-paginate',asyncErrorHandler(getTeachingExecellance));
  teachingRouter.get('/teaching-paginate',asyncErrorHandler(getTeachingPaginate));
  teachingRouter.post('/insert-teaching-data',upload.any(),asyncErrorHandler(insertTeachingController))
  teachingRouter.get('/teaching-excellance-delete',asyncErrorHandler(deleteTeachingController));

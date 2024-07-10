@@ -7,7 +7,8 @@ import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
 import {uploadFile} from '$middleware/fileupload.middleware';
 import {renderModal,getNmimsAuthors,getAllAuthors,
-   getSchool,getCampus,getEditors
+   getSchool,getCampus,
+   getEditors
 } from '$model/master-model';
 
 import { downloadFile } from '$middleware/fileupload.middleware';
