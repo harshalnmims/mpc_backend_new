@@ -7,6 +7,7 @@ export const insertEContent = async (eContent: EContent) => {
     return data;
 }
 
+
 export const updateEContent = async (eContent: EContent) => {
     const data = await sql`
         UPDATE e_content_development

@@ -1,95 +1,73 @@
+import { getLogger } from '$config/logger-context';
 import {
-    getTeachingPaginateService,
-    updateViewService,teachingViewService
-   } from '$service/research/teaching.service';
+    getTeachingService, insertTeachingService, updateTeachingService,
+    deleteTeachingService
+   } from '$service/research/teaching-excellance-service';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
 import { filesArraySchema , teachingItemsSchema } from '$validations/research.valid';
 import {insertTeachingService,deleteTeachingService,updateTeachingService,teachingDownloadFileService} from '$service/research/teaching.service';
 
-
-export const getTeachingPaginate = async(req : Request ,res : Response ,next : NextFunction) => {
+export const getTeachingExecellance = async (req: Request, res: Response, next: NextFunction) => {
+    const logger = getLogger();
+    logger.info('INSIDE GET TEACHING EXECELLANCE  CONTROLLER');
+ 
     const {
-        page = 1,
-        limit = 10,
-        sort = '',
-        order = 'desc',
-        search = '',
-        ...filters
-     } = { ...req.body, ...req.params, ...req.query };
-
- const data = await getTeachingPaginateService({
-     page ,
-     limit,
-     search,  
-     sort,
-     order,
-     filters,
-  });
-
-  return res.status(200).json(data); 
-}
-
-
-export const insertTeachingController = async (req : Request ,res : Response ,next : NextFunction) => {
-     let data;
-     let files = req.files;
-     let teaching_json = JSON.parse(req.body.teaching_excellance);
-
-     let result = validateWithZod(teachingItemsSchema,teaching_json);
-     let fileResult = validateWithZod(filesArraySchema, files);
-
-     if(fileResult.success && result.success){
-       data = await insertTeachingService(teaching_json,files);
-      }
-         
-     return res.status(200).json(data); 
-
-}
-
-export const updateTeachingController = async (req : Request ,res : Response ,next : NextFunction) => {
-    let data;
-    let files = req.files;
-    let teaching_json = JSON.parse(req.body.teaching_excellance);
-    let teachingId = JSON.parse(req.body.teachingId);
-    // console.log('request upsert json ',JSON.stringify(req.body.teachingId));
-
-    let result = validateWithZod(teachingItemsSchema,teaching_json);
-    let fileResult = validateWithZod(filesArraySchema, files);
-
-    if(fileResult.success && result.success){
-      data = await updateTeachingService(teaching_json,files,teachingId);
-     }
-        
-    return res.status(200).json(data); 
-
-}
-
-export const deleteTeachingController = async (req : Request ,res : Response ,next : NextFunction) => {
-    let id = req.query.id;
-    let data = await deleteTeachingService(Number(id));
+       page = 1,
+       limit = 10,
+       sort = '',
+       order = 'desc',
+       search = '',
+       ...filters
+    } = { ...req.body, ...req.params, ...req.query };
+ 
+    const data = await getTeachingService({
+       page,
+       limit,
+       search,
+       sort,
+       order,
+       filters,
+    });
+ 
     return res.status(200).json(data);
-}
+};
 
-export const updateViewController = async (req : Request ,res : Response ,next : NextFunction) => {
-    let id = req.query.id;
-    const data = await updateViewService(Number(id));
-    console.log('view json ',JSON.stringify(data))
-    return res.status(200).json(data);
-}
+export const insertTeachingForm = async(req : Request, res : Response, next : NextFunction) => {
+    const logger = getLogger();
+    logger.info('INSIDE GET TEACHING EXCELLANCE CONTROLLER');
 
+    const teachinngData = {...req.body};
 
-export const teachingViewController = async (req : Request ,res : Response ,next : NextFunction) => {
-    let id = req.query.id;
-    const data = await teachingViewService(Number(id));
-    console.log('view json ',JSON.stringify(data))
-    return res.status(200).json(data);
-}
+    const data = await insertTeachingService(teachinngData);
 
-export const teachingDownloadFiles = async (req : Request , res : Response , next  : NextFunction) => {
-   const id = req.query.id;
-   const abbr = req.query.abbr;
-   console.log('id ',id,abbr)
+    console.log(' data response in case of insert controller ===>>>>', data);
+    return res.status(200).json(data)
 
-    await teachingDownloadFileService(Number(id),String(abbr),req,res);
+};
+
+export const updateTeachingForm = async(req : Request, res : Response, next : NextFunction) => {
+    const logger = getLogger();
+    logger.info('INSIDE GET TEACHING EXCELLANCE CONTROLLER');
+
+    const updateTeachinngData = {...req.body};
+
+    const data = await updateTeachingService(updateTeachinngData);
+
+    console.log(' data response in case of insert controller ===>>>>', data);
+    return res.status(200).json(data)
+
+};
+
+export const deleteTeachingForm = async(req : Request, res : Response, next : NextFunction) => {
+    const logger = getLogger();
+    logger.info('INSIDE GET RESEARCH SEMINAR CONTROLLER Update');
+
+    const teachingData = {...req.body};
+    const teachingId = teachingData.teaching_excellance_id;
+
+    const data = await deleteTeachingService(teachingId);
+
+    console.log(' data response in case of delete controller ===>>>>', data);
+    return res.status(200).json(data)
 }

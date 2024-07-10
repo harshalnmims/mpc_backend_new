@@ -59,9 +59,8 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  };
 
  export const updateJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
-   //  const logger = getLogger();
-   //  logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
-
+    const logger = getLogger();
+ 
     let journalDetails = JSON.parse(req.body.journal_paper);
     let journalId = JSON.parse(req.body.journal_id);
 
@@ -77,23 +76,25 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
      }
      console.log('final json ',JSON.stringify(data))
      return res.status(200).json(data);
+    
 
  } 
 
 
- export const deleteJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
+export const deleteJournalArticleForm = async (req: Request, res: Response, next: NextFunction)  => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT Journal article CONTROLLER');
  
-   //  const journalPaper = { ...req.body};
-    const journalPaperId  = req.query.id
-    const data = await deleteJournalArticleService(Number(journalPaperId));
+    const journalPaper = { ...req.body};
+    const journalPaperId  = journalPaper.journal_paper_id
+
+    const data = await deleteJournalArticleService(journalPaperId);
 
     return  res.status(200).json(data)
 
  }
 
- export const journalPaginate =  async (req : Request,res : Response , next : NextFunction) => {
+export const journalPaginate =  async (req : Request,res : Response , next : NextFunction) => {
    // const data = { ...req.body, ...req.params, ...req.query };
    // console.log('data ',JSON.stringify(data)) 
    
@@ -114,6 +115,8 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
        order,
        filters,
     });
+
+    console.log('data in controller comming from backend ===>>>>', data)
  
     return res.status(200).json(data); 
    // {

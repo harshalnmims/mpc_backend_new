@@ -1,8 +1,84 @@
-import { infiniteScrollQueryBuilder } from '$utils/db/query-builder';
+import { infiniteScrollQueryBuilder,paginationQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
 import { BookPublicationDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
+
+
+
+export const getBookDetailsPaginateModel = async({ page, limit, sort, order, search, filters }: paginationDefaultType) =>{
+   console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+
+   const data = await paginationQueryBuilder<Session>({
+      baseQuery: `WITH book_publication_details AS (
+                     SELECT 
+                        bp.id,
+                        bp.publish_year,
+                        bp.title,
+                        bp.isbn_no,
+                        bp.publisher
+                     FROM book_publication bp
+                      WHERE bp.active = true
+                  ),
+                  school_details AS (
+                     SELECT
+                        bp.id AS book_id,
+                        JSON_AGG(DISTINCT bps.school_name) AS nmims_school
+                     FROM book_publication bp
+                     INNER JOIN book_publication_school bps ON bps.publication_lid = bp.id
+                     WHERE  bps.active = true AND bp.active = true
+                     GROUP BY bp.id
+                  ),
+                  campus_details AS (
+                     SELECT
+                        bp.id AS book_id,
+                        JSON_AGG(DISTINCT bpc.campus_name) AS nmims_campus
+                     FROM book_publication bp
+                     INNER JOIN book_publication_campus bpc ON bpc.publication_lid = bp.id
+                      WHERE  bpc.active = true AND bp.active = true
+                     GROUP BY bp.id
+                  ),
+                  all_authors AS (
+                     SELECT
+                        bp.id AS book_id,
+                        JSON_AGG(DISTINCT f.faculty_name) AS all_authors
+                     FROM book_publication bp
+                     INNER JOIN book_publication_all_authors bpaa ON bpaa.publication_lid = bp.id
+                     INNER JOIN faculties f ON f.id = bpaa.author_lid
+                     WHERE f.active = true AND bpaa.active = true AND bp.active = true
+                     GROUP BY bp.id
+                  )
+                  SELECT 
+                     bpd.id,
+                     bpd.publish_year,
+                     bpd.title,
+                     bpd.isbn_no,
+                     bpd.publisher,
+                     sd.nmims_school,
+                     cd.nmims_campus,
+                     aa.all_authors
+                  FROM book_publication_details bpd
+                  LEFT JOIN school_details sd ON sd.book_id = bpd.id
+                  LEFT JOIN campus_details cd ON cd.book_id = bpd.id
+                  LEFT JOIN all_authors aa ON aa.book_id = bpd.id 
+                  `,
+      filters: {
+         // Add your filters here
+         // Example: 'bp.publisher_category': filters.publisherCategory,
+      },
+      page: page || 1,
+      pageSize: limit || 10,
+      search: search || '',
+      searchColumns: ['bpd.publisher', 'sd.nmims_school', 'cd.nmims_campus', 'bpd.title', 'bpd.publish_year', 'aa.faculty_names'],
+      sort: {
+         column: sort || 'bpd.id',
+         order: order || 'desc',
+      },
+   });
+
+   return data;
+}
+
 
 export const getBookPublication = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
     const data = await infiniteScrollQueryBuilder<Session>({
@@ -43,10 +119,10 @@ export const insertBookPublicationModel = async (bookPublicationData: BookPublic
  }; 
 
 
-export const updateBookPublicationModel = async (updateBookDetails: BookPublicationDetails) => {
-    console.log('updateBookDetails in models  ===>>>>>', updateBookDetails)
+export const updateBookPublicationModel = async (bookPublicationData: BookPublicationDetails) => {
+    console.log('bookPublicationData in models  ===>>>>>', bookPublicationData)
     
-    const data = await sql`SELECT * FROM upsert_book_publication(${JSON.parse(JSON.stringify(updateBookDetails))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_book_publication(${JSON.parse(JSON.stringify(bookPublicationData))}, '1');`;
     return data;
  };
  
@@ -66,3 +142,125 @@ export const updateBookPublicationModel = async (updateBookDetails: BookPublicat
     }
    
 };
+
+
+export const bookPublicationEditViewModel = async(bookPublicationId : number) => {
+   const data = await sql`SELECT 
+    bp.id AS book_pulication_id,
+    bp.title,
+    bp.edition,
+    bp.volume_no,
+    bp.publisher,
+    bp.publish_year,
+    bp.publisher_category,
+    bp.web_link,
+    bp.isbn_no,
+    bp.doi_no,
+    bp.publication_place,
+    bp.nmims_authors_count,
+    JSON_AGG(DISTINCT bps.school_name) AS nmims_school,
+    JSON_AGG(DISTINCT bpc.campus_name) AS nmims_campus,
+    (SELECT 
+        JSONB_AGG(row_to_json(author_data))
+    FROM (
+        SELECT 
+            f.id,
+            f.faculty_name
+        FROM 
+            book_publication_all_authors bpaa
+        INNER JOIN 
+            faculties f 
+        ON 
+            bpaa.author_lid = f.id
+        WHERE 
+            bpaa.publication_lid = bp.id
+            AND bpaa.active = TRUE
+            AND f.active = TRUE
+    ) AS author_data) AS all_authors,
+    (SELECT JSONB_AGG(row_to_json(nmims_data))
+    FROM (
+        SELECT 
+            f.id,
+            f.faculty_name
+        FROM 
+            book_publication_authors bpna
+        INNER JOIN 
+            faculties f 
+        ON 
+            bpna.author_lid = f.id
+        WHERE 
+            bpna.publication_lid = bp.id
+            AND bpna.active = TRUE
+            AND f.active = TRUE
+    ) AS nmims_data) AS nmims_authors
+FROM 
+    book_publication bp
+INNER JOIN 
+    book_publication_school bps ON bps.publication_lid = bp.id
+INNER JOIN 
+    book_publication_campus bpc ON bpc.publication_lid = bp.id
+WHERE 
+    bp.id = ${bookPublicationId}
+    AND bp.active = TRUE 
+    AND bpc.active = TRUE 
+    AND bps.active = TRUE
+GROUP BY 
+    bp.id;`
+    return data;
+}
+
+
+
+
+export const bookPublicationFormviewModel = async(bookPublicationId : number) => {
+   console.log('bookPublicationId in case of form view ===>>>>>', bookPublicationId);
+   const data = await sql`SELECT 
+    bp.id AS book_publication_id,
+    bp.title,
+    bp.edition,
+    bp.volume_no,
+    bp.publisher,
+    bp.publish_year,
+    bp.publisher_category,
+    bp.web_link,
+    bp.isbn_no,
+    bp.doi_no,
+    bp.publication_place,
+    bp.nmims_authors_count,
+    bp.created_by,
+    bp.modified_by,
+	bp.ACTIVE,
+    COALESCE(JSON_AGG(DISTINCT bps.school_name), '[]'::json) AS nmims_school,
+    COALESCE(JSON_AGG(DISTINCT bpc.campus_name), '[]'::json) AS nmims_campus,
+    COALESCE(JSON_AGG(DISTINCT fa.faculty_name), '[]'::json) AS all_authors,
+    COALESCE(JSON_AGG(DISTINCT fa.faculty_name) FILTER (WHERE bpa2.author_lid IS NOT NULL AND fa.active = TRUE), '[]'::json) AS nmims_authors,
+    COALESCE(JSON_AGG(DISTINCT bpd.filename), '[]'::json) AS supporting_documents
+FROM 
+    book_publication bp
+LEFT JOIN book_publication_school bps ON bp.id = bps.publication_lid
+LEFT JOIN book_publication_campus bpc ON bp.id = bpc.publication_lid
+LEFT JOIN book_publication_all_authors bpa ON bp.id = bpa.publication_lid
+LEFT JOIN faculties fa ON fa.id = bpa.author_lid AND fa.active = TRUE
+LEFT JOIN book_publication_authors bpa2 ON bp.id = bpa2.publication_lid
+LEFT JOIN book_publication_documents bpd ON bp.id = bpd.publication_lid
+
+WHERE 	
+bp.ID = ${bookPublicationId}  AND bp.ACTIVE = true AND bpc.active = true AND fa.active = true AND bpa.active = true AND bpa2.active = true AND 
+bpd.active = true
+GROUP BY 
+    bp.id, bp.title, bp.edition, bp.volume_no, bp.publisher, bp.publish_year,
+    bp.publisher_category, bp.web_link, bp.isbn_no, bp.doi_no, bp.publication_place,
+    bp.nmims_authors_count, bp.created_by, bp.modified_by;
+
+
+`;
+
+   return data
+
+}
+
+
+export const bookPublicationFiles = async (bookPublicationId:number) => {
+   const data = await sql`SELECT * FROM book_publication_documents WHERE publication_lid = ${bookPublicationId} AND active=TRUE`;
+   return data;
+}

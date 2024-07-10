@@ -1,11 +1,23 @@
 import { getLogger } from '$config/logger-context';
 // import { insertBookPublicationForm } from '$controller/research/book-publication-controller';
 import { getBookPublication, insertBookPublicationModel, deleteBookPublicationModel,
-    updateBookPublicationModel
+    updateBookPublicationModel, getBookDetailsPaginateModel, bookPublicationEditViewModel,
+    bookPublicationFormviewModel, bookPublicationFiles
  } from '$model/book-publication-model';
 import { paginationDefaultType } from 'types/db.default';
+import {uploadFile} from '$middleware/fileupload.middleware';
+import {renderModal,getNmimsAuthors,getAllAuthors,
+   getSchool,getCampus
+} from '$model/master-model';
+
+import { Request,Response } from 'express';
 
 import { BookPublicationDetails } from 'types/research.types';
+import { bookPublication } from '$validations/research.valid';
+import { downloadFile } from '$middleware/fileupload.middleware';
+
+
+
 
 export const getBookPublicationService = async ({
    page,
@@ -18,7 +30,7 @@ export const getBookPublicationService = async ({
    const logger = getLogger();
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
 
-   const data = await getBookPublication({
+   const data = await getBookDetailsPaginateModel({
       page,
       limit,
       sort,
@@ -28,12 +40,28 @@ export const getBookPublicationService = async ({
    });
 
    return data;
-};
+}; 
 
-export const insertBookPublicationService = async (bookPublicationData: BookPublicationDetails) => {
+
+export const renderBookPublicationService  = async() => {
+   const nmimsAuthors = await getNmimsAuthors();
+   const allAuthors = await getAllAuthors();
+   const school = await getSchool();
+   const campus = await getCampus();
+   return {
+    nmimsAuthors,allAuthors,school,campus
+   };
+   
+}
+
+export const insertBookPublicationService = async (bookPublicationData: BookPublicationDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
+   //  logger.info('INSIDE GET SUBJECT BOOK PUBLICATION  SERVICES');
     console.log('bookPublicationData ====>>>>>', bookPublicationData);
+    let uploadDocuments = await uploadFile(documents);
+    bookPublicationData.supporting_documents  = uploadDocuments.map(data =>  data);
+
+    console.log('bookPublicationData with the file in service ====>>>>>', bookPublicationData);
  
     const data = await insertBookPublicationModel(bookPublicationData);
  
@@ -41,12 +69,26 @@ export const insertBookPublicationService = async (bookPublicationData: BookPubl
  }; 
 
 
- export const updateBookPublicationService = async (updateBookDetails: BookPublicationDetails) => {
+
+export const updateBookPublicationService = async (bookPublicationId : number, bookPublicationData : BookPublicationDetails, documents :  { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+
     const logger = getLogger();
-    logger.info('INSIDE GET updateBookPublicationService SERVICES');
-    console.log('updateBookDetails ===>>>>>', updateBookDetails);
+
+    let uploadDocuments = await uploadFile(documents);
+
+    if (uploadDocuments.length > 0) {
+      bookPublicationData.supporting_documents = uploadDocuments.map(data => data);
+    } else {
+      bookPublicationData.supporting_documents = [];
+    }
+    
+    bookPublicationData.book_publication_id = bookPublicationId;
+    console.log('upload documents ', uploadDocuments);
+   
+
+    
  
-    const data = await updateBookPublicationModel(updateBookDetails);
+    const data = await updateBookPublicationModel(bookPublicationData);
  
     return data;
  };
@@ -54,12 +96,42 @@ export const insertBookPublicationService = async (bookPublicationData: BookPubl
 
  export const deleteBookPublicationService = async(bookPublicationId : number) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
 
     console.log('bookPublicationId in service ===>>>', bookPublicationId);
  
     const data = await deleteBookPublicationModel(bookPublicationId);
 
-    console.log('data ===>>>>>', data);
+    return data
+
     
+ }
+
+export const bookPublicationEditViewService = async(bookPublicationId : number) => {
+
+   console.log('bookPublicationId in services ===>>>>>', bookPublicationId);
+   const bookPublicationData = await bookPublicationEditViewModel(bookPublicationId);
+   const nmimsAuthors = await getNmimsAuthors();
+   const allAuthors = await getAllAuthors();
+   const school = await getSchool();
+   const campus = await getCampus();
+   return {
+      bookPublicationData, nmimsAuthors,allAuthors,school,campus
+   };
+   
+}
+
+
+export const  bookPublicationFormViewService = async(bookPublicationId : number) => {
+   
+   const data = await bookPublicationFormviewModel(bookPublicationId);
+   return data
+}
+
+export const bookPublicationDownloadFileService = async (publicationId : number,req:Request,res:Response) => {
+   // const logger = getLogger();
+
+   const data = await bookPublicationFiles(publicationId);
+
+   let files : string[] = data.map(dt => dt.document_name); 
+   await downloadFile(files, req,res);
  }

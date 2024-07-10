@@ -45,7 +45,7 @@ export const journalPaginateService = async ({
    ...filters
 }: paginationDefaultType) => {
    const logger = getLogger();
-   logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
+   logger.info('INSIDE GET SUBJECT journalPaginateService SERVICES ');
 
    const data = await journalPaginateModal({
       page,
@@ -96,7 +96,7 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
  };
 
 
- export const deleteJournalArticleService = async(journalPaperId : number) => {
+export const deleteJournalArticleService = async(journalPaperId : number) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
 
@@ -109,7 +109,7 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
 
  }
 
- export const journalRenderService = async () => {
+export const journalRenderService = async () => {
    const logger = getLogger();
    
    const foreignAuthors =  await renderModal('fa');
@@ -159,3 +159,5 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
       foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus,journalData
    };
  }
+
+ 

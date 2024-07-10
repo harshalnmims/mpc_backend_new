@@ -86,6 +86,20 @@ export const renderModal = async (abbr : string) => {
     }
  }
 
+
+ export const getEditors = async () => {
+    const data = await sql` SELECT DISTINCT mid.id, mid.name
+            FROM master_input_data mid
+            INNER JOIN book_chapter_editors e ON mid.id = e.editor_lid
+            WHERE mid.active = true AND e.active = true;`;
+    return data.count > 0 ? {
+        status:200,
+        message:data
+    } : {
+        status:400,
+        message:'Failed To Fetch!'
+    }
+ }
  export const getCampus = async () => {
     const data = await sql`select * from nmims_campus where active=TRUE`;
     return data.count > 0 ? {
