@@ -121,7 +121,7 @@ export const updateViewService = async (teachingId : number) => {
           description,
           link: link || '',
           file: [],
-          isChecked : false
+          isPresent : true
         };
       }else{
         return null
@@ -142,3 +142,49 @@ async function getDropdownValue(typeName: string):Promise<DropdownValue | null> 
     console.log('dropdown items ',JSON,stringify(item))
     return item ? { value: item[0].abbr, label: item[0].input } : null;
   }
+
+  
+export const teachingViewService = async (teachingId : number) => {
+
+  let teachingExcellanceData = await updateViewData(teachingId);
+  console.log('received view ',JSON.stringify(teachingExcellanceData))
+
+  let modules: Module[]  = [] ;
+
+  if (teachingExcellanceData.count > 0) {
+    console.log('inside teaching ');
+
+    const columns: { key: keyof TeachingExcellanceDb; link: keyof TeachingExcellanceDb; abbr: string }[] = [
+      { key: 'pedagogy_innovation', link: 'pedagogy_link', abbr: 'pi' },
+      { key: 'fdp_program', link: 'fdp_link', abbr: 'ap' },
+      { key: 'student_workshops', link: 'workshop_link', abbr: 'ws' },
+      { key: 'niche', link: 'niche_link', abbr: 'nw' },
+      { key: 'program_orientation', link: 'orientation_link', abbr: 'po' }
+    ];
+
+    modules = await Promise.all(columns.map(async (column: any,index) => {
+      const description = teachingExcellanceData[0][column.key];
+      const link = teachingExcellanceData[0][column.link];
+
+      if (description != null && description != undefined) {
+        const dropdownValue = await getDropdownValue(column.abbr);
+
+        return {
+          id: index,
+          type: dropdownValue,
+          description,
+          link: link || '',
+        };
+      }else{
+        return null
+      } 
+    }));
+
+    modules = modules.filter(module => module !== null);
+
+  }
+
+  console.log('modules ',modules)
+  return {teachingId : teachingId,type_abbr:'te',teaching_data : modules};
+
+}

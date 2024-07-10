@@ -1,5 +1,5 @@
 import {Request,Response,NextFunction} from 'express'
-import {getPaginateService,updateViewService,insertBrandingService,deleteBrandingService,updateBrandingService} 
+import {getPaginateService,updateViewService,insertBrandingService,deleteBrandingService,updateBrandingService,brandingViewService} 
 from '$service/research/branding.service'
 import { brandingItemsSchema, filesArraySchema } from '$validations/research.valid';
 import { validateWithZod } from '$middleware/validation.middleware';
@@ -50,6 +50,13 @@ export const deleteBrandingDelete = async (req : Request ,res : Response ,next :
 export const updateViewController = async (req : Request ,res : Response ,next : NextFunction) => {
     let id = req.query.id;
     const data = await updateViewService(Number(id));
+    console.log('view json ',JSON.stringify(data))
+    return res.status(200).json(data);
+}
+
+export const brandingViewController = async (req : Request ,res : Response ,next : NextFunction) => {
+    let id = req.query.id;
+    const data = await brandingViewService(Number(id));
     console.log('view json ',JSON.stringify(data))
     return res.status(200).json(data);
 }

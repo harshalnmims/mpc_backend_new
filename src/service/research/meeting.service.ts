@@ -125,7 +125,7 @@ export const updateViewService = async (meetingId : number) => {
             description,
             link: link || '',
             file: [],
-            isChecked : false
+            isPresent : true
           };
         } else {
           return null
@@ -138,6 +138,51 @@ export const updateViewService = async (meetingId : number) => {
   
     console.log('modules ',modules)
     return {meetingId : meetingId,meeting_inputs : dropdownData , meeting_data: modules , type_abbr : 'ms'};
+  
+  }
+
+  export const meetingViewService = async (meetingId : number) => {
+    let meetingStakholdersData = await updateViewData(meetingId);
+    console.log('received view ',JSON.stringify(meetingStakholdersData))
+  
+    let modules: Module[] = [] ;
+  
+    if (meetingStakholdersData.count > 0) {
+      console.log('inside meeting ');
+  
+      const columns: { key: keyof MeetingStakeholderDb; link: keyof MeetingStakeholderDb; abbr: string }[] = [
+        { key: 'ranking', link: 'ranking_link', abbr: 'rn' },
+        { key: 'accreditation', link: 'accreditation_link', abbr: 'ac' },
+        { key: 'achievements', link: 'achievements_link', abbr: 'sc' },
+        { key: 'convocation', link: 'convocation_link', abbr: 'cn' },
+        { key: 'inaugral_program', link: 'inaugral_program_link', abbr: 'ip' },
+        { key: 'events', link: 'events_link', abbr: 'en' }
+      ];
+  
+      modules = await Promise.all(columns.map(async (column: any,index) => {
+        const description = meetingStakholdersData[0][column.key];
+        const link = meetingStakholdersData[0][column.link];
+  
+        if (description != null && description != undefined) {
+          const dropdownValue = await getDropdownValue(column.abbr);
+  
+          return {
+            id: index,
+            type: dropdownValue,
+            description,
+            link: link || '',
+          };
+        } else {
+          return null
+        }
+      }));
+
+      modules = modules.filter(module => module !== null);
+
+    }
+  
+    console.log('modules ',modules)
+    return {meetingId : meetingId,meeting_data: modules , type_abbr : 'ms'};
   
   }
   

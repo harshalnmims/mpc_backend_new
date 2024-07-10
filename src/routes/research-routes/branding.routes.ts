@@ -1,6 +1,6 @@
 import { 
     getBrandingPaginate,insertBrandingController,deleteBrandingDelete,updateViewController,
-    updateBrandingController    
+    updateBrandingController,brandingViewController    
     } from '$controller/research/branding.controller';
     import { asyncErrorHandler } from '$middleware/error.middleware';
     import { Router } from 'express';
@@ -14,6 +14,7 @@ import {
     brandingRouter.get('/branding-advertisement-delete',asyncErrorHandler(deleteBrandingDelete));
     brandingRouter.get('/update-branding-view-data',asyncErrorHandler(updateViewController));
     brandingRouter.post('/update-branding-data',upload.any(),asyncErrorHandler(updateBrandingController))
+    brandingRouter.get('/view-branding-data',asyncErrorHandler(brandingViewController))
 
 
     

@@ -1,6 +1,6 @@
 import {
     getTeachingPaginateService,
-    updateViewService
+    updateViewService,teachingViewService
    } from '$service/research/teaching.service';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
@@ -74,6 +74,14 @@ export const deleteTeachingController = async (req : Request ,res : Response ,ne
 export const updateViewController = async (req : Request ,res : Response ,next : NextFunction) => {
     let id = req.query.id;
     const data = await updateViewService(Number(id));
+    console.log('view json ',JSON.stringify(data))
+    return res.status(200).json(data);
+}
+
+
+export const teachingViewController = async (req : Request ,res : Response ,next : NextFunction) => {
+    let id = req.query.id;
+    const data = await teachingViewService(Number(id));
     console.log('view json ',JSON.stringify(data))
     return res.status(200).json(data);
 }
