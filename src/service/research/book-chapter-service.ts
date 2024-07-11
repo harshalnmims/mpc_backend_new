@@ -8,7 +8,7 @@ import { paginationDefaultType } from 'types/db.default';
 import {uploadFile} from '$middleware/fileupload.middleware';
 import {renderModal,getNmimsAuthors,getAllAuthors,
    getSchool,getCampus,
-   getEditors
+   getEditors,getMasterAllAuthors,getMasterNmimsAuthors
 } from '$model/master-model';
 
 import { downloadFile } from '$middleware/fileupload.middleware';
@@ -40,8 +40,8 @@ export const getBookChapterService = async ({
 }; 
 
 export const renderBookChapterLists  = async() => {
-   const nmimsAuthors = await getNmimsAuthors();
-   const allAuthors = await getAllAuthors();
+   const nmimsAuthors = await getMasterNmimsAuthors();
+   const allAuthors = await getMasterAllAuthors();
    const school = await getSchool();
    const campus = await getCampus();
    const editor = await getEditors();
@@ -68,8 +68,8 @@ export const insertBookChapterService = async (bookChapterData : bookChapterDeta
 
    console.log('booChapterId in services ===>>>>>', booChapterId);
    const bookChapterPublicationData = await booChapterEditViewModel(booChapterId);
-   const nmimsAuthors = await getNmimsAuthors();
-   const allAuthors = await getAllAuthors();
+   const nmimsAuthors = await getMasterNmimsAuthors();
+   const allAuthors = await getMasterAllAuthors();
    const school = await getSchool();
    const campus = await getCampus();
    const editor = await getEditors();
