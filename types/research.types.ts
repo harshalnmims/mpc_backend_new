@@ -256,6 +256,7 @@ export type seminarDetails = {
 }
 
 export type caseStudyDetails = {
+   case_study_id ?: number,
    title: string;
    edition: string;
    publish_year: number;
@@ -269,7 +270,7 @@ export type caseStudyDetails = {
    nmims_campus: string[];
    all_authors: number[];
    nmims_authors: number[];
-   supporting_documents: string[];
+   supporting_documents ?: SupportingDocument ;
 }
 
 // export type teachingDetails = {
