@@ -1,6 +1,6 @@
 import {getCaseStudy, insertCaseStudyForm, updateCaseStudyForm,
     deleteCaseStudyForm,CaseStudyPaginateController,CaseStudyRenderController,CaseStudyViewController,
-    CaseStudyUpdateViewController
+    CaseStudyUpdateViewController,downloadFilesController
 } from '$controller/research/case-study-controller'
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
@@ -17,7 +17,7 @@ caseStudyRoutes.get('/case-study-paginate',asyncErrorHandler(CaseStudyPaginateCo
 caseStudyRoutes.get('/case-study-render-data',asyncErrorHandler(CaseStudyRenderController));
 caseStudyRoutes.get('/case-study-view-data',asyncErrorHandler(CaseStudyViewController));
 caseStudyRoutes.get('/case-study-update-view',asyncErrorHandler(CaseStudyUpdateViewController));
-
+caseStudyRoutes.get('/case-study-download-files',asyncErrorHandler(downloadFilesController));
 
 
 

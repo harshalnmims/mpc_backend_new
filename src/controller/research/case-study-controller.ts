@@ -3,7 +3,7 @@ import { validateWithZod } from '$middleware/validation.middleware';
 import {
     getCaseStudyService, insertCaseStudyService, updateCaseStudyService,
     deleteCaseStudyService,CaseStudyPaginateService,CaseStudyRenderService,CaseStudyViewService,
-    CaseStudyUpdateViewService
+    CaseStudyUpdateViewService,caseStudyDownloadFileService
    } from '$service/research/case-study-service';
 import { caseStudy, filesArraySchema } from '$validations/research.valid';
 import { Request, Response, NextFunction } from 'express';
@@ -125,3 +125,11 @@ export const CaseStudyUpdateViewController = async (req : Request, res : Respons
     return res.status(200).json(data)
 
 };
+
+export const downloadFilesController = async (req : Request , res : Response , next  : NextFunction) => {
+    const id = req.query.id;
+    console.log('id ',id)
+ 
+     await caseStudyDownloadFileService(Number(id),req,res);
+  
+  }

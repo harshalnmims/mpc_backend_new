@@ -86,7 +86,7 @@ export const getCaseStudyModel = async ({ page, limit, sort, order, search, filt
       baseQuery: `SELECT 
                     c.id,
                     COALESCE(c.title, 'No Data Filled!') AS title,
-                    COALESCE(c.edition, 'No Data Filled!') AS edition,
+                    COALESCE(NULLIF(c.edition, ''), 'No Data Filled!') AS edition,
                     COALESCE(c.publisher, 'No Data Filled!') AS publisher,
                     COALESCE(c.publish_year, 0) AS publish_year,
                     COALESCE(c.volume_no, 'No Data Filled!') AS volume_no,
@@ -153,13 +153,13 @@ export const CaseStudyViewModel = async (caseStudyId : number) => {
     const data = await sql `SELECT 
                     c.id,
                     COALESCE(c.title, 'No Data') AS title,
-                    COALESCE(c.edition, 'No Data Filled!') AS edition,
+                    COALESCE(NULLIF(c.edition, ''), 'No Data Filled!') AS edition,
                     COALESCE(c.publisher, 'No Data') AS publisher,
                     COALESCE(c.publish_year, 0) AS publish_year,
                     COALESCE(c.volume_no, 'No Data') AS volume_no,
 					COALESCE(c.publisher_category, 0) AS publisher_category,
 					COALESCE(c.url, 'No Data Filled!') AS url,
-					COALESCE(c.page_no, 'No Data Filled!') AS page_no,
+					COALESCE(NULLIF(c.edition, ''), 'No Data Filled!') AS page_no,
 					COALESCE(c.nmims_authors_count, 0) AS nmims_authors_count,
                     COALESCE(JSON_AGG(DISTINCT md.name), '[]') AS all_authors,
 					COALESCE(JSON_AGG(DISTINCT mi.name), '[]') AS nmims_authors,
@@ -244,6 +244,11 @@ FROM
 WHERE 
     c.id = ${caseStudyId} AND c.active=TRUE AND cs.active = TRUE AND cc.active=TRUE
 GROUP BY c.id`;
+    return data;
+}
+
+export const caseStudyFiles = async(caseStudyId : number) => {
+    const data = await sql`SELECT document_name FROM case_study_documents WHERE case_study_lid=${caseStudyId} AND active = TRUE`;
     return data;
 }
 

@@ -1,15 +1,15 @@
 import { getLogger } from '$config/logger-context';
-import { uploadFile } from '$middleware/fileupload.middleware';
+import { downloadFile, uploadFile } from '$middleware/fileupload.middleware';
 import {getCaseStudyModel, insertCaseStudyModel, updateCaseStudyModel ,
     deleteCaseStudyModel,CaseStudyPaginateModel,CaseStudyViewModel,
-    CaseStudyUpdateViewModel
+    CaseStudyUpdateViewModel,caseStudyFiles
  } from '$model/case-study-model';
  import {
    getSchool,getCampus,getMasterAllAuthors,getMasterNmimsAuthors
 } from '$model/master-model';
 import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
-
+import {Request,Response} from 'express'
 import { caseStudyDetails} from 'types/research.types';
 import { number } from 'zod'; 
 
@@ -117,3 +117,12 @@ export const updateCaseStudyService = async (updateCaseStudyData : caseStudyDeta
     const nmims_authors = await getMasterNmimsAuthors();
     return {caseData,nmims_campus,nmims_school,all_authors,nmims_authors};
  };
+
+ export const caseStudyDownloadFileService = async (caseStudyId : number,req:Request,res:Response) => {
+   // const logger = getLogger();
+
+   const data = await caseStudyFiles(caseStudyId);
+
+  let files : string[] = data.map(dt => dt.document_name); 
+   await downloadFile(files,req,res);
+ }
