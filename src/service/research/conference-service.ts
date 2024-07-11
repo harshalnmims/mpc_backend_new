@@ -4,8 +4,8 @@ import {getConferenceModel, insertConferenceModel, updateConferencemodels, delet
  } from '$model/conference-model';
  import { paginationDefaultType } from 'types/db.default';
 import {uploadFile} from '$middleware/fileupload.middleware';
-import {renderModal,getNmimsAuthors,getAllAuthors,
-   getSchool,getCampus
+import {renderModal,getNmimsAuthors,getMasterAllAuthors,
+   getSchool,getCampus, getExternalAuthors
 } from '$model/master-model';
 import exp from 'constants';
 
@@ -38,11 +38,12 @@ import { number } from 'zod';
 
 export const renderConferenceListsService  = async() => {
     const nmimsAuthors = await getNmimsAuthors();
-    const allAuthors = await getAllAuthors();
+    const masterAllAuthors = await getMasterAllAuthors();
     const school = await getSchool();
     const campus = await getCampus();
+    const externalAuthors = await getExternalAuthors();
     return {
-     nmimsAuthors,allAuthors,school,campus
+     nmimsAuthors,masterAllAuthors,school,campus, externalAuthors
     };
     
  }

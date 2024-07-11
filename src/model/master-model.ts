@@ -39,6 +39,20 @@ export const renderModal = async (abbr : string) => {
    }
  }
 
+export const getExternalAuthors = async () => {
+    const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
+    WHERE ft.abbr= 'ext' AND f.active=TRUE AND ft.active=TRUE`;
+ 
+    return data.count > 0 ? {
+       status:200,
+       message:data
+   } : {
+       status:400,
+       message:'Failed To Fetch!'
+   }
+ } 
+
+
  export const getAllAuthors = async () => {
 
     const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
@@ -135,4 +149,19 @@ export const renderModal = async (abbr : string) => {
        status:400,
        message:'Failed To Fetch!'
    }
+ }
+
+
+ export const getMasterAllAuthors = async () => {
+    const data = await sql` SELECT DISTINCT mid.id, mid.name
+                            FROM master_input_data mid
+                            INNER JOIN master_inputs mi ON mid.input_type = mi.id
+                            WHERE mi.abbr='aa' AND mid.active = true AND mi.active = true`;
+    return data.count > 0 ? {
+        status:200,
+        message:data
+    } : {
+        status:400,
+        message:'Failed To Fetch!'
+    }
  }

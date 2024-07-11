@@ -6,7 +6,7 @@ import { getBookPublication, insertBookPublicationModel, deleteBookPublicationMo
  } from '$model/book-publication-model';
 import { paginationDefaultType } from 'types/db.default';
 import {uploadFile} from '$middleware/fileupload.middleware';
-import {renderModal,getNmimsAuthors,getAllAuthors,
+import {renderModal,getNmimsAuthors,getMasterAllAuthors,
    getSchool,getCampus
 } from '$model/master-model';
 
@@ -45,11 +45,11 @@ export const getBookPublicationService = async ({
 
 export const renderBookPublicationService  = async() => {
    const nmimsAuthors = await getNmimsAuthors();
-   const allAuthors = await getAllAuthors();
+   const masterAllAuthors = await getMasterAllAuthors();
    const school = await getSchool();
    const campus = await getCampus();
    return {
-    nmimsAuthors,allAuthors,school,campus
+    nmimsAuthors,masterAllAuthors,school,campus
    };
    
 }
@@ -111,11 +111,11 @@ export const bookPublicationEditViewService = async(bookPublicationId : number) 
    console.log('bookPublicationId in services ===>>>>>', bookPublicationId);
    const bookPublicationData = await bookPublicationEditViewModel(bookPublicationId);
    const nmimsAuthors = await getNmimsAuthors();
-   const allAuthors = await getAllAuthors();
+   const masterAllAuthors = await getMasterAllAuthors();
    const school = await getSchool();
    const campus = await getCampus();
    return {
-      bookPublicationData, nmimsAuthors,allAuthors,school,campus
+      bookPublicationData, nmimsAuthors,masterAllAuthors,school,campus
    };
    
 }
