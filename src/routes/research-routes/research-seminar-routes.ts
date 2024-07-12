@@ -1,5 +1,5 @@
 import { getResearchSeminar, insertResearchSeminarForm, updateResearchSeminarForm, 
-    deleteResearchSeminarForm
+    deleteResearchSeminarForm,researchSeminarPaginate
 } from '$controller/research/research-seminar-controller'
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
@@ -10,6 +10,7 @@ researchSeminarRoutes.get('/research-seminar', asyncErrorHandler(getResearchSemi
 researchSeminarRoutes.post('/research-seminar-insert', asyncErrorHandler(insertResearchSeminarForm));
 researchSeminarRoutes.post('/research-seminar-update', asyncErrorHandler(updateResearchSeminarForm));
 researchSeminarRoutes.post('/research-seminar-delete', asyncErrorHandler(deleteResearchSeminarForm));
+researchSeminarRoutes.get('/research-seminar-paginate',asyncErrorHandler(researchSeminarPaginate));
 
 
 

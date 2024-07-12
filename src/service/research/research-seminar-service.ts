@@ -1,6 +1,6 @@
 import { getLogger } from '$config/logger-context';
 import { getResearchSeminarModel, insertResearchSeminarModel, updateResearchSeminarModel,
-     deleteResearchSeminarModel
+     deleteResearchSeminarModel,ResearchSeminarPaginateModel
  } from '$model/research-seminar-model';
 import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
@@ -20,6 +20,28 @@ export const getResearchSeminarService = async ({
     logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
  
     const data = await getResearchSeminarModel({
+       page,
+       limit,
+       sort,
+       order,
+       search,
+       ...filters,
+    });
+ 
+    return data;
+ };
+
+ export const ResearchSeminarPaginateService = async ({
+    page,
+    limit,
+    sort,
+    order,
+    search,
+    ...filters
+ }: paginationDefaultType) => {
+   
+ 
+    const data = await ResearchSeminarPaginateModel({
        page,
        limit,
        sort,
