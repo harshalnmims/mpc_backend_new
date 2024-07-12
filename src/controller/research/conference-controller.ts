@@ -1,8 +1,13 @@
 import { getLogger } from '$config/logger-context';
-import {getConferenceService, renderConferenceListsService, insertConferenceService, updateConferenceService, deleteConferenceService
+import {getConferenceService, renderConferenceListsService, insertConferenceService, updateConferenceService, deleteConferenceService,
+    conferenceEditViewService
    } from '$service/research/conference-service'
 import exp from 'constants';
 import { Request, Response, NextFunction } from 'express';
+import { validateWithZod } from '$middleware/validation.middleware';
+import { filesArraySchema } from '$validations/research.valid';
+import { conferencePublication } from '$validations/research.valid';
+import { number } from 'zod';
 
 
 export const getConference = async (req: Request, res: Response, next: NextFunction) => {
@@ -36,11 +41,18 @@ export const getConference = async (req: Request, res: Response, next: NextFunct
 
 export const insertConferenceForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE insertBookChapterForm CONTROLLER');
 
-    const conferenceData = { ...req.body};
-
-    const data = await insertConferenceService(conferenceData);
+    let conferenceData = JSON.parse(req.body.conference_publication);
+    console.log('conferenceData ankit ===>>>>>', conferenceData)
+    let data;
+    let files = req.files;
+    console.log('files ===>>>>>', files);
+    let result = validateWithZod(conferencePublication,conferenceData);
+    let fileResult = validateWithZod(filesArraySchema, files);
+    console.log('result ===>>>>>>', result);
+    if(result.success && fileResult.success){
+        data = await insertConferenceService(conferenceData, files);
+    }
 
     console.log('data response conference controller  ====>>>>>>', data);
  
@@ -54,13 +66,35 @@ export const renderConferenceLists = async(req: Request, res: Response, next: Ne
     return res.status(200).json(data);
   }
 
+export const conferenceEditFrom = async(req: Request, res: Response, next: NextFunction) => {
+    const logger = getLogger();
+    const id =  req.query.id;
+    const conferenceId = Number(id);
+
+    const data = await conferenceEditViewService(conferenceId);
+
+    console.log('data response in controller ====>>>>', data)
+    return res.status(200).json(data);
+  }
+
 export const updateConferenceForm = async  (req: Request, res: Response, next: NextFunction) =>{
     const logger = getLogger();
-    logger.info('INSIDE updateConferenceForm CONTROLLER');
 
-    const updateConferenceData = { ...req.body};
+    let updateConferenceData = JSON.parse(req.body.update_conference_publication);
+    let conferenceId = JSON.parse(req.body.conference_id);
+    console.log('conferenceId ====>>>>>>', conferenceId);
 
-    const data = await updateConferenceService(updateConferenceData);
+    console.log('conferenceData ankit ===>>>>>', updateConferenceData)
+    let documents = req.files;
+    let data;
+    console.log('documents ===>>>>>', documents);
+    let result = validateWithZod(conferencePublication,updateConferenceData);
+    let fileResult = validateWithZod(filesArraySchema, documents);
+    console.log('result ===>>>>>>', result);
+
+    if(result.success && fileResult.success){
+        data = await updateConferenceService(conferenceId, updateConferenceData, documents);
+    }
 
     console.log('data response conference update  controller  ====>>>>>>', data);
  

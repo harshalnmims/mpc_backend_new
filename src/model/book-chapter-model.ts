@@ -42,11 +42,11 @@ export const getBookChapterPublication = async({ page, limit, sort, order, searc
                 all_authors AS (
                     SELECT
                         bcp.id AS book_chapter_id,
-                        JSON_AGG(DISTINCT f.faculty_name) AS all_authors
+                        JSON_AGG(DISTINCT mi.name) AS all_authors
                     FROM book_chapter_publication bcp
                     INNER JOIN book_chapter_publication_all_authors bcaa ON bcaa.publication_lid = bcp.id
-                    INNER JOIN faculties f ON f.id = bcaa.author_lid
-                    WHERE f.active = true AND bcaa.active = true AND bcp.active = true
+                    INNER JOIN master_input_data mi ON mi.id = bcaa.author_lid
+                    WHERE mi.active = true AND bcaa.active = true AND bcp.active = true
                     GROUP BY bcp.id
                 ),
                 editors AS (
@@ -123,34 +123,34 @@ SELECT
                 JSONB_AGG(row_to_json(author_data))
             FROM (
                 SELECT 
-                    f.id,
-                    f.faculty_name
+                    mi.id,
+                    mi.name
                 FROM 
                     book_chapter_publication_all_authors bcpaa
                 INNER JOIN 
-                    faculties f 
+                    master_input_data mi 
                 ON 
-                    bcpaa.author_lid = f.id
+                    bcpaa.author_lid = mi.id
                 WHERE 
                     bcpaa.publication_lid = bcp.id
                     AND bcpaa.active = TRUE
-                    AND f.active = TRUE
+                    AND mi.active = TRUE
             ) AS author_data) AS all_authors,
             (SELECT JSONB_AGG(row_to_json(nmims_data))
             FROM (
                 SELECT 
-                    f.id,
-                    f.faculty_name
+                    mi.id,
+                    mi.name
                 FROM 
                     book_chapter_publication_authors bcpna
                 INNER JOIN 
-                    faculties f 
+                    master_input_data mi 
                 ON 
-                    bcpna.author_lid = f.id
+                    bcpna.author_lid = mi.id
                 WHERE 
                     bcpna.publication_lid = bcp.id
                     AND bcpna.active = TRUE
-                    AND f.active = TRUE
+                    AND mi.active = TRUE
             ) AS nmims_data) AS nmims_authors,
             (SELECT JSONB_AGG(row_to_json(editor_data))
             FROM (
@@ -179,7 +179,7 @@ SELECT
             AND bcpc.active = TRUE 
             AND bcps.active = TRUE
         GROUP BY 
-            bcp.id`
+            bcp.id				`
      return data;
  }
 
@@ -225,8 +225,8 @@ export const bookChapterPublicationFormviewModel = async(bookChapterId : number)
             bcp.active,
             COALESCE(JSON_AGG(DISTINCT bcps.school_name), '[]'::json) AS nmims_school,
             COALESCE(JSON_AGG(DISTINCT bcpc.campus_name), '[]'::json) AS nmims_campus,
-            COALESCE(JSON_AGG(DISTINCT fa.faculty_name), '[]'::json) AS all_authors,
-            COALESCE(JSON_AGG(DISTINCT fa.faculty_name) FILTER (WHERE bcpa2.author_lid IS NOT NULL AND fa.active = TRUE), '[]'::json) AS nmims_authors,
+            COALESCE(JSON_AGG(DISTINCT mi.name), '[]'::json) AS all_authors,
+            COALESCE(JSON_AGG(DISTINCT md.name), '[]'::json) AS nmims_authors,
             COALESCE(JSON_AGG(DISTINCT bcpd.filename), '[]'::json) AS supporting_documents,
             COALESCE(JSON_AGG(DISTINCT mid.name),'[]'::json) AS book_editors
         FROM 
@@ -234,8 +234,9 @@ export const bookChapterPublicationFormviewModel = async(bookChapterId : number)
         LEFT JOIN book_chapter_publication_school bcps ON bcp.id = bcps.publication_lid
         LEFT JOIN book_chapter_publication_campus bcpc ON bcp.id = bcpc.publication_lid
         LEFT JOIN book_chapter_publication_all_authors bcpa ON bcp.id = bcpa.publication_lid
-        LEFT JOIN faculties fa ON fa.id = bcpa.author_lid AND fa.active = TRUE
+        LEFT JOIN master_input_data mi ON mi.id = bcpa.author_lid AND mi.active = TRUE
         LEFT JOIN book_chapter_publication_authors bcpa2 ON bcp.id = bcpa2.publication_lid
+		LEFT JOIN master_input_data md ON md.id = bcpa2.author_lid AND md.active = TRUE
         LEFT JOIN bookchapter_publication_documents bcpd ON bcp.id = bcpd.publication_lid
         LEFT JOIN book_chapter_editors bce ON bcp.id = bce.publication_lid
         LEFT JOIN master_input_data mid ON bce.editor_lid = mid.id
@@ -244,12 +245,11 @@ export const bookChapterPublicationFormviewModel = async(bookChapterId : number)
             bcp.id = ${bookChapterId} AND 
             bcp.active = TRUE AND 
             bcpc.active = TRUE AND 
-            fa.active = TRUE AND 
             bcpa.active = TRUE AND 
             bcpa2.active = TRUE AND 
             bcpd.active = TRUE
         GROUP BY 
-            bcp.id
+            bcp.id		
  
  `;
  

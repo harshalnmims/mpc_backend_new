@@ -85,3 +85,10 @@ export const getParticularInputs = async (type: string) => {
    const data = await sql`SELECT * FROM meeting_stackholders_inputs WHERE abbr=${type}`;
    return data;
 }
+
+
+export const meetingFiles = async (meetingId: number,abbr:string) => {
+   const data = await sql`SELECT * FROM meeting_stackholders_documents WHERE meeting_lid=${meetingId} AND input_lid IN (SELECT id FROM meeting_stackholders_inputs 
+   WHERE abbr=${abbr} AND active = TRUE) AND active = TRUE`;
+   return data;
+}

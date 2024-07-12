@@ -1,5 +1,5 @@
 import {Request,Response,NextFunction} from 'express'
-import {getPaginateService,updateViewService,insertBrandingService,deleteBrandingService,updateBrandingService} 
+import {getPaginateService,updateViewService,insertBrandingService,deleteBrandingService,updateBrandingService,brandingViewService,brandingDownloadFileService} 
 from '$service/research/branding.service'
 import { brandingItemsSchema, filesArraySchema } from '$validations/research.valid';
 import { validateWithZod } from '$middleware/validation.middleware';
@@ -54,6 +54,13 @@ export const updateViewController = async (req : Request ,res : Response ,next :
     return res.status(200).json(data);
 }
 
+export const brandingViewController = async (req : Request ,res : Response ,next : NextFunction) => {
+    let id = req.query.id;
+    const data = await brandingViewService(Number(id));
+    console.log('view json ',JSON.stringify(data))
+    return res.status(200).json(data);
+}
+
 export const updateBrandingController = async(req : Request ,res : Response ,next : NextFunction) => {
     let data;
     let files = req.files;
@@ -68,4 +75,12 @@ export const updateBrandingController = async(req : Request ,res : Response ,nex
      }
         
     return res.status(200).json(data); 
+}
+
+export const brandingDownloadFiles = async (req : Request , res : Response , next  : NextFunction) => {
+   const id = req.query.id;
+   const abbr = req.query.abbr;
+   console.log('id ',id,abbr)
+
+    await brandingDownloadFileService(Number(id),String(abbr),req,res);
 }

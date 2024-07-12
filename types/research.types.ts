@@ -126,6 +126,9 @@ export type journalArticleDetails = {
  }
 
  export type conferenceDetails = {
+   internal_authors: any;
+   external_authors: any;
+   conference_id?: number;
    paper_title: string;
    conference_name: string;
    place: string;
@@ -145,8 +148,8 @@ export type journalArticleDetails = {
    faculty_id: number[];
    nmims_school: string[];
    nmims_campus: string[];
-   conference_documents: string[];
-   award_documents: string[];
+   conference_documents: SupportingDocument;
+
  }
 
  export type patentDetails = {
@@ -213,7 +216,139 @@ export type EContent = {
    document_link: string;
    media_link: string;
    facility_list: string;
+
 }
+
+
+export type researchAwardDetails = {
+   award_name: string;
+   award_details: string;
+   award_date: string;
+   award_organization: string;
+   award_place: string;
+   award_category: number;
+   faculty_name: string;
+   supporting_documents: string[];
+
+};
+
+export type seminarDetails = {
+   topic: string;
+   resource_person: string;
+   paper_title: string;
+   journal_name: string;
+   publisher: string;
+   publisher_category: number;
+   publication_date: string;
+   research_date: string;
+   uid: string;
+   doi_no: string;
+   volume_no: string;
+   issn_no: string;
+   scopus_site_score: string;
+   gs_indexed: string;
+   ugc_indexed: string;
+   scs_indexed: string;
+   wos_indexed: string;
+   impact_factor: string;
+   nmims_school: string[];
+   nmims_campus: string[];
+   supporting_documents: string[];
+   abdc_indexed: number;
+   nmims_authors: number[];
+}
+
+export type caseStudyDetails = {
+   title: string;
+   edition: string;
+   publish_year: number;
+   publisher: string;
+   publisher_category: number;
+   volume_no: string;
+   page_no: string;
+   url: string;
+   nmims_authors_count: number;
+   nmims_school: string[];
+   nmims_campus: string[];
+   all_authors: number[];
+   nmims_authors: number[];
+   supporting_documents: string[];
+}
+
+// export type teachingDetails = {
+//    pedagogy_innovation: string;
+//    pedagogy_link: string;
+//    fdp_program: string;
+//    fdp_link: string;
+//    student_workshops: string;
+//    workshop_link: string;
+//    niche: string;
+//    niche_link: string;
+//    program_orientation: string;
+//    orientation_link: string;
+//    pedagogy_innovation_documents: string[];
+//    fdp_program_documents: string[];
+//    students_workshops_documents: string[];
+//    niche_documents: string[];
+//    program_orientation_documents: string[];
+// };
+
+
+// export type meetingDetails = {
+//    ranking: string;
+//    ranking_link: string;
+//    accreditation: string;
+//    accreditation_link: string;
+//    achievements: string;
+//    achievements_link: string;
+//    convocation: string;
+//    convocation_link: string;
+//    inaugral_program: string;
+//    inaugral_program_link: string;
+//    events: string;
+//    events_link: string;
+//    ranking_documents: string[];
+//    accreditation_documents: string[];
+//    achievements_documents: string[];
+//    convocation_documents: string[];
+//    inaugural_documents: string[];
+//    events_documents: string[];
+// }
+
+// export type brandingDetails = {
+//    faculty_recognition: string;
+//    faculty_recognition_link: string;
+//    faculty_awards: string;
+//    faculty_awards_link: string;
+//    staff_awards: string;
+//    staff_awards_link: string;
+//    alumni_awards: string;
+//    alumni_awards_link: string;
+//    student_awards: string;
+//    student_awards_link: string;
+//    international_ventures: string;
+//    international_ventures_link: string;
+//    conference_participation: string;
+//    conference_participation_link: string;
+//    organizing_conference: string;
+//    organizing_conference_link: string;
+//    student_event: string;
+//    student_event_link: string;
+//    newspaper_article: string;
+//    newspaper_article_link: string;
+//    faculty_recognition_documents: string[];
+//    faculty_awards_documents: string[];
+//    staff_awards_documents: string[];
+//    student_awards_documents: string[];
+//    alumni_awards_documents: string[];
+//    international_ventures_documents: string[];
+//    conference_participation_documents: string[];
+//    organizing_conference_documents: string[];
+//    student_event_documents: string[];
+//    newspaper_article_documents: string[];
+
+// }
+
 
 export type TeachingExcellance = {
    teaching_id ?:  number;
@@ -270,63 +405,4 @@ export type BrandingAdvertisement = {
    newspaper_article : string  | null ;
    newspaper_article_link : string | null;
    documents : SupportingDocument;
-}
-
-
-
-export type researchAwardDetails = {
-   award_name: string;
-   award_details: string;
-   award_date: string;
-   award_organization: string;
-   award_place: string;
-   award_category: number;
-   faculty_name: string;
-   supporting_documents: string[];
-
-};
-
-
-export type caseStudyDetails = {
-   title: string;
-   edition: string;
-   publish_year: number;
-   publisher: string;
-   publisher_category: number;
-   volume_no: string;
-   page_no: string;
-   url: string;
-   nmims_authors_count: number;
-   nmims_school: string[];
-   nmims_campus: string[];
-   all_authors: number[];
-   nmims_authors: number[];
-   supporting_documents: string[];
-}
-
-
-export type seminarDetails = {
-   topic: string;
-   resource_person: string;
-   paper_title: string;
-   journal_name: string;
-   publisher: string;
-   publisher_category: number;
-   publication_date: string;
-   research_date: string;
-   uid: string;
-   doi_no: string;
-   volume_no: string;
-   issn_no: string;
-   scopus_site_score: string;
-   gs_indexed: string;
-   ugc_indexed: string;
-   scs_indexed: string;
-   wos_indexed: string;
-   impact_factor: string;
-   nmims_school: string[];
-   nmims_campus: string[];
-   supporting_documents: string[];
-   abdc_indexed: number;
-   nmims_authors: number[];
 }

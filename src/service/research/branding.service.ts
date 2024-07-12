@@ -1,11 +1,12 @@
-import { uploadMultiFile } from '$middleware/fileupload.middleware';
+import { downloadFile, uploadMultiFile } from '$middleware/fileupload.middleware';
 import {getPaginateModel,insertBrandingModel,deleteBrandingModel, brandingViewData,
     getParticularInputs,
-    updateViewData,updateBrandingModel
+    updateViewData,updateBrandingModel,brandingFiles
 } from '$model/branding.model';
 import { paginationDefaultType } from 'types/db.default';
 import { BrandingAdvertisementDb, DropdownValue, Module } from 'types/research.master';
 import { BrandingAdvertisement } from 'types/research.types';
+import { Request,Response } from 'express';
 
 
 export const getPaginateService = async ( 
@@ -144,7 +145,7 @@ export const updateViewService = async (brandingId : number) => {
             description,
             link: link || '',
             file: [],
-            isChecked : false
+            isPresent : true
           };
         } else {
           return null
@@ -159,9 +160,68 @@ export const updateViewService = async (brandingId : number) => {
     return {brandingId : brandingId,branding_inputs : dropdownData , branding_data: modules , type_abbr : 'ba'};
   
   }
+
+  export const brandingViewService = async (brandingId : number) => {
+    let brandingData = await updateViewData(brandingId);
+    console.log('received view ',JSON.stringify(brandingData))
+  
+    let modules: Module[] = [] ;
+  
+    if (brandingData.count > 0) {
+      console.log('inside branding ');
+
+      
+      const columns: { key: keyof BrandingAdvertisementDb; link: keyof BrandingAdvertisementDb; abbr: string }[] = [
+        { key: 'faculty_recognition', link: 'faculty_recognition_link', abbr: 'fr' },
+        { key: 'faculty_awards', link: 'faculty_awards_link', abbr: 'fa' },
+        { key: 'staff_awards', link: 'staff_awards_link', abbr: 'sa' },
+        { key: 'alumni_awards', link: 'alumni_awards_link', abbr: 'aa' },
+        { key: 'student_awards', link: 'student_awards_link', abbr: 'saa' },
+        { key: 'international_ventures', link: 'international_ventures_link', abbr: 'ilv' },
+        { key: 'conference_participation', link: 'conference_participation_link', abbr: 'cp' },
+        { key: 'student_event', link: 'student_event_link', abbr: 'sep' },
+        { key: 'organizing_conference', link: 'organizing_conference_link', abbr: 'ocan' },
+        { key: 'newspaper_article', link: 'newspaper_article_link', abbr: 'na' }
+
+      ];
+  
+      modules = await Promise.all(columns.map(async (column: any,index) => {
+        const description = brandingData[0][column.key];
+        const link = brandingData[0][column.link];
+  
+        if (description != null && description != undefined) {
+          const dropdownValue = await getDropdownValue(column.abbr);
+  
+          return {
+            id: index,
+            type: dropdownValue,
+            description,
+            link: link || '',
+          };
+        } else {
+          return null
+        }
+      }));
+
+      modules = modules.filter(module => module !== null);
+
+    }
+  
+    console.log('modules ',modules)
+    return {brandingId : brandingId, branding_data: modules , type_abbr : 'ba'};
+  
+  }
   
   async function getDropdownValue(typeName: string):Promise<DropdownValue | null> {
       const item : any = await getParticularInputs(typeName);
       console.log('dropdown items ',JSON.stringify(item))
       return item ? { value: item[0].abbr, label: item[0].input } : null;
+    }
+
+    export const brandingDownloadFileService = async (brandingId : number,abbr:string,req:Request,res:Response) => {
+   // const logger = getLogger();
+
+      const data = await brandingFiles(brandingId,abbr);
+      let files : string[] = data.map((dt) => dt.document_name); 
+      await downloadFile(files,req,res);
     }

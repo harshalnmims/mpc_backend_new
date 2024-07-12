@@ -1,17 +1,14 @@
-import { getLogger } from '$config/logger-context';
 import {
     getTeachingPaginateService,
-    updateViewService
+    updateViewService,teachingViewService
    } from '$service/research/teaching.service';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
 import { filesArraySchema , teachingItemsSchema } from '$validations/research.valid';
-import {insertTeachingService,deleteTeachingService,updateTeachingService} from '$service/research/teaching.service';
+import {insertTeachingService,deleteTeachingService,updateTeachingService,teachingDownloadFileService} from '$service/research/teaching.service';
 
-export const getTeachingExecellance = async (req: Request, res: Response, next: NextFunction) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET TEACHING EXECELLANCE  CONTROLLER');
- 
+
+export const getTeachingPaginate = async(req : Request ,res : Response ,next : NextFunction) => {
     const {
         page = 1,
         limit = 10,
@@ -79,4 +76,20 @@ export const updateViewController = async (req : Request ,res : Response ,next :
     const data = await updateViewService(Number(id));
     console.log('view json ',JSON.stringify(data))
     return res.status(200).json(data);
+}
+
+
+export const teachingViewController = async (req : Request ,res : Response ,next : NextFunction) => {
+    let id = req.query.id;
+    const data = await teachingViewService(Number(id));
+    console.log('view json ',JSON.stringify(data))
+    return res.status(200).json(data);
+}
+
+export const teachingDownloadFiles = async (req : Request , res : Response , next  : NextFunction) => {
+   const id = req.query.id;
+   const abbr = req.query.abbr;
+   console.log('id ',id,abbr)
+
+    await teachingDownloadFileService(Number(id),String(abbr),req,res);
 }

@@ -31,6 +31,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "adm-zip": "^0.5.14",
     "aws-sdk": "^2.1652.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

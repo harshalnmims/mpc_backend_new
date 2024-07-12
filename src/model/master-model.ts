@@ -100,20 +100,6 @@ export const getExternalAuthors = async () => {
     }
  }
 
-
- export const getEditors = async () => {
-    const data = await sql` SELECT DISTINCT mid.id, mid.name
-            FROM master_input_data mid
-            INNER JOIN book_chapter_editors e ON mid.id = e.editor_lid
-            WHERE mid.active = true AND e.active = true;`;
-    return data.count > 0 ? {
-        status:200,
-        message:data
-    } : {
-        status:400,
-        message:'Failed To Fetch!'
-    }
- }
  export const getCampus = async () => {
     const data = await sql`select * from nmims_campus where active=TRUE`;
     return data.count > 0 ? {
@@ -136,23 +122,21 @@ export const getExternalAuthors = async () => {
     }
  }
 
-
- export const getExternalauthors = async() => {
-
-    const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
-    WHERE ft.abbr= 'int' AND f.active=TRUE AND ft.active=TRUE`;
- 
+ export const getEditors = async () => {
+    const data = await sql` SELECT DISTINCT mid.id, mid.name
+                            FROM master_input_data mid
+                            INNER JOIN master_inputs mi ON mid.input_type = mi.id
+                            WHERE mi.abbr='be' AND mid.active = true AND mi.active = true`;
     return data.count > 0 ? {
-       status:200,
-       message:data
-   } : {
-       status:400,
-       message:'Failed To Fetch!'
-   }
+        status:200,
+        message:data
+    } : {
+        status:400,
+        message:'Failed To Fetch!'
+    }
  }
 
-
- export const getMasterAllAuthors = async () => {
+  export const getMasterAllAuthors = async () => {
     const data = await sql` SELECT DISTINCT mid.id, mid.name
                             FROM master_input_data mid
                             INNER JOIN master_inputs mi ON mid.input_type = mi.id
@@ -165,3 +149,45 @@ export const getExternalAuthors = async () => {
         message:'Failed To Fetch!'
     }
  }
+
+  export const getMasterNmimsAuthors = async () => {
+    const data = await sql` SELECT DISTINCT mid.id, mid.name
+                            FROM master_input_data mid
+                            INNER JOIN master_inputs mi ON mid.input_type = mi.id
+                            WHERE mi.abbr='na' AND mid.active = true AND mi.active = true`;
+    return data.count > 0 ? {
+        status:200,
+        message:data
+    } : {
+        status:400,
+        message:'Failed To Fetch!'
+    }
+ } 
+
+
+ export const getExternalFaculty = async () => {
+    const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
+    WHERE ft.abbr= 'ext' AND f.active=TRUE AND ft.active=TRUE`;
+ 
+    return data.count > 0 ? {
+       status:200,
+       message:data
+   } : {
+       status:400,
+       message:'Failed To Fetch!'
+   }
+ }
+
+ export const getEnternalFaculty = async () => {
+    const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
+    WHERE ft.abbr= 'int' AND f.active=TRUE AND ft.active=TRUE`;
+ 
+    return data.count > 0 ? {
+       status:200,
+       message:data
+   } : {
+       status:400,
+       message:'Failed To Fetch!'
+   }
+ }
+

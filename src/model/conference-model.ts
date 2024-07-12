@@ -4,6 +4,7 @@ import { conferenceDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db'; 
 import { number } from 'zod';
+import confereRoutes from '$routes/research-routes/conference-routes';
 
 
 
@@ -97,3 +98,100 @@ export const deleteConferenceModel = async(conferenceId : number) => {
     }
 }
 
+export const getConferenceDocumentsAbbr = async() => {
+    const data = await sql`SELECT id,abbr FROM conference_documents_abbr WHERE active=TRUE`;
+    return data
+} 
+
+
+export const conferenceEditViewModel = async (conferenceId: number) => {
+    const data = await sql`
+             SELECT 
+                c.id AS conference_id,
+                c.paper_title,
+                c.conference_name,
+                c.place,
+                c.presenting_author,
+                c.proceeding_published,
+                c.conference_type,
+                c.issn_no,
+                c.doi_no,
+                c.publication_date,
+                c.amount,
+                c.sponsored,
+                c.organizing_body,
+                c.volume_no,
+                JSON_AGG(DISTINCT ca.author_lid) AS all_authors,
+                JSON_AGG(DISTINCT cc.campus_name) AS nmims_campus,
+                JSON_AGG(DISTINCT cs.school_name) AS nmims_school,
+                JSON_AGG(DISTINCT cd.document_name) AS conference_documents,
+                (SELECT 
+                    JSONB_AGG(row_to_json(faculty_data))
+                FROM (
+                    SELECT 
+                        f.id,
+                        f.faculty_name,
+                        ft.abbr
+                    FROM 
+                        conference_faculty cf
+                    INNER JOIN 
+                        faculties f
+                    ON 
+                        cf.faculty_lid = f.id
+                    INNER JOIN 
+                        faculty_type ft
+                    ON 
+                        f.faculty_type_lid = ft.id
+                    WHERE 
+                        cf.conference_lid = c.id
+                        AND cf.active = TRUE
+                        AND f.active = TRUE
+                ) AS faculty_data) AS faculty_details,
+
+                (SELECT 
+                    JSONB_AGG(row_to_json(author_data))
+                FROM (
+                    SELECT 
+                        mi.id,
+                        mi.name
+                    FROM 
+                        conference_all_authors caa
+                    INNER JOIN 
+                        master_input_data mi
+                    ON 
+                        caa.author_lid = mi.id
+                    WHERE 
+                        caa.conference_lid = c.id
+                        AND caa.active = TRUE
+                        AND mi.active = TRUE
+                ) AS author_data) AS all_authors,
+
+                (SELECT 
+                    JSONB_AGG(row_to_json(sponsor_data))
+                FROM (
+                    SELECT 
+                        s.id,
+                        s.name
+                    FROM 
+                        public.sponsored s
+                    WHERE 
+                        s.id = c.sponsored
+                ) AS sponsor_data) AS sponsor_details
+            FROM 
+                public.conference c
+            LEFT JOIN 
+                public.conference_all_authors ca ON ca.conference_lid = c.id AND ca.active = TRUE
+            LEFT JOIN 
+                public.conference_campus cc ON cc.conference_lid = c.id AND cc.active = TRUE
+            LEFT JOIN 
+                public.conference_school cs ON cs.conference_lid = c.id AND cs.active = TRUE
+            LEFT JOIN 
+                public.conference_documents cd ON cd.conference_lid = c.id AND cd.active = TRUE
+            WHERE 
+                c.id = ${conferenceId}
+                AND c.active = TRUE
+            GROUP BY 
+                c.id
+    `;
+    return data;
+}

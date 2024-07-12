@@ -23,8 +23,8 @@ export type Module = {
     type: any | null;
     description: any;
     link: any;
-    file: File[];
-    isChecked : boolean;
+    file ?: File[];
+    isPresent ?: boolean;
   } | null;
   
   export type DropdownValue = {

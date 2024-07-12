@@ -39,31 +39,6 @@ export const journalPaper = z.object({
 //   })
 });
 
-const teachingItemSchema = z.object({
-	input_type: z.string().min(1,{message:'Teaching Excellance Type Is Required'}),
-	description: z.string().min(1,{message:'Description Is Required'}),
-	link: z.string().min(1,{message:'Link Is Required'}),
-  });
-
-export const teachingItemsSchema = z.array(teachingItemSchema);
-
-const meetingItemSchema = z.object({
-	input_type: z.string().min(1,{message:'Teaching Excellance Type Is Required'}),
-	description: z.string().min(1,{message:'Description Is Required'}),
-	link: z.string().min(1,{message:'Link Is Required'}),
-  });
-
-export const meetingItemsSchema = z.array(meetingItemSchema);
-
-
-const brandingItemSchema = z.object({
-	input_type: z.string().min(1,{message:'Teaching Excellance Type Is Required'}),
-	description: z.string().min(1,{message:'Description Is Required'}),
-	link: z.string().min(1,{message:'Link Is Required'}),
-  });
-
-export const brandingItemsSchema = z.array(brandingItemSchema);
-
 
 export const bookPublication = z.object({
 	nmims_school : z.array(z.string()).min(1,{message:'School Is Required'}),
@@ -115,6 +90,34 @@ export const bookChapterPublication = z.object({
 })
 
 
+const teachingItemSchema = z.object({
+	input_type: z.string().min(1,{message:'Teaching Excellance Type Is Required'}),
+	description: z.string().min(1,{message:'Description Is Required'}),
+	link: z.string().min(1,{message:'Link Is Required'}),
+  });
+
+export const teachingItemsSchema = z.array(teachingItemSchema);
+
+const meetingItemSchema = z.object({
+	input_type: z.string().min(1,{message:'Teaching Excellance Type Is Required'}),
+	description: z.string().min(1,{message:'Description Is Required'}),
+	link: z.string().min(1,{message:'Link Is Required'}),
+  });
+
+export const meetingItemsSchema = z.array(meetingItemSchema);
+
+
+const brandingItemSchema = z.object({
+	input_type: z.string().min(1,{message:'Teaching Excellance Type Is Required'}),
+	description: z.string().min(1,{message:'Description Is Required'}),
+	link: z.string().min(1,{message:'Link Is Required'}),
+  });
+
+export const brandingItemsSchema = z.array(brandingItemSchema);
+
+
+
+
 const singleFileSchema = z.object({
 	fieldname: z.string(),
 	originalname: z.string(),
@@ -133,3 +136,30 @@ const singleFileSchema = z.object({
   
   export const filesArraySchema = z.array(singleFileSchema);
 
+
+
+
+
+export const conferencePublication = z.object({
+	nmims_school: z.array(z.string()).min(1, { message: 'School is required' }),
+	nmims_campus: z.array(z.string()).min(1, { message: 'Campus is required' }),
+	paper_title: z.string().min(1, { message: 'Title of the paper is required' }),
+	conference_name: z.string().min(1, { message: 'Name of conference is required' }),
+	all_authors: z.array(z.number()).min(1, { message: 'At least one author must be listed' }),
+	place: z.string().min(1, { message: 'Place of conference is required' }),
+	proceeding_published: z.boolean({ required_error: 'Proceedings published status is required' }),
+	conference_type: z.number().min(1, { message: 'Type of conference is required' }),
+	presenting_author: z.string().min(1, { message: 'Presenting author is required' }),
+	organizing_body: z.string().min(1, { message: 'Organizing body is required' }),
+	volume_no: z.string().optional(),
+	issn_no: z.string().optional(),
+	doi_no: z.string().min(1, { message: 'DOI number is required' }),
+	sponsored: z.number().min(1, { message: 'Sponsored by NMIMS/Other is required' }),
+	amount: z.string().min(1, { message: 'Amount spent in RS. by NMIMS is required' }),
+	publication_date: z.string().nullable().refine(date => date != null, { message: 'Publication date is required' }),
+	internal_authors: z.array(z.number()).optional(),
+	external_authors: z.array(z.number()).optional(),
+  }).refine(data => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {
+	message: 'At least one internal or external author must be present',
+	path: ['internal_authors'],
+  });

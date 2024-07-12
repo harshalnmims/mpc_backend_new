@@ -41,11 +41,11 @@ export const getBookDetailsPaginateModel = async({ page, limit, sort, order, sea
                   all_authors AS (
                      SELECT
                         bp.id AS book_id,
-                        JSON_AGG(DISTINCT f.faculty_name) AS all_authors
+                        JSON_AGG(DISTINCT mi.name) AS all_authors
                      FROM book_publication bp
                      INNER JOIN book_publication_all_authors bpaa ON bpaa.publication_lid = bp.id
-                     INNER JOIN faculties f ON f.id = bpaa.author_lid
-                     WHERE f.active = true AND bpaa.active = true AND bp.active = true
+                     INNER JOIN master_input_data mi ON mi.id = bpaa.author_lid
+                     WHERE mi.active = true AND bpaa.active = true AND bp.active = true
                      GROUP BY bp.id
                   )
                   SELECT 
@@ -60,7 +60,7 @@ export const getBookDetailsPaginateModel = async({ page, limit, sort, order, sea
                   FROM book_publication_details bpd
                   LEFT JOIN school_details sd ON sd.book_id = bpd.id
                   LEFT JOIN campus_details cd ON cd.book_id = bpd.id
-                  LEFT JOIN all_authors aa ON aa.book_id = bpd.id 
+                  LEFT JOIN all_authors aa ON aa.book_id = bpd.id 	 
                   `,
       filters: {
          // Add your filters here
@@ -164,34 +164,34 @@ export const bookPublicationEditViewModel = async(bookPublicationId : number) =>
         JSONB_AGG(row_to_json(author_data))
     FROM (
         SELECT 
-            f.id,
-            f.faculty_name
+            mi.id,
+            mi.name
         FROM 
             book_publication_all_authors bpaa
         INNER JOIN 
-            faculties f 
+            master_input_data mi
         ON 
-            bpaa.author_lid = f.id
+            bpaa.author_lid = mi.id
         WHERE 
             bpaa.publication_lid = bp.id
             AND bpaa.active = TRUE
-            AND f.active = TRUE
+            AND mi.active = TRUE
     ) AS author_data) AS all_authors,
     (SELECT JSONB_AGG(row_to_json(nmims_data))
     FROM (
         SELECT 
-            f.id,
-            f.faculty_name
+            mi.id,
+            mi.name
         FROM 
             book_publication_authors bpna
         INNER JOIN 
-            faculties f 
+            master_input_data mi 
         ON 
-            bpna.author_lid = f.id
+            bpna.author_lid = mi.id
         WHERE 
             bpna.publication_lid = bp.id
             AND bpna.active = TRUE
-            AND f.active = TRUE
+            AND mi.active = TRUE
     ) AS nmims_data) AS nmims_authors
 FROM 
     book_publication bp
@@ -232,27 +232,26 @@ export const bookPublicationFormviewModel = async(bookPublicationId : number) =>
 	bp.ACTIVE,
     COALESCE(JSON_AGG(DISTINCT bps.school_name), '[]'::json) AS nmims_school,
     COALESCE(JSON_AGG(DISTINCT bpc.campus_name), '[]'::json) AS nmims_campus,
-    COALESCE(JSON_AGG(DISTINCT fa.faculty_name), '[]'::json) AS all_authors,
-    COALESCE(JSON_AGG(DISTINCT fa.faculty_name) FILTER (WHERE bpa2.author_lid IS NOT NULL AND fa.active = TRUE), '[]'::json) AS nmims_authors,
+    COALESCE(JSON_AGG(DISTINCT md.name), '[]'::json) AS all_authors,
+    COALESCE(JSON_AGG(DISTINCT mi.name), '[]'::json) AS nmims_authors,
     COALESCE(JSON_AGG(DISTINCT bpd.filename), '[]'::json) AS supporting_documents
 FROM 
     book_publication bp
 LEFT JOIN book_publication_school bps ON bp.id = bps.publication_lid
 LEFT JOIN book_publication_campus bpc ON bp.id = bpc.publication_lid
 LEFT JOIN book_publication_all_authors bpa ON bp.id = bpa.publication_lid
-LEFT JOIN faculties fa ON fa.id = bpa.author_lid AND fa.active = TRUE
+LEFT JOIN master_input_data md ON md.id = bpa.author_lid AND md.active = TRUE
 LEFT JOIN book_publication_authors bpa2 ON bp.id = bpa2.publication_lid
+LEFT JOIN master_input_data mi ON mi.id = bpa2.author_lid AND mi.active = TRUE
 LEFT JOIN book_publication_documents bpd ON bp.id = bpd.publication_lid
 
 WHERE 	
-bp.ID = ${bookPublicationId}  AND bp.ACTIVE = true AND bpc.active = true AND fa.active = true AND bpa.active = true AND bpa2.active = true AND 
-bpd.active = true
+bp.ID = ${bookPublicationId} AND bp.ACTIVE = true AND bpc.active = true AND mi.active = true AND bpa.active = true AND bpa2.active = true AND 
+bpd.active = true AND md.active = true
 GROUP BY 
     bp.id, bp.title, bp.edition, bp.volume_no, bp.publisher, bp.publish_year,
     bp.publisher_category, bp.web_link, bp.isbn_no, bp.doi_no, bp.publication_place,
     bp.nmims_authors_count, bp.created_by, bp.modified_by;
-
-
 `;
 
    return data

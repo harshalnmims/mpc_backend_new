@@ -240,202 +240,6 @@ export const journalFiles = async (journalPaperId:number) => {
     return data;
 }
 
-// export const journalUpdateViewData = async (journalId : number) => {
-//    const data = await sql`SELECT 
-//     jpas.id AS journal_paper_id,
-//     jpas.journal_name,
-//     jpas.title,
-//     jpas.publish_year,
-//     jpas.total_authors,
-//     jpas.nmims_authors AS nmims_authors_count,
-//     jpas.uid,
-//     jpas.publisher,
-//     jpas.publishing_date,
-//     jpas.issn_no,
-//     jpas.scopus_site_score,
-//     jpas.gs_indexed,
-//     jpas.journal_type,
-//     jpas.ugc_indexed,
-//     jpas.scs_indexed,
-//     jpas.wos_indexed,
-//     jpas.page_no,
-//     jpas.foreign_authors_count,
-//     jpas.student_authors_count,
-//     jpas.impact_factor,
-//     jpas.doi_no,
-//     COALESCE(JSON_AGG(DISTINCT jps.school_name), '[]'::json) AS nmims_school,
-//     COALESCE(JSON_AGG(DISTINCT jpc.campus_name), '[]'::json) AS nmims_campus,
-//     COALESCE(
-//         (SELECT 
-//             JSONB_AGG(row_to_json(policy_data))
-//         FROM (
-//             SELECT 
-//                 pc.id,
-//                 pc.policy_name
-//             FROM 
-//                 journal_policy_cadre jpc
-//             INNER JOIN 
-//                 policy_cadre pc 
-//             ON 
-//                 jpc.policy_cadre_lid = pc.id
-//             WHERE 
-//                 jpc.journal_paper_lid = jpas.id
-//                 AND jpc.active = TRUE
-//                 AND pc.active = TRUE
-//         ) AS policy_data), 
-//         '[]'::jsonb
-//     ) AS policy_names,
-//     COALESCE(
-//         (SELECT 
-//             JSONB_AGG(row_to_json(author_data))
-//         FROM (
-//             SELECT 
-//                 f.id,
-//                 f.faculty_name
-//             FROM 
-//                 journal_all_authors jaa
-//             INNER JOIN 
-//                 faculties f 
-//             ON 
-//                 jaa.faculty_lid = f.id
-//             WHERE 
-//                 jaa.journal_paper_lid = jpas.id
-//                 AND jaa.active = TRUE
-//                 AND f.active = TRUE
-//         ) AS author_data), 
-//         '[]'::jsonb
-//     ) AS all_authors,
-//     COALESCE(
-//         (SELECT 
-//             JSONB_AGG(row_to_json(nmims_data))
-//         FROM (
-//             SELECT 
-//                 f.id,
-//                 f.faculty_name
-//             FROM 
-//                 journal_nmims_authors jna
-//             INNER JOIN 
-//                 faculties f 
-//             ON 
-//                 jna.faculty_lid = f.id
-//             WHERE 
-//                 jna.journal_paper_lid = jpas.id
-//                 AND jna.active = TRUE
-//                 AND f.active = TRUE
-//         ) AS nmims_data), 
-//         '[]'::jsonb
-//     ) AS nmims_authors,
-//     COALESCE(
-//         (SELECT 
-//             JSONB_AGG(row_to_json(foreign_data))
-//         FROM (
-//             SELECT 
-//                 ma.id,
-//                 ma.name
-//             FROM 
-//                 journal_foreign_authors jfa
-//             INNER JOIN 
-//                 master_input_data ma 
-//             ON 
-//                 jfa.author_lid = ma.id
-//             WHERE 
-//                 jfa.journal_paper_lid = jpas.id
-//                 AND jfa.active = TRUE
-//                 AND ma.active = TRUE
-//         ) AS foreign_data), 
-//         '[]'::jsonb
-//     ) AS foreign_authors,
-//     COALESCE(
-//         (SELECT 
-//             JSONB_AGG(row_to_json(student_data))
-//         FROM (
-//             SELECT 
-//                 ma.id,
-//                 ma.name
-//             FROM 
-//                 journal_student_authors jsa
-//             INNER JOIN 
-//                 master_input_data ma 
-//             ON 
-//                 jsa.author_lid = ma.id
-//             WHERE 
-//                 jsa.journal_paper_lid = jpas.id
-//                 AND jsa.active = TRUE
-//                 AND ma.active = TRUE
-//         ) AS student_data), 
-//         '[]'::jsonb
-//     ) AS student_authors,
-//     COALESCE(
-//         (SELECT 
-//             JSONB_AGG(row_to_json(other_data))
-//         FROM (
-//             SELECT 
-//                 ma.id,
-//                 ma.name
-//             FROM 
-//                 journal_other_authors joa
-//             INNER JOIN 
-//                 master_input_data ma 
-//             ON 
-//                 joa.author_lid = ma.id
-//             WHERE 
-//                 joa.journal_paper_lid = jpas.id
-//                 AND joa.active = TRUE
-//                 AND ma.active = TRUE
-//         ) AS other_data), 
-//         '[]'::jsonb
-//     ) AS other_authors,
-//     COALESCE(
-//         (SELECT 
-//             JSONB_AGG(row_to_json(abdc))
-//         FROM (
-//             SELECT 
-//                 at.id,
-//                 at.abdc_type
-//             FROM 
-//                 journal_paper_article jpa
-//             INNER JOIN 
-//                 abdc_types at 
-//             ON 
-//                 at.id = jpa.abdc_indexed
-//             WHERE 
-//                 jpa.id = jpas.id
-//                 AND jpa.active = TRUE
-//                 AND at.active = TRUE
-//         ) AS abdc), 
-//         '[]'::jsonb
-//     ) AS abdc_indexed,
-//     COALESCE(
-//         (SELECT 
-//             JSONB_AGG(row_to_json(paper))
-//         FROM (
-//             SELECT 
-//                 pt.id,
-//                 pt.paper_name
-//             FROM 
-//                 journal_paper_article jpa
-//             INNER JOIN 
-//                 paper_type pt 
-//             ON 
-//                 pt.id = jpa.paper_type
-//             WHERE 
-//                 jpa.id = jpas.id
-//                 AND jpa.active = TRUE
-//                 AND pt.active = TRUE
-//         ) AS paper), 
-//         '[]'::jsonb
-//     ) AS paper_type
-// FROM 
-//     journal_paper_article jpas
-//     INNER JOIN journal_paper_school jps ON jps.journal_paper_lid = jpas.id
-//     INNER JOIN journal_paper_campus jpc ON jpc.journal_paper_lid = jpas.id
-// WHERE 
-//     jpas.id = ${journalId} AND jpas.active=TRUE AND jpc.active = TRUE AND jps.active=TRUE
-// GROUP BY jpas.id
-// `
-//     return data;
-// }
-
 export const journalUpdateViewData = async (journalId : number) => {
    const data = await sql`SELECT 
     jpas.id AS journal_paper_id,
@@ -443,7 +247,7 @@ export const journalUpdateViewData = async (journalId : number) => {
     jpas.title,
     jpas.publish_year,
     jpas.total_authors,
-    jpas.nmims_authors,
+    jpas.nmims_authors AS nmims_authors_count,
     jpas.uid,
     jpas.publisher,
     jpas.publishing_date,
@@ -459,147 +263,175 @@ export const journalUpdateViewData = async (journalId : number) => {
     jpas.student_authors_count,
     jpas.impact_factor,
     jpas.doi_no,
-    (SELECT 
-        JSONB_AGG(row_to_json(policy_data))
-    FROM (
-        SELECT 
-            pc.id,
-            pc.policy_name
-        FROM 
-            journal_policy_cadre jpc
-        INNER JOIN 
-            policy_cadre pc 
-        ON 
-            jpc.policy_cadre_lid = pc.id
-        WHERE 
-            jpc.journal_paper_lid = jpas.id
-            AND jpc.active = TRUE
-            AND pc.active = TRUE
-    ) AS policy_data) AS policy_names,
-    
-    (SELECT 
-        JSONB_AGG(row_to_json(author_data))
-    FROM (
-        SELECT 
-            f.id,
-            f.faculty_name
-        FROM 
-            journal_all_authors jaa
-        INNER JOIN 
-            faculties f 
-        ON 
-            jaa.faculty_lid = f.id
-        WHERE 
-            jaa.journal_paper_lid = jpas.id
-            AND jaa.active = TRUE
-            AND f.active = TRUE
-    ) AS author_data) AS all_authors,
-	
-	(SELECT JSONB_AGG(row_to_json(nmims_data))
-    FROM (
-        SELECT 
-            f.id,
-            f.faculty_name
-        FROM 
-            journal_nmims_authors jna
-        INNER JOIN 
-            faculties f 
-        ON 
-            jna.faculty_lid = f.id
-        WHERE 
-            jna.journal_paper_lid = jpas.id
-            AND jna.active = TRUE
-            AND f.active = TRUE
-    ) AS nmims_data) AS nmims_authors,
-	
-	(SELECT JSONB_AGG(row_to_json(foreign_data))
-    FROM (
-        SELECT 
-            ma.id,
-            ma.name
-        FROM 
-            journal_foreign_authors jfa
-        INNER JOIN 
-            master_input_data ma 
-        ON 
-            jfa.author_lid = ma.id
-        WHERE 
-            jfa.journal_paper_lid = jpas.id
-            AND jfa.active = TRUE
-            AND ma.active = TRUE
-    ) AS foreign_data) AS foreign_authors,
-	
-	(SELECT JSONB_AGG(row_to_json(student_data))
-    FROM (
-        SELECT 
-            ma.id,
-            ma.name
-        FROM 
-            journal_student_authors jsa
-        INNER JOIN 
-            master_input_data ma 
-        ON 
-            jsa.author_lid = ma.id
-        WHERE 
-            jsa.journal_paper_lid = jpas.id
-            AND jsa.active = TRUE
-            AND ma.active = TRUE
-    ) AS student_data) AS student_authors,
-	
-	(SELECT JSONB_AGG(row_to_json(other_data))
-    FROM (
-        SELECT 
-            ma.id,
-            ma.name
-        FROM 
-            journal_other_authors joa
-        INNER JOIN 
-            master_input_data ma 
-        ON 
-            joa.author_lid = ma.id
-        WHERE 
-            joa.journal_paper_lid = jpas.id
-            AND joa.active = TRUE
-            AND ma.active = TRUE
-    ) AS other_data) AS other_authors,
-	
-	(SELECT JSONB_AGG(row_to_json(abdc))
-    FROM (
-        SELECT 
-            at.id,
-            at.abdc_type
-        FROM 
-            journal_paper_article jpa
-        INNER JOIN 
-            abdc_types at 
-        ON 
-            at.id = jpa.abdc_indexed
-        WHERE 
-            jpa.id = jpas.id
-            AND jpa.active = TRUE
-            AND at.active = TRUE
-    ) AS abdc) AS abdc_indexed,
-	
-	(SELECT JSONB_AGG(row_to_json(paper))
-    FROM (
-        SELECT 
-            pt.id,
-            pt.paper_name
-        FROM 
-            journal_paper_article jpa
-        INNER JOIN 
-            paper_type pt 
-        ON 
-            pt.id = jpa.paper_type
-        WHERE 
-            jpa.id = jpas.id
-            AND jpa.active = TRUE
-            AND pt.active = TRUE
-    ) AS paper) AS paper_type
-	
+    COALESCE(JSON_AGG(DISTINCT jps.school_name), '[]'::json) AS nmims_school,
+    COALESCE(JSON_AGG(DISTINCT jpc.campus_name), '[]'::json) AS nmims_campus,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(policy_data))
+        FROM (
+            SELECT 
+                pc.id,
+                pc.policy_name
+            FROM 
+                journal_policy_cadre jpc
+            INNER JOIN 
+                policy_cadre pc 
+            ON 
+                jpc.policy_cadre_lid = pc.id
+            WHERE 
+                jpc.journal_paper_lid = jpas.id
+                AND jpc.active = TRUE
+                AND pc.active = TRUE
+        ) AS policy_data), 
+        '[]'::jsonb
+    ) AS policy_names,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(author_data))
+        FROM (
+            SELECT 
+                f.id,
+                f.faculty_name
+            FROM 
+                journal_all_authors jaa
+            INNER JOIN 
+                faculties f 
+            ON 
+                jaa.faculty_lid = f.id
+            WHERE 
+                jaa.journal_paper_lid = jpas.id
+                AND jaa.active = TRUE
+                AND f.active = TRUE
+        ) AS author_data), 
+        '[]'::jsonb
+    ) AS all_authors,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(nmims_data))
+        FROM (
+            SELECT 
+                f.id,
+                f.faculty_name
+            FROM 
+                journal_nmims_authors jna
+            INNER JOIN 
+                faculties f 
+            ON 
+                jna.faculty_lid = f.id
+            WHERE 
+                jna.journal_paper_lid = jpas.id
+                AND jna.active = TRUE
+                AND f.active = TRUE
+        ) AS nmims_data), 
+        '[]'::jsonb
+    ) AS nmims_authors,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(foreign_data))
+        FROM (
+            SELECT 
+                ma.id,
+                ma.name
+            FROM 
+                journal_foreign_authors jfa
+            INNER JOIN 
+                master_input_data ma 
+            ON 
+                jfa.author_lid = ma.id
+            WHERE 
+                jfa.journal_paper_lid = jpas.id
+                AND jfa.active = TRUE
+                AND ma.active = TRUE
+        ) AS foreign_data), 
+        '[]'::jsonb
+    ) AS foreign_authors,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(student_data))
+        FROM (
+            SELECT 
+                ma.id,
+                ma.name
+            FROM 
+                journal_student_authors jsa
+            INNER JOIN 
+                master_input_data ma 
+            ON 
+                jsa.author_lid = ma.id
+            WHERE 
+                jsa.journal_paper_lid = jpas.id
+                AND jsa.active = TRUE
+                AND ma.active = TRUE
+        ) AS student_data), 
+        '[]'::jsonb
+    ) AS student_authors,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(other_data))
+        FROM (
+            SELECT 
+                ma.id,
+                ma.name
+            FROM 
+                journal_other_authors joa
+            INNER JOIN 
+                master_input_data ma 
+            ON 
+                joa.author_lid = ma.id
+            WHERE 
+                joa.journal_paper_lid = jpas.id
+                AND joa.active = TRUE
+                AND ma.active = TRUE
+        ) AS other_data), 
+        '[]'::jsonb
+    ) AS other_authors,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(abdc))
+        FROM (
+            SELECT 
+                at.id,
+                at.abdc_type
+            FROM 
+                journal_paper_article jpa
+            INNER JOIN 
+                abdc_types at 
+            ON 
+                at.id = jpa.abdc_indexed
+            WHERE 
+                jpa.id = jpas.id
+                AND jpa.active = TRUE
+                AND at.active = TRUE
+        ) AS abdc), 
+        '[]'::jsonb
+    ) AS abdc_indexed,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(paper))
+        FROM (
+            SELECT 
+                pt.id,
+                pt.paper_name
+            FROM 
+                journal_paper_article jpa
+            INNER JOIN 
+                paper_type pt 
+            ON 
+                pt.id = jpa.paper_type
+            WHERE 
+                jpa.id = jpas.id
+                AND jpa.active = TRUE
+                AND pt.active = TRUE
+        ) AS paper), 
+        '[]'::jsonb
+    ) AS paper_type
 FROM 
     journal_paper_article jpas
+    INNER JOIN journal_paper_school jps ON jps.journal_paper_lid = jpas.id
+    INNER JOIN journal_paper_campus jpc ON jpc.journal_paper_lid = jpas.id
 WHERE 
-    jpas.id = ${journalId} AND jpas.active=TRUE;`
+    jpas.id = ${journalId} AND jpas.active=TRUE AND jpc.active = TRUE AND jps.active=TRUE
+GROUP BY jpas.id
+`
     return data;
 }

@@ -83,3 +83,9 @@ export const getParticularInputs = async (type: string) => {
    const data = await sql`SELECT * FROM teaching_excellance_inputs WHERE abbr=${type}`;
    return data;
 }
+
+export const teachingFiles = async (teachingId: number,abbr:string) => {
+   const data = await sql`SELECT * FROM teaching_excellance_documents WHERE teaching_lid=${teachingId} AND input_lid IN (SELECT id FROM teaching_excellance_inputs 
+   WHERE abbr=${abbr} AND active = TRUE) AND active = TRUE`;
+   return data;
+}

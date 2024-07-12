@@ -1,6 +1,6 @@
 import {Request,Response,NextFunction} from 'express'
 import {getPaginateService,insertMeetingService,deleteMeetingService,updateViewService,
-    updateMeetingService
+    updateMeetingService,meetingViewService,meetingDownloadFileService
 } from '$service/research/meeting.service'
 import { validateWithZod } from '$middleware/validation.middleware';
 import { filesArraySchema, meetingItemsSchema } from '$validations/research.valid';
@@ -56,6 +56,13 @@ export const updateViewController = async (req : Request ,res : Response ,next :
     return res.status(200).json(data);
 }
 
+export const meetingViewController = async (req : Request ,res : Response ,next : NextFunction) => {
+    let id = req.query.id;
+    const data = await meetingViewService(Number(id));
+    console.log('view json ',JSON.stringify(data))
+    return res.status(200).json(data);
+}
+
 export const updateMeetingController = async (req : Request ,res : Response ,next : NextFunction) => {
     let data;
     let files = req.files;
@@ -72,4 +79,12 @@ export const updateMeetingController = async (req : Request ,res : Response ,nex
         
     return res.status(200).json(data); 
 
+}
+
+export const meetingDownloadFiles = async (req : Request , res : Response , next  : NextFunction) => {
+   const id = req.query.id;
+   const abbr = req.query.abbr;
+   console.log('id ',id,abbr)
+
+    await meetingDownloadFileService(Number(id),String(abbr),req,res);
 }
