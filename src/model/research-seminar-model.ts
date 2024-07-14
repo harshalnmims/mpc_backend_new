@@ -101,3 +101,137 @@ export const deleteResearchSeminarModel = async (seminarId : number) => {
         message:'Failed To Delete !'
     }
 }
+
+export const researchSeminarViewModel = async (seminarId : number) => {
+    const data = await sql`SELECT
+    r.id,
+    r.journal_name,
+    r.topic,
+    COALESCE(NULLIF(r.resource_person, ''), 'No Data Filled!') AS resource_person,
+    r.paper_title,
+    r.uid,
+    r.publisher,
+    r.publication_date,
+    r.research_date,
+    COALESCE(NULLIF(r.issn_no, ''), 'No Data Filled!') AS issn_no,
+    COALESCE(NULLIF(r.scopus_site_score, ''), 'No Data Filled!') AS scopus_site_score,
+    COALESCE(NULLIF(r.gs_indexed, ''), 'No Data Filled!') AS gs_indexed,
+    r.publisher_category,
+    r.ugc_indexed,
+    COALESCE(NULLIF(r.scs_indexed, ''), 'No Data Filled!') AS scs_indexed,
+    r.wos_indexed,
+    COALESCE(NULLIF(r.volume_no, ''), 'No Data Filled!') AS volume_no,
+    r.impact_factor,
+    COALESCE(r.doi_no, 'No Data Filled!') AS doi_no,
+    CASE 
+        WHEN r.abdc_indexed IS NULL THEN 'No Data Filled!'
+        ELSE at.abdc_type
+    END AS abdc_indexed,
+    COALESCE(JSON_AGG(DISTINCT rss.school_name) FILTER (WHERE rss.school_name IS NOT NULL), '[]') AS nmims_school,
+    COALESCE(JSON_AGG(DISTINCT rsc.campus_name) FILTER (WHERE rsc.campus_name IS NOT NULL), '[]') AS nmims_campus,
+    COALESCE(JSON_AGG(DISTINCT mi.name) FILTER (WHERE mi.name IS NOT NULL), '[]') AS nmims_authors,
+    COALESCE(JSON_AGG(DISTINCT rsd.filename) FILTER (WHERE rsd.filename IS NOT NULL), '[]'::json) AS filename
+FROM
+    research_seminar r
+LEFT JOIN
+    research_seminar_authors rs ON rs.research_seminar_lid = r.id
+LEFT JOIN
+    master_input_data mi ON mi.id = rs.author_lid
+LEFT JOIN
+    research_seminar_school rss ON rss.research_seminar_lid = r.id 
+LEFT JOIN 
+    research_seminar_campus rsc ON rsc.research_seminar_lid = r.id 
+LEFT JOIN
+    research_seminar_documents rsd ON rsd.research_seminar_lid = r.id 
+LEFT JOIN
+    abdc_types at ON r.abdc_indexed = at.id 
+WHERE 
+    r.id =  ${seminarId} AND r.active = TRUE AND mi.active = TRUE AND rss.active = TRUE AND rsc.active = TRUE AND rsd.active = TRUE
+GROUP BY 
+    r.id, r.journal_name, r.topic, r.resource_person, r.paper_title, r.uid, r.publisher, r.publication_date, r.research_date, 
+    r.issn_no, r.scopus_site_score, r.gs_indexed, r.publisher_category, r.ugc_indexed, r.scs_indexed, r.wos_indexed, 
+    r.volume_no, r.impact_factor, r.doi_no, r.abdc_indexed,
+	at.abdc_type`;
+    return data;
+}
+
+export const researchSeminarUpdViewModel = async (seminarId : number) => {
+    const data = await sql`SELECT 
+    r.id,
+    r.journal_name,
+    r.paper_title,
+	r.topic,
+	r.resource_person,
+    r.uid,
+    r.publisher,
+    r.publication_date,
+	r.research_date,
+    r.issn_no,
+    r.scopus_site_score,
+    r.gs_indexed,
+    r.publisher_category,
+    r.ugc_indexed,
+    r.scs_indexed,
+    r.wos_indexed,
+    r.volume_no,
+    r.impact_factor,
+    r.doi_no,
+    COALESCE(JSON_AGG(DISTINCT rs.school_name), '[]'::json) AS nmims_school,
+    COALESCE(JSON_AGG(DISTINCT rc.campus_name), '[]'::json) AS nmims_campus,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(nmims_data))
+        FROM (
+            SELECT 
+                mi.id,
+                mi.name
+            FROM 
+                research_seminar_authors rsa
+            INNER JOIN 
+                master_input_data mi
+            ON 
+                mi.id= rsa.author_lid
+            WHERE 
+                rsa.research_seminar_lid = r.id
+                AND rsa.active = TRUE
+                AND r.active = TRUE
+        ) AS nmims_data), 
+        '[]'::jsonb
+    ) AS nmims_authors,
+    COALESCE(
+        (SELECT 
+            JSONB_AGG(row_to_json(abdc))
+        FROM (
+            SELECT 
+                at.id,
+                at.abdc_type
+            FROM 
+                research_seminar rss
+            INNER JOIN 
+                abdc_types at 
+            ON 
+                at.id = rss.abdc_indexed
+            WHERE 
+                rss.id = r.id
+			    AND rss.abdc_indexed IS NOT NULL  
+                AND rss.active = TRUE
+                AND at.active = TRUE
+        ) AS abdc), 
+        '[]'::jsonb
+    ) AS abdc_indexed
+    
+FROM 
+    research_seminar r
+    INNER JOIN research_seminar_school rs ON rs.research_seminar_lid = r.id
+    INNER JOIN research_seminar_campus rc ON rc.research_seminar_lid = r.id
+WHERE 
+    r.id = ${seminarId} AND r.active=TRUE AND rs.active = TRUE AND rc.active=TRUE
+GROUP BY r.id
+`;
+    return data;
+}
+
+export const seminarFiles = async (seminarId : number) => {
+    const data = await sql`SELECT * FROM research_seminar_documents WHERE research_seminar_lid = ${seminarId} AND active = TRUE`;
+    return data;
+}

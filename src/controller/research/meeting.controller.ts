@@ -66,8 +66,8 @@ export const meetingViewController = async (req : Request ,res : Response ,next 
 export const updateMeetingController = async (req : Request ,res : Response ,next : NextFunction) => {
     let data;
     let files = req.files;
-    let meeting_json = JSON.parse(req.body.meeting_stakeholders);
-    let meetingId = JSON.parse(req.body.meetingId);
+    let meeting_json = JSON.parse(req.body.json_data);
+    let meetingId = JSON.parse(req.body.row_id);
     // console.log('request upsert json ',JSON.stringify(req.body.teachingId));
 
     let result = validateWithZod(meetingItemsSchema,meeting_json);

@@ -64,8 +64,8 @@ export const brandingViewController = async (req : Request ,res : Response ,next
 export const updateBrandingController = async(req : Request ,res : Response ,next : NextFunction) => {
     let data;
     let files = req.files;
-    let branding_json = JSON.parse(req.body.branding_advertisement);
-    let brandingId = JSON.parse(req.body.brandingId);
+    let branding_json = JSON.parse(req.body.json_data);
+    let brandingId = JSON.parse(req.body.row_id);
 
     let result = validateWithZod(brandingItemsSchema,branding_json);
     let fileResult = validateWithZod(filesArraySchema, files);

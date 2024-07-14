@@ -15,6 +15,8 @@ import brandingRoutes from './research-routes/branding.routes'
 import meetingRoutes from './research-routes/meeting.routes'
 import caseStudyRoutes from './research-routes/case-study-routes';
 import researchSeminarRoutes from './research-routes/research-seminar-routes';
+import eContentRouter from './research-routes/e-content-routes';
+import researchAwardRoutes from './research-routes/research-award-routes';
 
 //ankit
 
@@ -35,6 +37,8 @@ router.use('/',teachingRoutes);
 router.use('/',meetingRoutes);
 router.use('/',brandingRoutes);
 router.use('/',caseStudyRoutes);
-router.use('/',researchSeminarRoutes)
+router.use('/',researchSeminarRoutes);
+router.use('/',eContentRouter);
+router.use('/',researchAwardRoutes);
 
 export default router; 

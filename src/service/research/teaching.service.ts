@@ -133,7 +133,9 @@ export const updateViewService = async (teachingId : number) => {
   }
 
   console.log('modules ',modules)
-  return {teachingId : teachingId ,teaching_inputs : dropdownData , teaching_data: modules , type_abbr : 'te'};
+  // return {teachingId : teachingId ,teaching_inputs : dropdownData , teaching_data: modules , type_abbr : 'te'};
+  return {teachingId : teachingId ,dropdown_data : dropdownData , input_data: modules , type_abbr : 'te'};
+
 
 }
 

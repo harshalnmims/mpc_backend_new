@@ -1,8 +1,11 @@
 import { getLogger } from '$config/logger-context';
+import { validateWithZod } from '$middleware/validation.middleware';
 import {
     getResearchAwardService, insertResearchAwardService, updateResearchAwardService, 
-    deleteResearchAwardService
+    deleteResearchAwardService,researchAwardPaginateService,researchAwardRenderService,
+    researchAwardViewService
    } from '$service/research/research-award-service';
+import { filesArraySchema, researchAwardDataObj } from '$validations/research.valid';
 import { Request, Response, NextFunction } from 'express';
 
 export const getResearchAward = async (req: Request, res: Response, next: NextFunction) => {
@@ -30,15 +33,43 @@ export const getResearchAward = async (req: Request, res: Response, next: NextFu
     return res.status(200).json(data);
 }
 
-export const insertResearchAwardForm = async(req : Request, res : Response, next : NextFunction) => {
+export const researchAwardPaginateController = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE GET RESEARCH AWARD CONTROLLER');
+    logger.info('INSIDE GET PATENT SUBMISSION AND GRANT CONTROLLER');
+ 
+    const {
+       page = 1,
+       limit = 10,
+       sort = '',
+       order = 'desc',
+       search = '',
+       ...filters
+    } = { ...req.body, ...req.params, ...req.query };
+ 
+    const data = await researchAwardPaginateService({
+       page,
+       limit,
+       search,
+       sort,
+       order,
+       filters,
+    });
+ 
+    return res.status(200).json(data);
+}
 
-    const researchAwardData = {...req.body};
+export const insertResearchAwardForm = async(req : Request, res : Response, next : NextFunction) => {
+    
 
-    const data = await insertResearchAwardService(researchAwardData);
+    let researchAwardData = JSON.parse(req.body.research_award);
+    let data;
+    let documents = req.files;
 
-    console.log(' data response in case of insert controller ===>>>>', data);
+    let result = validateWithZod(researchAwardDataObj,researchAwardData);
+    let fileResult = validateWithZod(filesArraySchema, documents);
+    if(fileResult.success && result.success){
+     data = await insertResearchAwardService(researchAwardData,documents);
+    }
     return res.status(200).json(data)
 
 };
@@ -57,15 +88,25 @@ export const updateResearchAwardForm = async(req : Request, res : Response, next
 };
 
 export const deleteResearchAwardForm = async (req : Request, res : Response, next : NextFunction) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET RESEARCH AWARD CONTROLLER');
+   
+    const awardId = req.query.id;
+    const data = await deleteResearchAwardService(Number(awardId));
 
-    const researchAwardData = {...req.body};
-    const awardId = researchAwardData.research_award_id;
+    return res.status(200).json(data)
 
-    const data = await deleteResearchAwardService(awardId);
+}
 
-    console.log(' data response in case of insert controller ===>>>>', data);
+export const researchAwardRenderController = async (req : Request, res : Response, next : NextFunction) => {
+   
+    const data = await researchAwardRenderService();
+    return res.status(200).json(data)
+
+}
+
+export const researchAwardViewController = async (req : Request, res : Response, next : NextFunction) => {
+   
+    let id = req.query.id;
+    const data = await researchAwardViewService(Number(id));
     return res.status(200).json(data)
 
 }

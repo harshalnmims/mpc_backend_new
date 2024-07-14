@@ -1,8 +1,11 @@
 import { getLogger } from '$config/logger-context';
+import { validateWithZod } from '$middleware/validation.middleware';
 import {
     getResearchSeminarService, insertResearchSeminarService, updateResearchSeminarService,
-    deleteResearchSeminalService,ResearchSeminarPaginateService
+    deleteResearchSeminalService,ResearchSeminarPaginateService,researchSeminarRenderService,
+    researchSeminarViewService,researchSeminarUpdateViewService,researchSeminarDownloadFileService
    } from '$service/research/research-seminar-service';
+import { filesArraySchema, researchSeminarObj } from '$validations/research.valid';
 import { Request, Response, NextFunction } from 'express';
 
 export const getResearchSeminar = async (req: Request, res: Response, next: NextFunction) => {
@@ -54,26 +57,34 @@ export const researchSeminarPaginate = async (req: Request, res: Response, next:
 };
 
 export const insertResearchSeminarForm = async(req : Request, res : Response, next : NextFunction) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET RESEARCH AWARD CONTROLLER');
+    let researchSeminarDetails = JSON.parse(req.body.research_seminar);
+    let data;
+    let documents = req.files;
 
-    const researchSeminarData = {...req.body};
+    let result = validateWithZod(researchSeminarObj,researchSeminarDetails);
+    let fileResult = validateWithZod(filesArraySchema, documents);
 
-    const data = await insertResearchSeminarService(researchSeminarData);
-
-    console.log(' data response in case of insert controller ===>>>>', data);
-    return res.status(200).json(data)
+    if(fileResult.success && result.success){
+     data = await insertResearchSeminarService(researchSeminarDetails,documents);
+    }
+    return res.status(200).json(data);
 
 };
 
 
 export const updateResearchSeminarForm = async(req : Request, res : Response, next : NextFunction) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET RESEARCH SEMINAR CONTROLLER');
+    
+    let researchSeminarDetails = JSON.parse(req.body.research_seminar);
+    let seminarId = JSON.parse(req.body.research_seminar_id);
+    let data;
+    let documents = req.files;
 
-    const updateResearchSeminarData = {...req.body};
+    let result = validateWithZod(researchSeminarObj,researchSeminarDetails);
+    let fileResult = validateWithZod(filesArraySchema, documents);
 
-    const data = await updateResearchSeminarService(updateResearchSeminarData);
+    if(fileResult.success && result.success){
+     data = await updateResearchSeminarService(researchSeminarDetails,documents,Number(seminarId));
+    }
 
     console.log(' data response in case of insert controller ===>>>>', data);
     return res.status(200).json(data)
@@ -81,14 +92,34 @@ export const updateResearchSeminarForm = async(req : Request, res : Response, ne
 };
 
 export const deleteResearchSeminarForm = async(req : Request, res : Response, next : NextFunction) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET RESEARCH SEMINAR CONTROLLER Update');
 
-    const researchSeminarData = {...req.body};
-    const seminarId = researchSeminarData.research_seminar_id;
+    const seminarId = req.query.id;
 
-    const data = await deleteResearchSeminalService(seminarId);
-
-    console.log(' data response in case of delete controller ===>>>>', data);
+    const data = await deleteResearchSeminalService(Number(seminarId));
     return res.status(200).json(data)
+}
+
+export const researchSeminarRenderController  = async(req : Request, res : Response, next : NextFunction) => {
+   
+    const data = await researchSeminarRenderService();
+    return res.status(200).json(data)
+}
+
+export const researchSeminarViewController = async(req : Request, res : Response, next : NextFunction) => {
+    let id = req.query.id;
+    const data = await researchSeminarViewService(Number(id));
+    return res.status(200).json(data)
+}
+
+export const researchSeminarUpdateViewCtrl  = async(req : Request, res : Response, next : NextFunction) => {
+    let id = req.query.id;
+    const data = await researchSeminarUpdateViewService(Number(id));
+    return res.status(200).json(data)
+}
+
+export const researchSeminarFilesCtrl = async(req : Request, res : Response, next : NextFunction) => {
+    const id = req.query.id;
+   console.log('id ',id)
+
+    await researchSeminarDownloadFileService(Number(id),req,res);
 }

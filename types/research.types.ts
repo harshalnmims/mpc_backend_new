@@ -205,7 +205,7 @@ export type IPRDetails = {
 }
 
 export type EContent = {
-   eContentId: number;
+   eContentId ?: number;
    faculty_name: string;
    module: string;
    module_platform: string;
@@ -218,6 +218,7 @@ export type EContent = {
 
 
 export type researchAwardDetails = {
+   research_award_id ?: number;
    award_name: string;
    award_details: string;
    award_date: string;
@@ -225,11 +226,12 @@ export type researchAwardDetails = {
    award_place: string;
    award_category: number;
    faculty_name: string;
-   supporting_documents: string[];
+   supporting_documents: SupportingDocument;
 
 };
 
 export type seminarDetails = {
+   research_seminar_id ?: number;
    topic: string;
    resource_person: string;
    paper_title: string;
@@ -250,7 +252,7 @@ export type seminarDetails = {
    impact_factor: string;
    nmims_school: string[];
    nmims_campus: string[];
-   supporting_documents: string[];
+   supporting_documents ?: SupportingDocument;
    abdc_indexed: number;
    nmims_authors: number[];
 }

@@ -50,8 +50,8 @@ export const insertTeachingController = async (req : Request ,res : Response ,ne
 export const updateTeachingController = async (req : Request ,res : Response ,next : NextFunction) => {
     let data;
     let files = req.files;
-    let teaching_json = JSON.parse(req.body.teaching_excellance);
-    let teachingId = JSON.parse(req.body.teachingId);
+    let teaching_json = JSON.parse(req.body.json_data);
+    let teachingId = JSON.parse(req.body.row_id);
     // console.log('request upsert json ',JSON.stringify(req.body.teachingId));
 
     let result = validateWithZod(teachingItemsSchema,teaching_json);
