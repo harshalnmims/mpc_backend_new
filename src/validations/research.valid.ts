@@ -163,3 +163,27 @@ export const conferencePublication = z.object({
 	message: 'At least one internal or external author must be present',
 	path: ['internal_authors'],
   });
+
+
+
+  export const iprDetails = z.object({
+	nmims_school: z.array(z.string()).min(1, { message: 'School Is Required' }),
+	nmims_campus: z.array(z.string()).min(1, { message: 'Campus Is Required' }),
+	invention_type: z.number().min(1, {message:'Invention type is required'}).refine(data => data != 0,'Invention type is required'),
+	sdg_goals: z.array(z.number()).min(1, { message: 'Sustainable Development Goals is required' }),
+	patent_status: 	z.number().min(1, {message:'Patent Status is required'}).refine(data => data != 0,'Patent Status is required'),
+	title: z.string().min(1, 'Title of Patent / Invention is required'),
+	appln_no: z.number().min(1, 'Patent/Invention Application Number'),
+	filed_date: z.string().refine(date => date !== '1970-01-01', { message: 'Patent Filed Date is required' }),
+	grant_date: z.string().refine(date => date !== '1970-01-01', { message: 'Patent Grant Date is required' }).optional(),
+	published_date: z.string().refine(date => date !== '1970-01-01', { message: 'Patent/Invention Published Date is required' }).optional(),
+	publication_no: z.number().optional(),
+	granted_no: z.number().optional(),
+	institue_affiliation: z.string().min(1, 'Institute Affiliation is required'),
+	applicant_names:  z.array(z.number()).min(1, { message: 'Applicants Names' }),
+	internal_authors: z.array(z.number()).optional(),
+	external_authors: z.array(z.number()).optional(),
+}).refine(data => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {
+	message: 'At least one internal or external author must be present',
+	path: ['internal_authors'],
+});

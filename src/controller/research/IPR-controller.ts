@@ -1,6 +1,6 @@
 import {iprPaginateService, insertIPRService, updateIPRService, deleteIPRService,
 
-    iprRenderService
+    iprRenderService, iprEditViewService
 
  } from '$service/research/IPR-service';
 
@@ -11,6 +11,7 @@ import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
 
 import { filesArraySchema } from '$validations/research.valid';
+import { iprDetails } from '$validations/research.valid';
 
 import AWS from 'aws-sdk';
 
@@ -22,10 +23,6 @@ import { AwsData } from 'types/base.types';
 
 
 export const iprPaginate =  async (req : Request,res : Response , next : NextFunction) => {
-
-   
-
-    
 
     const {
 
@@ -75,14 +72,7 @@ export const iprPaginate =  async (req : Request,res : Response , next : NextFun
   } 
 
 
-
-
-
-
 export const iprRenderData = async (req : Request , res : Response , next  : NextFunction) => {
-
-
-
 
     const data = await iprRenderService();
 
@@ -99,22 +89,35 @@ export const insertIpr = async (req: Request, res: Response, next: NextFunction)
 
     const logger = getLogger();
 
-    logger.info('INSIDE INSERT IPR');
+    let iprData = JSON.parse(req.body.ipr_data);
+    console.log('iprData ankit ===>>>>>', iprData)
+    let data;
+    let files = req.files;
+    console.log('files ===>>>>>', files);
+    let result = validateWithZod(iprDetails,iprData);
+    let fileResult = validateWithZod(filesArraySchema, files);
+    console.log('result ===>>>>>>', result);
+    if(result.success && fileResult.success){
+        data = await insertIPRService(iprData, files);
+    }
 
 
-
-
-    const IPRDetails = { ...req.body};
-
-     const data = await insertIPRService(IPRDetails);
-
- 
 
      return res.status(200).json(data);
 
 }
 
 
+export const iprEditViewForm = async(req: Request, res: Response, next: NextFunction) => {
+    const logger = getLogger();
+    const id =  req.query.id;
+    const iprId = Number(id);
+
+    const data = await iprEditViewService(iprId);
+
+    console.log('data response in controller ====>>>>', data)
+    return res.status(200).json(data);
+  }
 
 
 export const updateIPR = async (req: Request, res: Response, next: NextFunction) => {

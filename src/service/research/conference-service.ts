@@ -1,6 +1,6 @@
 import { getLogger } from '$config/logger-context';
 import {getConferenceModel, insertConferenceModel, updateConferencemodels, deleteConferenceModel,
-    getConferenceDocumentsAbbr  , conferenceEditViewModel
+    getConferenceDocumentsAbbr  , conferenceEditViewModel, conferenceViewModel, conferenceFilesModel
  } from '$model/conference-model';
  import { paginationDefaultType } from 'types/db.default';
 import {uploadMultiFile} from '$middleware/fileupload.middleware';
@@ -9,6 +9,9 @@ import {renderModal,getNmimsAuthors,getMasterAllAuthors,
    getExternalFaculty
 } from '$model/master-model';
 import exp from 'constants';
+import { downloadFile } from '$middleware/fileupload.middleware';
+import { Request,Response } from 'express';
+
 
 import { conferenceDetails} from 'types/research.types';
 import { number } from 'zod';
@@ -120,9 +123,19 @@ export const updateConferenceService = async(conferenceId: number, updateConfere
 }
 
 
+export const viewConferenceService = async(conferenceId : number) => {
+    const logger = getLogger();
+    console.log('conferenceId in service ====>>>>>', conferenceId);
+ 
+    const data = await conferenceViewModel(conferenceId);
+ 
+    return data
+
+} 
+
+
 export const deleteConferenceService = async(conferenceId : number) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
     console.log('conferenceId in service ====>>>>>', conferenceId);
  
     const data = await deleteConferenceModel(conferenceId);
@@ -130,3 +143,16 @@ export const deleteConferenceService = async(conferenceId : number) => {
     return data
 
 }
+
+
+export const downloadconferenceFilesServicve = async (conferenceId : number, abbr:string, req:Request,res:Response) => {
+    const logger = getLogger();
+    console.log('conferenceId in model  ===>>>', conferenceId)
+    console.log('abbr in model ===>>>', abbr)
+
+ 
+    const data = await conferenceFilesModel(conferenceId, abbr);
+ 
+    let files : string[] = data.map(dt => dt.document_name); 
+    await downloadFile(files, req,res);
+  }

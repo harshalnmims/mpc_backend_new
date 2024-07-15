@@ -157,7 +157,6 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
 
 
 
-
     return data;
 
 };
@@ -185,6 +184,101 @@ export const insertIPRModel = async (iprDetails: IPRDetails) => {
 
 
 
+
+export const iprEditViewModel = async (iprId : number) => {
+    const data = await sql`SELECT                        
+                    ipr.id AS ipr_id,
+                    ipr.title,
+                    ipr.appln_no,
+                    ipr.grant_date,
+                    ipr.published_date,
+                    ipr.publication_no,
+                    ipr.granted_no,
+                    ipr.institute_affiliation,
+                    ipr.invention_type,
+                    ipr.patent_status,
+                    COALESCE(JSON_AGG(DISTINCT ips.school_name), '[]'::json) AS nmims_school,
+                    COALESCE(JSON_AGG(DISTINCT ipc.campus_name), '[]'::json) AS nmims_campus,
+                    COALESCE(JSON_AGG(DISTINCT ipd.filename), '[]'::json) AS supporting_documents,
+                    COALESCE(
+                        (SELECT 
+                            JSONB_AGG(row_to_json(faculty_data))
+                        FROM (
+                            SELECT 
+                                f.id,
+                                f.faculty_name,
+                                ft.abbr
+                            FROM 
+                                ipr_faculty ipf
+                            INNER JOIN 
+                                faculties f
+                            ON 
+                                ipf.faculty_lid = f.id
+                            INNER JOIN 
+                                faculty_type ft
+                            ON 
+                                f.faculty_type_lid = ft.id
+                            WHERE 
+                                ipf.ipr_lid = ipr.id
+                                AND ipf.active = TRUE
+                                AND f.active = TRUE
+                        ) AS faculty_data), 
+                        '[]'::jsonb
+                    ) AS faculty_details,
+                    COALESCE(
+                        (SELECT 
+                            JSONB_AGG(row_to_json(sdg_goals_data))
+                        FROM (
+                            SELECT 
+                                sg.id,
+                                sg.goals_name
+                            FROM 
+                                ipr_sdg_goals isg
+                            INNER JOIN 
+                                sdg_goals sg 
+                            ON 
+                                isg.goals_lid = sg.id
+                            WHERE 
+                                isg.ipr_lid = ipr.id
+                                AND isg.active = TRUE
+                                AND sg.active = TRUE
+                        ) AS sdg_goals_data), 
+                        '[]'::jsonb
+                    ) AS sdg_goals,
+                    COALESCE(
+                        (SELECT 
+                            JSONB_AGG(row_to_json(applicant_data))
+                        FROM (
+                            SELECT 
+                                ma.id,
+                                ma.name
+                            FROM 
+                                ipr_applicants ipra
+                            INNER JOIN 
+                                master_input_data ma 
+                            ON 
+                                ipra.applicant_lid = ma.id
+                            WHERE 
+                                ipra.ipr_lid = ipr.id
+                                AND ipra.active = TRUE
+                                AND ma.active = TRUE
+                        ) AS applicant_data), 
+                        '[]'::jsonb
+                    ) AS applicant_names
+                FROM 
+                    ipr
+                INNER JOIN ipr_school ips ON ips.ipr_lid = ipr.id
+                INNER JOIN ipr_campus ipc ON ipc.ipr_lid = ipr.id
+                LEFT JOIN ipr_documents ipd ON ipd.ipr_lid = ipr.id
+                WHERE 
+                    ipr.id = ${iprId}
+                    AND ips.active = TRUE 
+                    AND ipc.active = TRUE 
+                GROUP BY 
+                    ipr.id
+ `
+     return data;
+ }
 
 export const updateIPRModel = async (updateIprDetails: IPRDetails) => {
 

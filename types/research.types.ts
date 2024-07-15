@@ -187,7 +187,9 @@ export type journalArticleDetails = {
 
 
 
-export type IPRDetails = {   
+export type IPRDetails = {
+   internal_authors: any;
+   external_authors: any;   
    ipr_id:number;
    title: string;
    appln_no: number
@@ -203,8 +205,8 @@ export type IPRDetails = {
    applicant_names :number[];
    nmims_school : string[];
    nmims_campus:string[];  
-   inventors_id: number[];
-   supporting_documents:string[];
+   faculty_id: number[];
+   supporting_documents ?: SupportingDocument ;
 }
 
 export type EContent = {

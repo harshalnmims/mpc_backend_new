@@ -1,5 +1,5 @@
 import { getConference, insertConferenceForm, updateConferenceForm, deleteConferenceForm, renderConferenceLists,
-    conferenceEditFrom
+    conferenceEditFrom, viewConferenceForm, downloadConferenceFiles
 } from '$controller/research/conference-controller'
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
@@ -16,9 +16,8 @@ confereRoutes.get('/conference-render', asyncErrorHandler(renderConferenceLists)
 confereRoutes.post('/conference-insert', upload.any(), asyncErrorHandler(insertConferenceForm));
 confereRoutes.get('/conference-edit-view-form', asyncErrorHandler(conferenceEditFrom));
 confereRoutes.post('/conference-update', upload.any(),asyncErrorHandler(updateConferenceForm));
+confereRoutes.get('/conference-view-form', asyncErrorHandler(viewConferenceForm));
+confereRoutes.get('/conference-download-files', asyncErrorHandler(downloadConferenceFiles));
 confereRoutes.post('/conference-delete', asyncErrorHandler(deleteConferenceForm));
-
-
-
 
 export default confereRoutes;

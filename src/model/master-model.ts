@@ -261,3 +261,18 @@ export const getExternalAuthors = async () => {
     }
 
  } 
+
+
+ export const getApplicantNames = async () => {
+    const data = await sql` SELECT DISTINCT mid.id, mid.name
+                            FROM master_input_data mid
+                            INNER JOIN master_inputs mi ON mid.input_type = mi.id
+                            WHERE mi.abbr='ipr' AND mid.active = true AND mi.active = true`;
+    return data.count > 0 ? {
+        status:200,
+        message:data
+    } : {
+        status:400,
+        message:'Failed To Fetch!'
+    }
+ }

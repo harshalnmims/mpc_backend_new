@@ -1,6 +1,8 @@
 import { getLogger } from '$config/logger-context';
 
-import { insertIPRModel, updateIPRModel, deleteIPRModel, iprPaginateModel } from '$model/ipr-model';
+import { insertIPRModel, updateIPRModel, deleteIPRModel, iprPaginateModel,
+   iprEditViewModel
+ } from '$model/ipr-model';
 
 import { IPRDetails }  from 'types/research.types';
 
@@ -10,7 +12,7 @@ import { IPRDetails }  from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 
 import { getSchool,getCampus,getEnternalFaculty, 
-	getExternalFaculty, getSdgGoals, getInventionType, getPatentStatus
+	getExternalFaculty, getSdgGoals, getInventionType, getPatentStatus, getApplicantNames
 
 } from '$model/master-model';
 
@@ -84,10 +86,6 @@ export const iprPaginateService = async ({
 
     const logger = getLogger();
 
-    
-
- 
-
     const externalAuthors = await getExternalFaculty();
 
     const internalAuthors = await getEnternalFaculty();
@@ -101,12 +99,13 @@ export const iprPaginateService = async ({
     const inventionType = await getInventionType();
 
     const sdgGoals = await getSdgGoals();
+    const applicantNames = await getApplicantNames();
 
     
 
     return {
 
-       school,campus, externalAuthors, internalAuthors, status, inventionType, sdgGoals
+       school,campus, externalAuthors, internalAuthors, status, inventionType, sdgGoals, applicantNames
 
     };
 
@@ -118,14 +117,17 @@ export const iprPaginateService = async ({
 
 
 
-
-export const insertIPRService = async (iprDetails: IPRDetails) => {
-
+export const insertIPRService = async (iprDetails: IPRDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
     const logger = getLogger();
 
-    logger.info('INSIDE IPR  SERVICES');
+    let uploadDocuments = await uploadFile(documents);
+    iprDetails.supporting_documents = uploadDocuments;
+    iprDetails.faculty_id = [...iprDetails.internal_authors, ...iprDetails.external_authors];
+    delete iprDetails.internal_authors;
+    delete iprDetails.external_authors;
 
- 
+    console.log('iprDetails data in service ===>>>>>>', iprDetails);
+
 
     const data = await insertIPRModel(iprDetails);
 
@@ -135,6 +137,34 @@ export const insertIPRService = async (iprDetails: IPRDetails) => {
 
 }
 
+
+export const iprEditViewService = async(iprId : number) => {
+   const logger = getLogger();
+
+   const iprdata = await iprEditViewModel(iprId);
+   const externalAuthors = await getExternalFaculty();
+
+   const internalAuthors = await getEnternalFaculty();
+
+   const school = await getSchool();
+
+   const campus = await getCampus();
+
+   const status = await getPatentStatus();
+
+   const inventionType = await getInventionType();
+
+   const sdgGoals = await getSdgGoals();
+   const applicantNames = await getApplicantNames();
+
+   
+
+   return {
+
+      iprdata, school,campus, externalAuthors, internalAuthors, status, inventionType, sdgGoals, applicantNames
+
+   };
+}
 export const updateIPRService = async (iprDetails: IPRDetails) => {
 
     const logger = getLogger();

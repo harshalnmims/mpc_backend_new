@@ -1,6 +1,6 @@
 import { getLogger } from '$config/logger-context';
 import {getConferenceService, renderConferenceListsService, insertConferenceService, updateConferenceService, deleteConferenceService,
-    conferenceEditViewService
+    conferenceEditViewService, viewConferenceService, downloadconferenceFilesServicve
    } from '$service/research/conference-service'
 import exp from 'constants';
 import { Request, Response, NextFunction } from 'express';
@@ -106,8 +106,8 @@ export const deleteConferenceForm = async (req: Request, res: Response, next: Ne
     const logger = getLogger();
     logger.info('INSIDE updateConferenceForm CONTROLLER');
 
-    const conferenceData = { ...req.body};
-    const conferenceId = conferenceData.conference_id;
+    const id =  req.query.id;
+    const conferenceId = Number(id);
 
     const data = await deleteConferenceService(conferenceId);
 
@@ -116,3 +116,32 @@ export const deleteConferenceForm = async (req: Request, res: Response, next: Ne
     return res.status(200).json(data);
 
 }
+
+export const viewConferenceForm = async (req: Request, res: Response, next: NextFunction) => {
+    const logger = getLogger();
+
+    const id =  req.query.id;
+    const conferenceId = Number(id);
+
+    const data = await viewConferenceService(conferenceId);
+
+    console.log('data response conference update  controller  ====>>>>>>', data);
+ 
+    return res.status(200).json(data);
+
+}
+
+
+export const downloadConferenceFiles = async (req : Request , res : Response , next  : NextFunction) => {
+
+    const id =  req.query.id;
+    const conferenceId = Number(id);
+    console.log('conferenceId ===>>>>>', conferenceId);
+    const abbr = req.query.abbr;
+    console.log('abbr ===>>>>>', abbr);
+    
+    const data = await downloadconferenceFilesServicve(Number(id),String(abbr),req,res)
+    return data
+ 
+ 
+  }
