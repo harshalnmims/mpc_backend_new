@@ -170,7 +170,10 @@ export const journalViewData = async (journalpaperId:number) => {
     jpa.student_authors_count,
     jpa.impact_factor,
     jpa.doi_no,
-    jpa.abdc_indexed,
+    CASE 
+        WHEN jpa.abdc_indexed IS NULL THEN 'No Data Filled!'
+        ELSE at.abdc_type
+    END AS abdc_indexed,
     pt.paper_name,
     at.abdc_type,
     COALESCE(JSON_AGG(DISTINCT jns.school_name), '[]'::json) AS nmims_school,
@@ -220,17 +223,7 @@ LEFT JOIN
 WHERE
     jpa.id = ${journalpaperId} AND jpa.active = TRUE
     AND jpc.active = TRUE
-    AND jsa.active = TRUE
-    AND joa.active = TRUE
-    AND jfa.active = TRUE
-    AND jna.active = TRUE
-    AND jaa.active = TRUE
-    AND pt.active = TRUE
-    AND jnc.active = TRUE
-    AND jns.active = TRUE
-    AND at.active = TRUE 
-GROUP BY
-    jpa.id, pt.paper_name, at.abdc_type
+GROUP BY jpa.id,pt.paper_name,at.abdc_type
 `;
    return data;
 }

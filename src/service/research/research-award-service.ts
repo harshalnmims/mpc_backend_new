@@ -1,12 +1,12 @@
 import { getLogger } from '$config/logger-context';
-import { uploadFile } from '$middleware/fileupload.middleware';
+import { downloadFile, uploadFile } from '$middleware/fileupload.middleware';
 import { getCampus, getSchool } from '$model/master-model';
 import { getResearchAwardModel, insertResearchAwardModel, updateResearchAwardModel, 
-    deleteResearchAwardModel,researchAwardPaginateModel,researchAwardViewModel
+    deleteResearchAwardModel,researchAwardPaginateModel,researchAwardViewModel,researchAwardUpdateViewModel,awardFiles
  } from '$model/research-award-model';
 import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
-
+import {Request,Response} from 'express'
 import { researchAwardDetails} from 'types/research.types';
 import { number } from 'zod'; 
 
@@ -64,13 +64,17 @@ export const insertResearchAwardService = async (researchAwardData : researchAwa
     return data;
  };
 
-export const updateResearchAwardService = async (updateResearchAwardData : researchAwardDetails) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET RESEARCH PROJECT  SERVICES');
-    console.log('updateResearchAwardData in service ====>>>>>', updateResearchAwardData);
- 
-    const data = await updateResearchAwardModel(updateResearchAwardData);
- 
+export const updateResearchAwardService = async (updateResearchAwardData : researchAwardDetails,documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,researchAwardId:number) => {
+    
+    let uploadDocuments = await uploadFile(documents);
+    if(uploadDocuments.length > 0){
+    updateResearchAwardData.supporting_documents  = uploadDocuments.map(data =>  data);
+   }else{
+     updateResearchAwardData.supporting_documents  = uploadDocuments.map(data =>  data);
+   } 
+   updateResearchAwardData.research_award_id = researchAwardId;
+   const data = await updateResearchAwardModel(updateResearchAwardData);
+
     return data;
  };
 
@@ -94,4 +98,19 @@ export const researchAwardViewService = async (awardId : number) => {
     
    const data = await researchAwardViewModel(awardId)
    return data;
+}
+
+export const researchAwardUpdViewService = async (awardId : number) => {
+    
+   const researchAwardData = await researchAwardUpdateViewModel(awardId)
+   const nmims_school = await getSchool();
+   const nmims_campus = await getCampus();
+   return {researchAwardData,nmims_school,nmims_campus};
+}
+
+export const researchAwardDownloadFileService = async (awardId : number,req:Request,res:Response) => {
+    
+  const data = await awardFiles(awardId);
+  let files : string[] = data.map((dt => dt.document_name)); 
+  await downloadFile(files, req,res);
 }

@@ -82,7 +82,6 @@ export const insertResearchAwardModel = async(researchAwardData : researchAwardD
 } 
 
 export const updateResearchAwardModel = async(updateResearchAwardData : researchAwardDetails) => {
-    console.log('updateResearchAwardData ===>>>>>', updateResearchAwardData)
     
     const data = await sql`SELECT * FROM upsert_research_award(${JSON.parse(JSON.stringify(updateResearchAwardData))}, '1');`;
     return data;
@@ -130,3 +129,32 @@ export const researchAwardViewModel = async(awardId : number) => {
 
 
 }
+
+export const researchAwardUpdateViewModel = async(awardId : number) => {
+    console.log('awardId in  models  ====>>>>>>', awardId);
+    
+    const data = await sql`SELECT 
+                    r.id,
+                    COALESCE(r.faculty_name, 'No Data') AS faculty_name,
+                    COALESCE(r.award_name, 'No Data') AS award_name,
+                    COALESCE(r.award_details, 'No Data') AS award_details,
+                    COALESCE(r.award_place, 'No Data') AS award_place,
+                    COALESCE(r.award_organization, 'No Data') AS award_organization,
+					r.award_category,
+				    COALESCE(r.award_date, NULL) AS award_date,
+					COALESCE(JSON_AGG(DISTINCT rs.school_name), '[]'::json) AS nmims_school,
+					COALESCE(JSON_AGG(DISTINCT rc.campus_name), '[]'::json) AS nmims_campus
+                FROM research_award r
+				INNER JOIN research_award_school rs ON rs.research_award_lid = r.id
+				INNER JOIN research_award_campus rc ON rc.research_award_lid = r.id
+                WHERE r.active = TRUE  AND rc.active = TRUE AND  r.id = ${awardId}
+                GROUP BY r.id`;
+    return data
+
+
+}
+
+export const awardFiles = async (awardId : number) => {
+    const data = await sql`SELECT * FROM research_award_documents WHERE research_award_lid=${awardId}`;
+    return data;
+} 
