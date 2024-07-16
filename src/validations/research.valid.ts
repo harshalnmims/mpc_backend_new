@@ -198,7 +198,7 @@ export const eContentObj =  z.object({
 	module_platform: z.string().min(1,{message:'Module platform is required'}),
 	document_link: z.string().min(1, {message:'Link for document and facility available is required'}),
 	facility_list: z.string().min(1, {message:'Link for development facility available is required'}),
-	media_link: z.string().min(1, {message:'Link to vieos for media centre is required'}),
+	media_link: z.string().min(1, {message:'Link to videos for media centre is required'}),
 	launching_date: z.string().refine(date => {
         return date !== '1970-01-01' && date !== '';
     }, {
