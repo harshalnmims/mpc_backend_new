@@ -1,50 +1,135 @@
 import { getLogger } from '$config/logger-context';
-import { getpatentSubmission, insertPatentSubmissionModel, updatePatentSubmissionModel, 
-    deletePatentSubmissionModel
+import { getPatentSubmissionModel, insertPatentSubmissionModel, updatePatentSubmissionModel, 
+    deletePatentSubmissionModel, patentEditViewModel
  } from '$model/patent-submission-model';
 import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
 
+import {getEnternalFaculty, 
+	getExternalFaculty, getSdgGoals, getInventionType, getPatentStatus
+
+} from '$model/master-model';
+
 import { patentDetails} from 'types/research.types';
 import { number } from 'zod';
 
-export const getBookPatentService = async ({
-    page,
-    limit,
-    sort,
-    order,
-    search,
-    ...filters
- }: paginationDefaultType) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
- 
-    const data = await getpatentSubmission({
-       page,
-       limit,
-       sort,
-       order,
-       search,
-       ...filters,
-    });
- 
-    return data;
- };
+import {uploadFile} from '$middleware/fileupload.middleware'
 
- export const insertPatentSubmissionService = async (patentData : patentDetails) => {
+import { Request,Response } from 'express';
+
+import { downloadFile } from '$middleware/fileupload.middleware';
+
+import { string } from 'zod';
+
+export const getBookPatentService = async ({
+      page,
+      limit,
+      sort,
+      order,
+      search,
+      ...filters
+
+}: paginationDefaultType) => {
+
+   const logger = getLogger();
+
+   logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
+
+
+
+   const data = await getPatentSubmissionModel({
+      page,
+      limit,
+      sort,
+      order,
+      search,
+
+      ...filters,
+
+   });
+
+
+
+   return data;
+
+}; 
+
+
+export const PatentRenderService = async () => {
+
+   const logger = getLogger();
+
+   const externalAuthors = await getExternalFaculty();
+
+   const internalAuthors = await getEnternalFaculty();
+
+   const status = await getPatentStatus();
+
+   const inventionType = await getInventionType();
+
+   const sdgGoals = await getSdgGoals();
+
+   
+
+   return {
+
+       externalAuthors, internalAuthors, status, inventionType, sdgGoals
+
+   };
+
+ }
+
+ export const insertPatentSubmissionService = async (patentData : patentDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
     const logger = getLogger();
-    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
-    console.log('patentData in service ====>>>>>', patentData);
+    let uploadDocuments = await uploadFile(documents);
+    patentData.supporting_documents = uploadDocuments;
+    patentData.faculty_id = [...patentData.internal_authors, ...patentData.external_authors];
+    delete patentData.internal_authors;
+    delete patentData.external_authors;
+
+    console.log('patentData data in service ===>>>>>>', patentData);
  
     const data = await insertPatentSubmissionModel(patentData);
  
     return data;
- }
+ } 
 
-export const updatePatentSubmissionService = async (updatePatentData : patentDetails) => {
+
+ export const patentEditViewService = async(patentId : number) => {
+   const logger = getLogger();
+
+   const patentDataList = await patentEditViewModel(patentId);
+   const externalAuthors = await getExternalFaculty();
+
+   const internalAuthors = await getEnternalFaculty();
+
+
+   const status = await getPatentStatus();
+
+   const inventionType = await getInventionType();
+
+   const sdgGoals = await getSdgGoals();
+
+   
+
+   return {
+
+      patentDataList, externalAuthors, internalAuthors, status, inventionType, sdgGoals
+
+   };
+}
+
+// patentId, updatePatentData, files
+export const updatePatentSubmissionService = async (patentId : number,updatePatentData : patentDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined)=> {
     const logger = getLogger();
-    logger.info('INSIDE GET  PATENT SUBMISSION');
-    console.log('patentData in service ====>>>>>', updatePatentData);
+    let uploadDocuments = await uploadFile(documents);
+    updatePatentData.supporting_documents = uploadDocuments;
+    updatePatentData.faculty_id = [...updatePatentData.internal_authors, ...updatePatentData.external_authors];
+    delete updatePatentData.internal_authors;
+    delete updatePatentData.external_authors;
+    updatePatentData.ipr_id = patentId;
+
+    console.log('details for update data ===>>>>', updatePatentData);
  
     const data = await updatePatentSubmissionModel(updatePatentData);
  

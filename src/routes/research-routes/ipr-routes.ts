@@ -1,4 +1,6 @@
-import {iprPaginate, insertIpr, updateIPR, deleteIPR, iprRenderData, iprEditViewForm } from '$controller/research/IPR-controller'
+import {iprPaginate, insertIpr, updateIPR, deleteIPR, iprRenderData, iprEditViewForm ,
+    viewIprForm, downloadIprFiles
+} from '$controller/research/IPR-controller'
 
 import { asyncErrorHandler } from '$middleware/error.middleware';
 
@@ -26,9 +28,13 @@ iprRoutes.get('/ipr-edit-view', asyncErrorHandler(iprEditViewForm));
 
 iprRoutes.post('/ipr-insert',upload.array("supporting_documents"), asyncErrorHandler(insertIpr));
 
-iprRoutes.post('/update-ipr', asyncErrorHandler(updateIPR));
+iprRoutes.post('/ipr-update', upload.array("supporting_documents"),asyncErrorHandler(updateIPR));
 
-iprRoutes.post('/delete-ipr', asyncErrorHandler(deleteIPR));
+iprRoutes.get('/ipr-form-view', asyncErrorHandler(viewIprForm));
+
+iprRoutes.get('/ipr-download-files', asyncErrorHandler(downloadIprFiles));
+
+iprRoutes.post('/ipr-delete', asyncErrorHandler(deleteIPR));
 
 
 

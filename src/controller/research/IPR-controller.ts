@@ -1,6 +1,6 @@
 import {iprPaginateService, insertIPRService, updateIPRService, deleteIPRService,
 
-    iprRenderService, iprEditViewService
+    iprRenderService, iprEditViewService, viewIprService, iprDownloadFilesService
 
  } from '$service/research/IPR-service';
 
@@ -124,40 +124,48 @@ export const updateIPR = async (req: Request, res: Response, next: NextFunction)
 
     const logger = getLogger();
 
-    logger.info('INSIDE UPDATE IPR');
+    let iprData = JSON.parse(req.body.update_ipr_data);
+    let iprId = JSON.parse(req.body.ipr_id);
+    console.log('iprData ankit ===>>>>>', iprData);
+    console.log('iprId  ===>>>>>', iprId)
+    let data;
+    let files = req.files;
+    console.log('files ===>>>>>', files);
+    let result = validateWithZod(iprDetails,iprData);
+    let fileResult = validateWithZod(filesArraySchema, files);
+    console.log('result ===>>>>>>', result);
+    if(result.success && fileResult.success){
+        data = await updateIPRService(iprId, iprData, files);
+    }
 
-
-
-
-    const IPRDetails = { ...req.body};
-
-    const data = await updateIPRService(IPRDetails);
-
-
-
+    console.log('data responce in controller ===>>>>', data)
 
     return res.status(200).json(data);
 
 }
 
 
+export const viewIprForm = async (req: Request, res: Response, next: NextFunction) => {
 
+    const logger = getLogger();
+
+    const id =  req.query.id;
+    const iprId = Number(id);
+    console.log('iprId ===>>>>', iprId)
+    const data = await viewIprService(iprId);
+
+    console.log('data respoinse in controller ===>>>>>', data);
+
+    return res.status(200).json(data);
+
+}
 
 export const deleteIPR = async (req: Request, res: Response, next: NextFunction) => {
 
     const logger = getLogger();
-
-    logger.info('INSIDE DELETE IPR');
-
-
-
-
-    const iprDetails = { ...req.body};
-
-    const iprId = iprDetails.ipr_id;
-
-
-
+    const id =  req.query.id;
+    const iprId = Number(id);
+    console.log('iprId ===>>>>', iprId)
 
     const data = await deleteIPRService(iprId);
 
@@ -166,3 +174,12 @@ export const deleteIPR = async (req: Request, res: Response, next: NextFunction)
     return res.status(200).json(data);
 
 }
+
+export const downloadIprFiles = async (req : Request , res : Response , next  : NextFunction) => {
+
+    const iprId = req.query.id;
+    console.log('iprId ',iprId)
+ 
+     await iprDownloadFilesService(Number(iprId), req, res);
+ 
+  }

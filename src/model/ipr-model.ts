@@ -23,9 +23,6 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
 
     console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
 
-
-
-
     const data = await paginationQueryBuilder<Session>({
 
         baseQuery: `WITH ipr_details AS (
@@ -190,13 +187,16 @@ export const iprEditViewModel = async (iprId : number) => {
                     ipr.id AS ipr_id,
                     ipr.title,
                     ipr.appln_no,
+                    ipr.filed_date,
                     ipr.grant_date,
                     ipr.published_date,
                     ipr.publication_no,
                     ipr.granted_no,
                     ipr.institute_affiliation,
-                    ipr.invention_type,
-                    ipr.patent_status,
+                    ipr.invention_type AS invention_id,
+                    ipr.patent_status  AS status_id,
+                    ivt.invention_type,
+                    ps.patent_status,
                     COALESCE(JSON_AGG(DISTINCT ips.school_name), '[]'::json) AS nmims_school,
                     COALESCE(JSON_AGG(DISTINCT ipc.campus_name), '[]'::json) AS nmims_campus,
                     COALESCE(JSON_AGG(DISTINCT ipd.filename), '[]'::json) AS supporting_documents,
@@ -270,13 +270,16 @@ export const iprEditViewModel = async (iprId : number) => {
                 INNER JOIN ipr_school ips ON ips.ipr_lid = ipr.id
                 INNER JOIN ipr_campus ipc ON ipc.ipr_lid = ipr.id
                 LEFT JOIN ipr_documents ipd ON ipd.ipr_lid = ipr.id
+                INNER JOIN invention_type ivt ON ivt.id = ipr.invention_type AND ivt.active = TRUE
+                INNER JOIN patent_status ps ON ps.id = ipr.patent_status AND ps.active = TRUE
                 WHERE 
-                    ipr.id = ${iprId}
+                    ipr.id = ${iprId} 
                     AND ips.active = TRUE 
                     AND ipc.active = TRUE 
                 GROUP BY 
-                    ipr.id
- `
+                    ipr.id,
+                    ivt.invention_type,
+                    ps.patent_status`
      return data;
  }
 
@@ -289,6 +292,67 @@ export const updateIPRModel = async (updateIprDetails: IPRDetails) => {
 }
 
 
+export const viewIprModel = async (iprId: number) => {
+
+    const data = await sql`SELECT                        
+            ipr.id AS ipr_id,
+            ipr.title,
+            ipr.appln_no,
+            ipr.filed_date,
+            ipr.grant_date,
+            ipr.published_date,
+            ipr.publication_no,
+            ipr.granted_no,
+            ipr.institute_affiliation,
+            ipr.invention_type AS invention_id,
+            ipr.patent_status  AS status_id,
+            ivt.invention_type,
+            ps.patent_status,
+            COALESCE(JSON_AGG(DISTINCT ips.school_name) FILTER (WHERE ips.active = TRUE), '[]'::json) AS nmims_school,
+            COALESCE(JSON_AGG(DISTINCT ipc.campus_name) FILTER (WHERE ipc.active = TRUE), '[]'::json) AS nmims_campus,
+            COALESCE(JSON_AGG(DISTINCT ipd.filename) FILTER (WHERE ipd.active = TRUE), '[]'::json) AS supporting_documents,
+            COALESCE(
+                JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'int'), 
+                '[]'::json
+            ) AS internal_faculty_details,
+            COALESCE(
+                JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'ext'), 
+                '[]'::json
+            ) AS external_faculty_details,
+            COALESCE(
+                JSON_AGG(DISTINCT sg.goals_name) FILTER (WHERE isg.active = TRUE AND sg.active = TRUE), 
+                '[]'::json
+            ) AS sdg_goals,
+            COALESCE(
+                JSON_AGG(DISTINCT ma.name) FILTER (WHERE ipra.active = TRUE AND ma.active = TRUE), 
+                '[]'::json
+            ) AS applicants_names
+        FROM 
+            ipr
+        INNER JOIN ipr_school ips ON ips.ipr_lid = ipr.id
+        INNER JOIN ipr_campus ipc ON ipc.ipr_lid = ipr.id
+        LEFT JOIN ipr_documents ipd ON ipd.ipr_lid = ipr.id
+        INNER JOIN invention_type ivt ON ivt.id = ipr.invention_type AND ivt.active = TRUE
+        INNER JOIN patent_status ps ON ps.id = ipr.patent_status AND ps.active = TRUE
+        LEFT JOIN ipr_faculty ipf ON ipf.ipr_lid = ipr.id AND ipf.active = TRUE
+        LEFT JOIN faculties f ON ipf.faculty_lid = f.id AND f.active = TRUE
+        LEFT JOIN faculty_type ft ON f.faculty_type_lid = ft.id
+        LEFT JOIN ipr_sdg_goals isg ON isg.ipr_lid = ipr.id AND isg.active = TRUE
+        LEFT JOIN sdg_goals sg ON isg.goals_lid = sg.id AND sg.active = TRUE
+        LEFT JOIN ipr_applicants ipra ON ipra.ipr_lid = ipr.id AND ipra.active = TRUE
+        LEFT JOIN master_input_data ma ON ipra.applicant_lid = ma.id AND ma.active = TRUE
+        WHERE 
+            ipr.id = ${iprId}
+            AND ips.active = TRUE 
+            AND ipc.active = TRUE 
+        GROUP BY 
+            ipr.id,
+            ivt.invention_type,
+            ps.patent_status`
+     return data;
+
+}
+
 
 
 export const deleteIPRModel = async (iprId: number) => {
@@ -297,4 +361,9 @@ export const deleteIPRModel = async (iprId: number) => {
 
     return data;
 
-}
+} 
+
+export const downloadIprFilesModel = async (iprId: number) => {
+    const data = await sql`SELECT * FROM ipr_documents WHERE ipr_lid = ${iprId} AND active=TRUE`;
+    return data;
+ }

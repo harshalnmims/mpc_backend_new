@@ -13,6 +13,7 @@ import indexRoutes from './research-routes/index'
 import teachingRoutes from './research-routes/teachig-excellance-routes';
 import brandingRoutes from './research-routes/branding.routes'
 import meetingRoutes from './research-routes/meeting.routes'
+import patentRoutes from './research-routes/patent-submission-routes';
 
 //ankit
 
@@ -34,6 +35,7 @@ router.use('/',indexRoutes);
 router.use('/',teachingRoutes);
 router.use('/',meetingRoutes);
 router.use('/',brandingRoutes);
+router.use('/', patentRoutes);
 
 
 export default router; 

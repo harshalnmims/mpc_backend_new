@@ -153,6 +153,8 @@ export type journalArticleDetails = {
  }
 
  export type patentDetails = {
+   [x: string]: any;
+   patent_id?:number;
    title: string;
    appln_no: number;
    publication_date: number;
@@ -160,8 +162,7 @@ export type journalArticleDetails = {
    invention_type: number[];
    faculty_id: number[];
    sdg_goals: number[];
-   supporting_documents: string[];
- } 
+   supporting_documents ?: SupportingDocument ; } 
 
 
  export type researchProjectDetails = { 
@@ -188,9 +189,9 @@ export type journalArticleDetails = {
 
 
 export type IPRDetails = {
+   ipr_id?:number;
    internal_authors: any;
    external_authors: any;   
-   ipr_id:number;
    title: string;
    appln_no: number
    filed_date:string;

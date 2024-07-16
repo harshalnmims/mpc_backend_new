@@ -1,7 +1,7 @@
 import { getLogger } from '$config/logger-context';
 
 import { insertIPRModel, updateIPRModel, deleteIPRModel, iprPaginateModel,
-   iprEditViewModel
+   iprEditViewModel, viewIprModel, downloadIprFilesModel
  } from '$model/ipr-model';
 
 import { IPRDetails }  from 'types/research.types';
@@ -23,11 +23,6 @@ import { Request,Response } from 'express';
 import { downloadFile } from '$middleware/fileupload.middleware';
 
 import { string } from 'zod';
-
-
-
-
-
 
 
 
@@ -79,9 +74,6 @@ export const iprPaginateService = async ({
 
 
 
-
-
-
  export const iprRenderService = async () => {
 
     const logger = getLogger();
@@ -111,10 +103,6 @@ export const iprPaginateService = async ({
 
   }
 
- 
-
-
-
 
 
 export const insertIPRService = async (iprDetails: IPRDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
@@ -141,7 +129,7 @@ export const insertIPRService = async (iprDetails: IPRDetails, documents: { [fie
 export const iprEditViewService = async(iprId : number) => {
    const logger = getLogger();
 
-   const iprdata = await iprEditViewModel(iprId);
+   const iprDataList = await iprEditViewModel(iprId);
    const externalAuthors = await getExternalFaculty();
 
    const internalAuthors = await getEnternalFaculty();
@@ -161,15 +149,22 @@ export const iprEditViewService = async(iprId : number) => {
 
    return {
 
-      iprdata, school,campus, externalAuthors, internalAuthors, status, inventionType, sdgGoals, applicantNames
+      iprDataList, school,campus, externalAuthors, internalAuthors, status, inventionType, sdgGoals, applicantNames
 
    };
 }
-export const updateIPRService = async (iprDetails: IPRDetails) => {
+export const updateIPRService = async (iprId:number, iprDetails: IPRDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined)  => {
 
     const logger = getLogger();
 
-    logger.info('UPDATE IPR SERVICES');
+    let uploadDocuments = await uploadFile(documents);
+    iprDetails.supporting_documents = uploadDocuments;
+    iprDetails.faculty_id = [...iprDetails.internal_authors, ...iprDetails.external_authors];
+    delete iprDetails.internal_authors;
+    delete iprDetails.external_authors;
+    iprDetails.ipr_id = iprId;
+
+    console.log('details for update ipr data ===>>>>', iprDetails);
 
     const data = await updateIPRModel(iprDetails);
 
@@ -180,14 +175,29 @@ export const updateIPRService = async (iprDetails: IPRDetails) => {
 
 }
 
+export const viewIprService = async (iprId: number) => {
+
+   const logger = getLogger();
+
+   const data = await viewIprModel(iprId);
+
+   return data;
+
+}
+
 export const deleteIPRService = async (iprId: number) => {
 
     const logger = getLogger();
-
-    logger.info('DELETE IPR SERVICES');
-
     const data = await deleteIPRModel(iprId);
 
     return data;
 
-}
+} 
+
+export const iprDownloadFilesService = async (iprId : number,req:Request,res:Response) => {
+
+   const data = await downloadIprFilesModel(iprId);
+
+   let files : string[] = data.map(dt => dt.document_name); 
+   await downloadFile(files, req,res);
+ }
