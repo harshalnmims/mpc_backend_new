@@ -1,6 +1,6 @@
 import { getLogger } from '$config/logger-context';
 import { getPatentSubmissionModel, insertPatentSubmissionModel, updatePatentSubmissionModel, 
-    deletePatentSubmissionModel, patentEditViewModel
+    deletePatentSubmissionModel, patentEditViewModel, viewPatentModel, downloadPatentFilesModel
  } from '$model/patent-submission-model';
 import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
@@ -119,7 +119,6 @@ export const PatentRenderService = async () => {
    };
 }
 
-// patentId, updatePatentData, files
 export const updatePatentSubmissionService = async (patentId : number,updatePatentData : patentDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined)=> {
     const logger = getLogger();
     let uploadDocuments = await uploadFile(documents);
@@ -127,7 +126,7 @@ export const updatePatentSubmissionService = async (patentId : number,updatePate
     updatePatentData.faculty_id = [...updatePatentData.internal_authors, ...updatePatentData.external_authors];
     delete updatePatentData.internal_authors;
     delete updatePatentData.external_authors;
-    updatePatentData.ipr_id = patentId;
+    updatePatentData.patent_id = patentId;
 
     console.log('details for update data ===>>>>', updatePatentData);
  
@@ -137,9 +136,20 @@ export const updatePatentSubmissionService = async (patentId : number,updatePate
 }
 
 
+
+export const viewPatentService = async (patentId: number) => {
+
+   const logger = getLogger();
+
+   const data = await viewPatentModel(patentId);
+
+   return data;
+
+}
+
+
 export const deletePatentSubmissionService = async(patentId : number) => {
     const logger = getLogger();
-    logger.info('INSIDE GET  PATENT SUBMISSION');
     console.log('patentId in service ====>>>>>', patentId);
  
     const data = await deletePatentSubmissionModel(patentId);
@@ -147,5 +157,15 @@ export const deletePatentSubmissionService = async(patentId : number) => {
     return data;
 
 };
+
+
+
+export const patentDownloadFilesService = async (patentId : number,req:Request,res:Response) => {
+
+   const data = await downloadPatentFilesModel(patentId);
+
+   let files : string[] = data.map(dt => dt.document_name); 
+   await downloadFile(files, req,res);
+ }
 
 

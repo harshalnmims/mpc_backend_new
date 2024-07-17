@@ -105,19 +105,19 @@ export const iprPaginateService = async ({
 
 
 
-export const insertIPRService = async (iprDetails: IPRDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertIPRService = async (iprData: IPRDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
     const logger = getLogger();
 
     let uploadDocuments = await uploadFile(documents);
-    iprDetails.supporting_documents = uploadDocuments;
-    iprDetails.faculty_id = [...iprDetails.internal_authors, ...iprDetails.external_authors];
-    delete iprDetails.internal_authors;
-    delete iprDetails.external_authors;
+    iprData.supporting_documents = uploadDocuments;
+    iprData.faculty_id = [...iprData.internal_authors, ...iprData.external_authors];
+    delete iprData.internal_authors;
+    delete iprData.external_authors;
 
-    console.log('iprDetails data in service ===>>>>>>', iprDetails);
+    console.log('iprData data in service ===>>>>>>', iprData);
 
 
-    const data = await insertIPRModel(iprDetails);
+    const data = await insertIPRModel(iprData);
 
  
 
@@ -153,20 +153,22 @@ export const iprEditViewService = async(iprId : number) => {
 
    };
 }
-export const updateIPRService = async (iprId:number, iprDetails: IPRDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined)  => {
+
+
+export const updateIPRService = async (iprId:number, iprData: IPRDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined)  => {
 
     const logger = getLogger();
 
     let uploadDocuments = await uploadFile(documents);
-    iprDetails.supporting_documents = uploadDocuments;
-    iprDetails.faculty_id = [...iprDetails.internal_authors, ...iprDetails.external_authors];
-    delete iprDetails.internal_authors;
-    delete iprDetails.external_authors;
-    iprDetails.ipr_id = iprId;
+    iprData.supporting_documents = uploadDocuments;
+    iprData.faculty_id = [...iprData.internal_authors, ...iprData.external_authors];
+    delete iprData.internal_authors;
+    delete iprData.external_authors;
+    iprData.ipr_id = iprId;
 
-    console.log('details for update ipr data ===>>>>', iprDetails);
+    console.log('details for update ipr data ===>>>>', iprData);
 
-    const data = await updateIPRModel(iprDetails);
+    const data = await updateIPRModel(iprData);
 
 
 

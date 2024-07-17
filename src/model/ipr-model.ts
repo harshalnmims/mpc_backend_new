@@ -162,15 +162,6 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
 
 
 
-
-
-
-
-
-
-
-
-
 export const insertIPRModel = async (iprDetails: IPRDetails) => {
 
     const data = await sql`SELECT * FROM insert_ipr(${JSON.parse(JSON.stringify(iprDetails))}, '1');`;
@@ -178,7 +169,6 @@ export const insertIPRModel = async (iprDetails: IPRDetails) => {
     return data;
 
 }
-
 
 
 

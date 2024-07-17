@@ -203,4 +203,27 @@ export const patentDetails = z.object({
 }).refine(data => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {
 	message: 'At least one internal or external author must be present',
 	path: ['internal_authors'],
-});
+}); 
+
+
+export const researchProjectDetails = z.object({
+	nmims_school: z.array(z.string()).min(1, { message: 'School Is Required' }),
+	nmims_campus: z.array(z.string()).min(1, { message: 'Campus Is Required' }),
+	research_status: z.number().min(1, {message:'Research Status is required'}).refine(data => data != 0,'Patent Status is required'),
+	title: z.string().min(1, 'Title of Project is required'),
+	grant_proposal: z.number().min(1, 'Type of Grant is  required'),
+	grant_type: z.number().min(1, 'Grant Proposal is  required'),
+	thrust_area: z.string().min(1, 'Thrust area of Research is required'),
+	funding_amount: z.number().min(1, 'Funding Amount is required'),
+	funding_agency: z.string().min(1, 'Name of Funding Agency  is required'),
+	duration: z.string().min(1, 'Duration Of Project In Months is required'),
+	scheme: z.string().min(1, 'Scheme  is required'),
+	received_amount: z.number().min(1, 'Amount Received is required'),
+	grant_date: z.string().refine(date => date !== '1970-01-01', { message: 'Submission/Grant Date' }),
+	payment_date: z.string().refine(date => date !== '1970-01-01', { message: 'Annual Payment Date' }),
+	internal_authors: z.array(z.number()).optional(),
+	external_authors: z.array(z.number()).optional(),
+}).refine(data => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {
+	message: 'At least one internal or external author must be present',
+	path: ['internal_authors'],
+}); 

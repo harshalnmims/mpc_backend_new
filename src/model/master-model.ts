@@ -275,4 +275,29 @@ export const getExternalAuthors = async () => {
         status:400,
         message:'Failed To Fetch!'
     }
- }
+ }  
+
+
+ export const getResearchProjectStatus = async () => {
+
+    const data = await sql`select * from research_project_status where active=TRUE`;
+
+    return data.count > 0 ? {
+
+        status:200,
+
+        message:data
+
+    } : {
+
+        status:400,
+
+        message:'Failed To Fetch!'
+
+    }
+
+ } 
+
+
+
+ 

@@ -1,7 +1,8 @@
 import { getLogger } from '$config/logger-context';
 import {
     getBookPatentService, insertPatentSubmissionService, updatePatentSubmissionService,
-    deletePatentSubmissionService, PatentRenderService, patentEditViewService
+    deletePatentSubmissionService, PatentRenderService, patentEditViewService, viewPatentService,
+    patentDownloadFilesService
    } from '$service/research/patent-submission-service';
 import { Request, Response, NextFunction } from 'express';
 
@@ -124,12 +125,28 @@ export const updatePatentSubmissionForm = async(req : Request, res : Response, n
 
 }
 
+export const viewPatentForm = async (req: Request, res: Response, next: NextFunction) => {
+
+    const logger = getLogger();
+
+    const id =  req.query.id;
+    const patentId = Number(id);
+    console.log('patentId ===>>>>', patentId)
+    const data = await viewPatentService(patentId);
+
+    console.log('data respoinse in controller ===>>>>>', data);
+
+    return res.status(200).json(data);
+
+}
+
+
 export const deletePatentSubmissionForm = async(req : Request, res : Response, next : NextFunction) => {
     const logger = getLogger();
-    logger.info('INSIDE GET PATENT SUBMISSION AND GRANT CONTROLLER');
-
-    const patentData = {...req.body};
-    const patentId = patentData.patent_id;
+    const id =  req.query.id;
+    const patentId = Number(id);
+    console.log('patentId ===>>>>', patentId)
+    
 
     const data = await deletePatentSubmissionService(patentId);
 
@@ -137,4 +154,14 @@ export const deletePatentSubmissionForm = async(req : Request, res : Response, n
 
     return res.status(200).json(data)
 
-}
+} 
+
+
+export const downloadPatentFiles = async (req : Request , res : Response , next  : NextFunction) => {
+
+    const patentId = req.query.id;
+    console.log('patentId ',patentId)
+ 
+     await patentDownloadFilesService(Number(patentId), req, res);
+ 
+  }

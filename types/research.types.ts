@@ -153,7 +153,8 @@ export type journalArticleDetails = {
  }
 
  export type patentDetails = {
-   [x: string]: any;
+   internal_authors: any;
+   external_authors: any;
    patent_id?:number;
    title: string;
    appln_no: number;
@@ -165,7 +166,10 @@ export type journalArticleDetails = {
    supporting_documents ?: SupportingDocument ; } 
 
 
- export type researchProjectDetails = { 
+ export type researchProjectDetails = {
+   research_project_id?:number;
+   internal_authors: any;
+   external_authors: any; 
    title: string;
    grant_proposal: number;
    grant_type: number;
@@ -179,7 +183,7 @@ export type journalArticleDetails = {
    received_amount: number;
    research_status: number;
    faculty_id: number[];
-   supporting_documents: string[];
+   supporting_documents ?: SupportingDocument ;
    nmims_school: string[];
    nmims_campus: string[];
 

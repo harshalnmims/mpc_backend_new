@@ -154,6 +154,56 @@ export const updatePatentSubmissionModel = async(updatePatentData : patentDetail
 
 } 
 
+
+export const viewPatentModel = async (patentId: number) => {
+
+    const data = await sql`SELECT                        
+              	psg.id AS patent_id,
+				psg.title,
+				psg.appln_no,
+				psg.publication_date,
+				psg.invention_type AS invention_id,
+				psg.patent_status  AS status_id,
+				ivt.invention_type,
+				ps.patent_status,
+            COALESCE(JSON_AGG(DISTINCT psd.filename) FILTER (WHERE psd.active = TRUE), '[]'::json) AS supporting_documents,
+
+            COALESCE(
+                JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'int'), 
+                '[]'::json
+            ) AS internal_faculty_details,
+            COALESCE(
+                JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'ext'), 
+                '[]'::json
+            ) AS external_faculty_details,
+            COALESCE(
+                JSON_AGG(DISTINCT sg.goals_name) FILTER (WHERE psdg.active = TRUE AND sg.active = TRUE), 
+                '[]'::json
+            ) AS sdg_goals
+        FROM 
+    		patent_submission_grant psg
+		LEFT JOIN 
+    		patent_grant_documents psd ON psd.patent_lid = psg.id
+        INNER JOIN invention_type ivt ON ivt.id = psg.invention_type AND ivt.active = TRUE
+        INNER JOIN patent_status ps ON ps.id = psg.patent_status AND ps.active = TRUE
+        LEFT JOIN patent_faculty psf ON psf.patent_lid = psg.id AND psf.active = TRUE
+        LEFT JOIN faculties f ON psf.faculty_lid = f.id AND f.active = TRUE
+        LEFT JOIN faculty_type ft ON f.faculty_type_lid = ft.id
+        LEFT JOIN patent_sdg_goals psdg ON psdg.patent_lid = psg.id AND psdg.active = TRUE
+        LEFT JOIN sdg_goals sg ON psdg.patent_goals_lid = sg.id AND sg.active = TRUE
+        
+        WHERE 
+            psg.id = ${patentId}
+            AND psg.active = TRUE 
+        GROUP BY 
+            psg.id,
+            ivt.invention_type,
+            ps.patent_status                        
+            `
+     return data;
+
+}
+
 export const deletePatentSubmissionModel = async(patentId : number) => {
     console.log('patentId in  models  ====>>>>>>', patentId);
     
@@ -169,6 +219,12 @@ export const deletePatentSubmissionModel = async(patentId : number) => {
 
 
 }
+
+
+export const downloadPatentFilesModel = async (patentId: number) => {
+    const data = await sql`SELECT * FROM patent_grant_documents WHERE patent_lid = ${patentId} AND active=TRUE`;
+    return data;
+ }
 
 
 

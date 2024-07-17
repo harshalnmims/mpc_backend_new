@@ -1,5 +1,5 @@
 import { getpatentSubmissionData, insertPatentSubmissionForm, updatePatentSubmissionForm, 
-    deletePatentSubmissionForm, patentRenderList, patentEditViewForm
+    deletePatentSubmissionForm, patentRenderList, patentEditViewForm, viewPatentForm, downloadPatentFiles
 } from '$controller/research/patent-submission-controller'
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
@@ -14,7 +14,11 @@ patentRoutes.get('/patent-submission-and-grant-render', asyncErrorHandler(patent
 patentRoutes.post('/patent-submission-and-grant-insert', upload.array("supporting_documents"),asyncErrorHandler(insertPatentSubmissionForm));
 patentRoutes.get('/patent-submission-and-grant-edit-view', asyncErrorHandler(patentEditViewForm));
 patentRoutes.post('/patent-submission-and-grant-update', upload.array("supporting_documents"), asyncErrorHandler(updatePatentSubmissionForm));
-patentRoutes.post('/patent-submission-delete', asyncErrorHandler(deletePatentSubmissionForm));
+patentRoutes.get('/patent-submission-and-grant-view', asyncErrorHandler(viewPatentForm));
+patentRoutes.get('/patent-submission-and-grant-download-files', asyncErrorHandler(downloadPatentFiles));
+
+patentRoutes.post('/patent-submission-and-grant-delete', asyncErrorHandler(deletePatentSubmissionForm));
+
 
 
 
