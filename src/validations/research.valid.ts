@@ -174,7 +174,7 @@ export const conferencePublication = z.object({
 	patent_status: 	z.number().min(1, {message:'Patent Status is required'}).refine(data => data != 0,'Patent Status is required'),
 	title: z.string().min(1, 'Title of Patent / Invention is required'),
 	appln_no: z.number().min(1, 'Patent/Invention Application Number'),
-	filed_date: z.string().refine(date => date !== '1970-01-01', { message: 'Patent Filed Date is required' }),
+	filed_date: z.string().refine(date => date !== '1970-01-01'  && date !== '', { message: 'Patent Filed Date is required' }),
 	grant_date: z.string().refine(date => date !== '1970-01-01', { message: 'Patent Grant Date is required' }).optional(),
 	published_date: z.string().refine(date => date !== '1970-01-01', { message: 'Patent/Invention Published Date is required' }).optional(),
 	publication_no: z.number().optional(),
@@ -197,7 +197,7 @@ export const patentDetails = z.object({
 	patent_status: 	z.number().min(1, {message:'Patent Status is required'}).refine(data => data != 0,'Patent Status is required'),
 	title: z.string().min(1, 'Title of Patent / Invention is required'),
 	appln_no: z.number().min(1, 'Patent/Invention Application Number'),
-	publication_date: z.string().refine(date => date !== '1970-01-01', { message: 'Publication Date is required' }),
+	publication_date: z.string().refine(date => date !== '1970-01-01'  && date !== '', { message: 'Publication Date is required' }),
 	internal_authors: z.array(z.number()).optional(),
 	external_authors: z.array(z.number()).optional(),
 }).refine(data => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {
@@ -219,8 +219,8 @@ export const researchProjectDetails = z.object({
 	duration: z.string().min(1, 'Duration Of Project In Months is required'),
 	scheme: z.string().min(1, 'Scheme  is required'),
 	received_amount: z.number().min(1, 'Amount Received is required'),
-	grant_date: z.string().refine(date => date !== '1970-01-01', { message: 'Submission/Grant Date' }),
-	payment_date: z.string().refine(date => date !== '1970-01-01', { message: 'Annual Payment Date' }),
+	grant_date: z.string().refine(date => date !== '1970-01-01'  && date !== '', { message: 'Submission/Grant Date' }),
+	payment_date: z.string().refine(date => date !== '1970-01-01'  && date !== '', { message: 'Annual Payment Date' }),
 	internal_authors: z.array(z.number()).optional(),
 	external_authors: z.array(z.number()).optional(),
 }).refine(data => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {

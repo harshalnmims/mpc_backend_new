@@ -106,7 +106,7 @@ export const getConferenceDocumentsAbbr = async() => {
 
 export const conferenceEditViewModel = async (conferenceId: number) => {
     const data = await sql`
-             SELECT 
+             		SELECT 
                 c.id AS conference_id,
                 c.paper_title,
                 c.conference_name,
@@ -125,6 +125,7 @@ export const conferenceEditViewModel = async (conferenceId: number) => {
                 JSON_AGG(DISTINCT cc.campus_name) AS nmims_campus,
                 JSON_AGG(DISTINCT cs.school_name) AS nmims_school,
                 JSON_AGG(DISTINCT cd.document_name) AS conference_documents,
+                COALESCE(
                 (SELECT 
                     JSONB_AGG(row_to_json(faculty_data))
                 FROM (
@@ -144,9 +145,34 @@ export const conferenceEditViewModel = async (conferenceId: number) => {
                         f.faculty_type_lid = ft.id
                     WHERE 
                         cf.conference_lid = c.id
+                        AND f.faculty_type_lid IN (SELECT id FROM faculty_type WHERE abbr='int' AND ACTIVE = TRUE)
                         AND cf.active = TRUE
                         AND f.active = TRUE
-                ) AS faculty_data) AS faculty_details,
+                ) AS faculty_data),'[]') AS internal_faculty,
+				
+				COALESCE((SELECT 
+                    JSONB_AGG(row_to_json(faculty_data))
+                FROM (
+                    SELECT 
+                        f.id,
+                        f.faculty_name,
+                        ft.abbr
+                    FROM 
+                        conference_faculty cf
+                    INNER JOIN 
+                        faculties f
+                    ON 
+                        cf.faculty_lid = f.id
+                    INNER JOIN 
+                        faculty_type ft
+                    ON 
+                        f.faculty_type_lid = ft.id
+                    WHERE 
+                        cf.conference_lid = c.id
+                        AND f.faculty_type_lid IN (SELECT id FROM faculty_type WHERE abbr='ext' AND ACTIVE = TRUE)
+                        AND cf.active = TRUE
+                        AND f.active = TRUE
+                ) AS faculty_data),'[]') AS external_faculty,
 
                 (SELECT 
                     JSONB_AGG(row_to_json(author_data))
@@ -191,7 +217,9 @@ export const conferenceEditViewModel = async (conferenceId: number) => {
                 c.id = ${conferenceId}
                 AND c.active = TRUE
             GROUP BY 
-                c.id
+                c.id		
+			
+				
     `;
     return data;
 }

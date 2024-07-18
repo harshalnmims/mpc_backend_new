@@ -163,7 +163,8 @@ export type journalArticleDetails = {
    invention_type: number[];
    faculty_id: number[];
    sdg_goals: number[];
-   supporting_documents ?: SupportingDocument ; } 
+   supporting_documents ?: SupportingDocument ; 
+} 
 
 
  export type researchProjectDetails = {
