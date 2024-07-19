@@ -1,17 +1,23 @@
-import { infiniteScrollQueryBuilder,paginationQueryBuilder } from '$utils/db/query-builder';
+import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
 import { bookChapterDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 
-import sql from '$config/db'; 
+import sql from '$config/db';
 import { number } from 'zod';
 
+export const getBookChapterPublication = async ({
+   page,
+   limit,
+   sort,
+   order,
+   search,
+   filters,
+}: paginationDefaultType) => {
+   console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
 
-export const getBookChapterPublication = async({ page, limit, sort, order, search, filters }: paginationDefaultType) =>{
-    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
- 
-    const data = await paginationQueryBuilder<Session>({
-       baseQuery: `WITH book_chapter_details AS (
+   const data = await paginationQueryBuilder<Session>({
+      baseQuery: `WITH book_chapter_details AS (
                     SELECT 
                         bcp.id,
                         bcp.publish_year,
@@ -75,33 +81,40 @@ export const getBookChapterPublication = async({ page, limit, sort, order, searc
                 LEFT JOIN all_authors aa ON aa.book_chapter_id = bcd.id
                 LEFT JOIN editors e ON e.book_chapter_id = bcd.id
                    `,
-       filters: {
-          // Add your filters here
-          // Example: 'bp.publisher_category': filters.publisherCategory,
-       },
-       page: page || 1,
-       pageSize: limit || 10,
-       search: search || '',
-       searchColumns: ['bcd.publisher', 'sd.nmims_school', 'cd.nmims_campus', 'bcd.book_title', 'bcd.publish_year', 'bcd.isbn_no', 'aa.faculty_names'],
-       sort: {
-          column: sort || 'bcd.id',
-          order: order || 'desc',
-       },
-    });
- 
-    return data;
- }
+      filters: {
+         // Add your filters here
+         // Example: 'bp.publisher_category': filters.publisherCategory,
+      },
+      page: page || 1,
+      pageSize: limit || 10,
+      search: search || '',
+      searchColumns: [
+         'bcd.publisher',
+         'sd.nmims_school',
+         'cd.nmims_campus',
+         'bcd.book_title',
+         'bcd.publish_year',
+         'bcd.isbn_no',
+         'aa.faculty_names',
+      ],
+      sort: {
+         column: sort || 'bcd.id',
+         order: order || 'desc',
+      },
+   });
 
-export const insertBookChapterModel = async(bookChapterData : bookChapterDetails) => {
-    console.log('bookChapterData ===>>>>>', bookChapterData)
-    
-    const data = await sql`SELECT * FROM insert_book_chapter(${JSON.parse(JSON.stringify(bookChapterData))}, '1');`;
-    return data;
+   return data;
+};
 
-}
+export const insertBookChapterModel = async (bookChapterData: bookChapterDetails) => {
+   console.log('bookChapterData ===>>>>>', bookChapterData);
 
-export const booChapterEditViewModel = async(booChapterId : number) => {
-        const data = await sql`
+   const data = await sql`SELECT * FROM insert_book_chapter(${JSON.parse(JSON.stringify(bookChapterData))}, '1');`;
+   return data;
+};
+
+export const booChapterEditViewModel = async (booChapterId: number) => {
+   const data = await sql`
 SELECT 
             bcp.id AS book_chapter_id,
             bcp.book_title,
@@ -179,35 +192,38 @@ SELECT
             AND bcpc.active = TRUE 
             AND bcps.active = TRUE
         GROUP BY 
-            bcp.id				`
-     return data;
- }
+            bcp.id				`;
+   return data;
+};
 
-export const updateBookChapterModel = async(updateBookChapterData : bookChapterDetails) => {
-    console.log('updateBookChapterData ===>>>>>', updateBookChapterData)
-    
-    const data = await sql`SELECT * FROM upsert_book_chapter(${JSON.parse(JSON.stringify(updateBookChapterData))}, '1');`;
-    return data;
-}
+export const updateBookChapterModel = async (updateBookChapterData: bookChapterDetails) => {
+   console.log('updateBookChapterData ===>>>>>', updateBookChapterData);
 
-export const deleteBookChapterModel = async(bookChapterId : number) => {
-    console.log('bookChapterId in  models  ====>>>>>>', bookChapterId);
-    
-    const data = await sql`UPDATE book_chapter_publication SET active = false,modified_date=now(),modified_by='1' WHERE id = ${bookChapterId}`;
+   const data =
+      await sql`SELECT * FROM upsert_book_chapter(${JSON.parse(JSON.stringify(updateBookChapterData))}, '1');`;
+   return data;
+};
 
-    return data.count > 0 ? {
-        status:200,
-        message:'Deleted Successfully !'
-    } : {
-        status:400,
-        message:'Failed To Delete !'
-    }
-}
+export const deleteBookChapterModel = async (bookChapterId: number) => {
+   console.log('bookChapterId in  models  ====>>>>>>', bookChapterId);
 
+   const data =
+      await sql`UPDATE book_chapter_publication SET active = false,modified_date=now(),modified_by='1' WHERE id = ${bookChapterId}`;
 
-export const bookChapterPublicationFormviewModel = async(bookChapterId : number) => {
-    console.log('bookChapterId in case of form view ===>>>>>', bookChapterId);
-        const data = await sql`SELECT 
+   return data.count > 0
+      ? {
+           status: 200,
+           message: 'Deleted Successfully !',
+        }
+      : {
+           status: 400,
+           message: 'Failed To Delete !',
+        };
+};
+
+export const bookChapterPublicationFormviewModel = async (bookChapterId: number) => {
+   console.log('bookChapterId in case of form view ===>>>>>', bookChapterId);
+   const data = await sql`SELECT 
             bcp.id AS book_chapter_id,
             bcp.book_title,
             bcp.chapter_title,
@@ -252,14 +268,12 @@ export const bookChapterPublicationFormviewModel = async(bookChapterId : number)
             bcp.id		
  
  `;
- 
-    return data
- 
- }
 
+   return data;
+};
 
-
- export const bookChapterPublicationFiles = async (bookChapterId:number) => {
-    const data = await sql`SELECT * FROM bookchapter_publication_documents WHERE publication_lid = ${bookChapterId} AND active=TRUE`;
-    return data;
- }
+export const bookChapterPublicationFiles = async (bookChapterId: number) => {
+   const data =
+      await sql`SELECT * FROM bookchapter_publication_documents WHERE publication_lid = ${bookChapterId} AND active=TRUE`;
+   return data;
+};

@@ -1,132 +1,122 @@
 import { getLogger } from '$config/logger-context';
 
-import { insertIPRModel, updateIPRModel, deleteIPRModel, iprPaginateModel,
-   iprEditViewModel, viewIprModel, downloadIprFilesModel
- } from '$model/ipr-model';
+import {
+   insertIPRModel,
+   updateIPRModel,
+   deleteIPRModel,
+   iprPaginateModel,
+   iprEditViewModel,
+   viewIprModel,
+   downloadIprFilesModel,
+} from '$model/ipr-model';
 
-import { IPRDetails }  from 'types/research.types';
-
-
-
+import { IPRDetails } from 'types/research.types';
 
 import { paginationDefaultType } from 'types/db.default';
 
-import { getSchool,getCampus,getEnternalFaculty, 
-	getExternalFaculty, getSdgGoals, getInventionType, getPatentStatus, getApplicantNames
-
+import {
+   getSchool,
+   getCampus,
+   getEnternalFaculty,
+   getExternalFaculty,
+   getSdgGoals,
+   getInventionType,
+   getPatentStatus,
+   getApplicantNames,
 } from '$model/master-model';
 
-import {uploadFile} from '$middleware/fileupload.middleware'
+import { uploadFile } from '$middleware/fileupload.middleware';
 
-import { Request,Response } from 'express';
+import { Request, Response } from 'express';
 
 import { downloadFile } from '$middleware/fileupload.middleware';
 
 import { string } from 'zod';
 
-
-
-
-
 export const iprPaginateService = async ({
+   page,
 
-    page,
+   limit,
 
-    limit,
+   sort,
 
-    sort,
+   order,
 
-    order,
+   search,
 
-    search,
+   ...filters
+}: paginationDefaultType) => {
+   const logger = getLogger();
 
-    ...filters
+   logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
 
- }: paginationDefaultType) => {
+   const data = await iprPaginateModel({
+      page,
 
-    const logger = getLogger();
+      limit,
 
-    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
+      sort,
 
- 
+      order,
 
-    const data = await iprPaginateModel({
+      search,
 
-       page,
+      ...filters,
+   });
 
-       limit,
+   return data;
+};
 
-       sort,
+export const iprRenderService = async () => {
+   const logger = getLogger();
 
-       order,
+   const externalAuthors = await getExternalFaculty();
 
-       search,
+   const internalAuthors = await getEnternalFaculty();
 
-       ...filters,
+   const school = await getSchool();
 
-    });
+   const campus = await getCampus();
 
- 
+   const status = await getPatentStatus();
 
-    return data;
+   const inventionType = await getInventionType();
 
- }; 
+   const sdgGoals = await getSdgGoals();
+   const applicantNames = await getApplicantNames();
 
+   return {
+      school,
+      campus,
+      externalAuthors,
+      internalAuthors,
+      status,
+      inventionType,
+      sdgGoals,
+      applicantNames,
+   };
+};
 
+export const insertIPRService = async (
+   iprData: IPRDetails,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+) => {
+   const logger = getLogger();
 
- export const iprRenderService = async () => {
+   let uploadDocuments = await uploadFile(documents);
+   iprData.supporting_documents = uploadDocuments;
+   iprData.faculty_id = [...iprData.internal_authors, ...iprData.external_authors];
+   delete iprData.internal_authors;
+   delete iprData.external_authors;
 
-    const logger = getLogger();
+   console.log('iprData data in service ===>>>>>>', iprData);
 
-    const externalAuthors = await getExternalFaculty();
+   const data = await insertIPRModel(iprData);
 
-    const internalAuthors = await getEnternalFaculty();
+   return data;
+};
 
-    const school = await getSchool();
-
-    const campus = await getCampus();
-
-    const status = await getPatentStatus();
-
-    const inventionType = await getInventionType();
-
-    const sdgGoals = await getSdgGoals();
-    const applicantNames = await getApplicantNames();
-
-    
-
-    return {
-
-       school,campus, externalAuthors, internalAuthors, status, inventionType, sdgGoals, applicantNames
-
-    };
-
-  }
-
-
-
-export const insertIPRService = async (iprData: IPRDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
-    const logger = getLogger();
-
-    let uploadDocuments = await uploadFile(documents);
-    iprData.supporting_documents = uploadDocuments;
-    iprData.faculty_id = [...iprData.internal_authors, ...iprData.external_authors];
-    delete iprData.internal_authors;
-    delete iprData.external_authors;
-
-    console.log('iprData data in service ===>>>>>>', iprData);
-
-
-    const data = await insertIPRModel(iprData);
-
- 
-
-    return data;
-
-}
-
-
-export const iprEditViewService = async(iprId : number) => {
+export const iprEditViewService = async (iprId: number) => {
    const logger = getLogger();
 
    const iprDataList = await iprEditViewModel(iprId);
@@ -145,61 +135,58 @@ export const iprEditViewService = async(iprId : number) => {
    const sdgGoals = await getSdgGoals();
    const applicantNames = await getApplicantNames();
 
-   
-
    return {
-
-      iprDataList, school,campus, externalAuthors, internalAuthors, status, inventionType, sdgGoals, applicantNames
-
+      iprDataList,
+      school,
+      campus,
+      externalAuthors,
+      internalAuthors,
+      status,
+      inventionType,
+      sdgGoals,
+      applicantNames,
    };
-}
+};
 
+export const updateIPRService = async (
+   iprId: number,
+   iprData: IPRDetails,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+) => {
+   const logger = getLogger();
 
-export const updateIPRService = async (iprId:number, iprData: IPRDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined)  => {
+   let uploadDocuments = await uploadFile(documents);
+   iprData.supporting_documents = uploadDocuments;
+   iprData.faculty_id = [...iprData.internal_authors, ...iprData.external_authors];
+   delete iprData.internal_authors;
+   delete iprData.external_authors;
+   iprData.ipr_id = iprId;
 
-    const logger = getLogger();
+   console.log('details for update ipr data ===>>>>', iprData);
 
-    let uploadDocuments = await uploadFile(documents);
-    iprData.supporting_documents = uploadDocuments;
-    iprData.faculty_id = [...iprData.internal_authors, ...iprData.external_authors];
-    delete iprData.internal_authors;
-    delete iprData.external_authors;
-    iprData.ipr_id = iprId;
+   const data = await updateIPRModel(iprData);
 
-    console.log('details for update ipr data ===>>>>', iprData);
-
-    const data = await updateIPRModel(iprData);
-
-
-
-
-    return data;
-
-}
+   return data;
+};
 
 export const viewIprService = async (iprId: number) => {
-
    const logger = getLogger();
 
    const data = await viewIprModel(iprId);
 
    return data;
-
-}
+};
 
 export const deleteIPRService = async (iprId: number) => {
+   const logger = getLogger();
+   const data = await deleteIPRModel(iprId);
 
-    const logger = getLogger();
-    const data = await deleteIPRModel(iprId);
+   return data;
+};
 
-    return data;
-
-} 
-
-export const iprDownloadFilesService = async (iprId : number,req:Request,res:Response) => {
-
+export const iprDownloadFilesService = async (iprId: number, req: Request, res: Response) => {
    const data = await downloadIprFilesModel(iprId);
 
-   let files : string[] = data.map(dt => dt.document_name); 
-   await downloadFile(files, req,res);
- }
+   let files: string[] = data.map((dt) => dt.document_name);
+   await downloadFile(files, req, res);
+};

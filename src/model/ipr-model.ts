@@ -1,8 +1,8 @@
-import { IPRDetails } from "types/research.types"
+import { IPRDetails } from 'types/research.types';
 
 import sql from '$config/db';
 
-import { infiniteScrollQueryBuilder,paginationQueryBuilder } from '$utils/db/query-builder';
+import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
 
 import { Campus, Program, Session } from 'types/base.types';
 
@@ -12,20 +12,11 @@ import { HTTP_STATUS } from '$constants/http.constant';
 
 import { CustomError } from '$utils/error/customError';
 
-
-
-
-
-
-
-
 export const iprPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+   console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
 
-    console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
-
-    const data = await paginationQueryBuilder<Session>({
-
-        baseQuery: `WITH ipr_details AS (
+   const data = await paginationQueryBuilder<Session>({
+      baseQuery: `WITH ipr_details AS (
 
                         SELECT 
 
@@ -105,75 +96,51 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
 
         `,
 
+      filters: {
+         // Define any necessary filters here
+         // 'usi.program_lid': filters.programLid,
+         // 'usi.session_lid': filters.sessionLid,
+         // 'usi.subject_lid': filters.subjectLid,
+      },
 
+      page: page,
 
+      pageSize: limit || 10,
 
-        filters: {
+      search: search || '',
 
-            // Define any necessary filters here
+      searchColumns: [
+         'ipr.title',
 
-            // 'usi.program_lid': filters.programLid,
+         'sd.nmims_school',
 
-            // 'usi.session_lid': filters.sessionLid,
+         'cd.nmims_campus',
 
-            // 'usi.subject_lid': filters.subjectLid,
+         'ipr.appln_no',
 
-        },
+         'ipr.filed_date',
 
-        page: page,
+         'ipr.institute_affiliation',
+      ],
 
-        pageSize: limit || 10,
+      sort: {
+         column: sort || 'ipd.id',
 
-        search: search || '',
+         order: order || 'desc',
+      },
+   });
 
-        searchColumns: [
-
-            'ipr.title',
-
-            'sd.nmims_school',
-
-            'cd.nmims_campus',
-
-            'ipr.appln_no',
-
-            'ipr.filed_date',
-
-            'ipr.institute_affiliation'
-
-        ],
-
-        sort: {
-
-            column: sort || 'ipd.id',
-
-            order: order || 'desc',
-
-        },
-
-    });
-
-
-
-    return data;
-
+   return data;
 };
 
-
-
-
-
 export const insertIPRModel = async (iprDetails: IPRDetails) => {
+   const data = await sql`SELECT * FROM insert_ipr(${JSON.parse(JSON.stringify(iprDetails))}, '1');`;
 
-    const data = await sql`SELECT * FROM insert_ipr(${JSON.parse(JSON.stringify(iprDetails))}, '1');`;
+   return data;
+};
 
-    return data;
-
-}
-
-
-
-export const iprEditViewModel = async (iprId : number) => {
-    const data = await sql`SELECT                        
+export const iprEditViewModel = async (iprId: number) => {
+   const data = await sql`SELECT                        
                     ipr.id AS ipr_id,
                     ipr.title,
                     ipr.appln_no,
@@ -190,31 +157,55 @@ export const iprEditViewModel = async (iprId : number) => {
                     COALESCE(JSON_AGG(DISTINCT ips.school_name), '[]'::json) AS nmims_school,
                     COALESCE(JSON_AGG(DISTINCT ipc.campus_name), '[]'::json) AS nmims_campus,
                     COALESCE(JSON_AGG(DISTINCT ipd.filename), '[]'::json) AS supporting_documents,
-                    COALESCE(
-                        (SELECT 
-                            JSONB_AGG(row_to_json(faculty_data))
-                        FROM (
-                            SELECT 
-                                f.id,
-                                f.faculty_name,
-                                ft.abbr
-                            FROM 
-                                ipr_faculty ipf
-                            INNER JOIN 
-                                faculties f
-                            ON 
-                                ipf.faculty_lid = f.id
-                            INNER JOIN 
-                                faculty_type ft
-                            ON 
-                                f.faculty_type_lid = ft.id
-                            WHERE 
-                                ipf.ipr_lid = ipr.id
-                                AND ipf.active = TRUE
-                                AND f.active = TRUE
-                        ) AS faculty_data), 
-                        '[]'::jsonb
-                    ) AS faculty_details,
+                    
+					  COALESCE(
+                (SELECT 
+                    JSONB_AGG(row_to_json(faculty_data))
+                FROM (
+                    SELECT 
+                        f.id,
+                        f.faculty_name,
+                        ft.abbr
+                    FROM 
+                        ipr_faculty ipf
+                    INNER JOIN 
+                        faculties f
+                    ON 
+                        ipf.faculty_lid = f.id
+                    INNER JOIN 
+                        faculty_type ft
+                    ON 
+                        f.faculty_type_lid = ft.id
+                    WHERE 
+                        ipf.ipr_lid = ipr.id
+                        AND f.faculty_type_lid IN (SELECT id FROM faculty_type WHERE abbr='int' AND ACTIVE = TRUE)
+                        AND ipf.active = TRUE
+                        AND f.active = TRUE
+                ) AS faculty_data),'[]') AS internal_faculty,
+				
+				COALESCE((SELECT 
+                    JSONB_AGG(row_to_json(faculty_data))
+                FROM (
+                    SELECT 
+                        f.id,
+                        f.faculty_name,
+                        ft.abbr
+                    FROM 
+                         ipr_faculty ipf
+                    INNER JOIN 
+                        faculties f
+                    ON 
+                        ipf.faculty_lid = f.id
+                    INNER JOIN 
+                        faculty_type ft
+                    ON 
+                        f.faculty_type_lid = ft.id
+                    WHERE 
+                        ipf.ipr_lid = ipr.id
+                        AND f.faculty_type_lid IN (SELECT id FROM faculty_type WHERE abbr='ext' AND ACTIVE = TRUE)
+                        AND ipf.active = TRUE
+                        AND f.active = TRUE
+                ) AS faculty_data),'[]') AS external_faculty,
                     COALESCE(
                         (SELECT 
                             JSONB_AGG(row_to_json(sdg_goals_data))
@@ -263,97 +254,89 @@ export const iprEditViewModel = async (iprId : number) => {
                 INNER JOIN invention_type ivt ON ivt.id = ipr.invention_type AND ivt.active = TRUE
                 INNER JOIN patent_status ps ON ps.id = ipr.patent_status AND ps.active = TRUE
                 WHERE 
-                    ipr.id = ${iprId} 
+                    ipr.id = ${iprId}
                     AND ips.active = TRUE 
                     AND ipc.active = TRUE 
                 GROUP BY 
                     ipr.id,
                     ivt.invention_type,
-                    ps.patent_status`
-     return data;
- }
+                    ps.patent_status`;
+   return data;
+};
 
 export const updateIPRModel = async (updateIprDetails: IPRDetails) => {
+   const data = await sql`SELECT * FROM upsert_ipr(${JSON.parse(JSON.stringify(updateIprDetails))}, '1');`;
 
-    const data = await sql`SELECT * FROM upsert_ipr(${JSON.parse(JSON.stringify(updateIprDetails))}, '1');`;
-
-    return data;
-
-}
-
+   return data;
+};
 
 export const viewIprModel = async (iprId: number) => {
+   const data = await sql`SELECT                        
+                            ipr.id AS ipr_id,
+                            ipr.title,
+                            ipr.appln_no,
+                            COALESCE(ipr.filed_date, NULL) AS filed_date,
+                            COALESCE(ipr.grant_date, NULL) AS grant_date,
+                            COALESCE(ipr.published_date, NULL) AS published_date,
+                            ipr.publication_no,
+                            ipr.granted_no,
+                            ipr.institute_affiliation,
+                            ipr.invention_type AS invention_id,
+                            ipr.patent_status  AS status_id,
+                            ivt.invention_type,
+                            ps.patent_status,
+                            COALESCE(JSON_AGG(DISTINCT ips.school_name) FILTER (WHERE ips.active = TRUE), '[]'::json) AS nmims_school,
+                            COALESCE(JSON_AGG(DISTINCT ipc.campus_name) FILTER (WHERE ipc.active = TRUE), '[]'::json) AS nmims_campus,
+                            COALESCE(JSON_AGG(DISTINCT ipd.filename) FILTER (WHERE ipd.active = TRUE), '[]'::json) AS supporting_documents,
+                            COALESCE(
+                                JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'int'), 
+                                '["No Data Found"]'::json
+                            ) AS internal_faculty_details,
+                            COALESCE(
+                                JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'ext'), 
+                                '["No Data Found"]'::json
+                            ) AS external_faculty_details,
+                            COALESCE(
+                                JSON_AGG(DISTINCT sg.goals_name) FILTER (WHERE isg.active = TRUE AND sg.active = TRUE), 
+                                '["No Data Found"]'::json
+                            ) AS sdg_goals,
+                            COALESCE(
+                                JSON_AGG(DISTINCT ma.name) FILTER (WHERE ipra.active = TRUE AND ma.active = TRUE), 
+                                '["No Data Found"]'::json
+                            ) AS applicants_names
+                        FROM 
+                            ipr
+                        INNER JOIN ipr_school ips ON ips.ipr_lid = ipr.id
+                        INNER JOIN ipr_campus ipc ON ipc.ipr_lid = ipr.id
+                        LEFT JOIN ipr_documents ipd ON ipd.ipr_lid = ipr.id
+                        INNER JOIN invention_type ivt ON ivt.id = ipr.invention_type AND ivt.active = TRUE
+                        INNER JOIN patent_status ps ON ps.id = ipr.patent_status AND ps.active = TRUE
+                        LEFT JOIN ipr_faculty ipf ON ipf.ipr_lid = ipr.id AND ipf.active = TRUE
+                        LEFT JOIN faculties f ON ipf.faculty_lid = f.id AND f.active = TRUE
+                        LEFT JOIN faculty_type ft ON f.faculty_type_lid = ft.id
+                        LEFT JOIN ipr_sdg_goals isg ON isg.ipr_lid = ipr.id AND isg.active = TRUE
+                        LEFT JOIN sdg_goals sg ON isg.goals_lid = sg.id AND sg.active = TRUE
+                        LEFT JOIN ipr_applicants ipra ON ipra.ipr_lid = ipr.id AND ipra.active = TRUE
+                        LEFT JOIN master_input_data ma ON ipra.applicant_lid = ma.id AND ma.active = TRUE
+                        WHERE 
+                            ipr.id = ${iprId}
+                            AND ips.active = TRUE 
+                            AND ipc.active = TRUE 
+                        GROUP BY 
+                            ipr.id,
+                            ivt.invention_type,
+                            ps.patent_status`;
 
-    const data = await sql`SELECT                        
-            ipr.id AS ipr_id,
-            ipr.title,
-            ipr.appln_no,
-            ipr.filed_date,
-            ipr.grant_date,
-            ipr.published_date,
-            ipr.publication_no,
-            ipr.granted_no,
-            ipr.institute_affiliation,
-            ipr.invention_type AS invention_id,
-            ipr.patent_status  AS status_id,
-            ivt.invention_type,
-            ps.patent_status,
-            COALESCE(JSON_AGG(DISTINCT ips.school_name) FILTER (WHERE ips.active = TRUE), '[]'::json) AS nmims_school,
-            COALESCE(JSON_AGG(DISTINCT ipc.campus_name) FILTER (WHERE ipc.active = TRUE), '[]'::json) AS nmims_campus,
-            COALESCE(JSON_AGG(DISTINCT ipd.filename) FILTER (WHERE ipd.active = TRUE), '[]'::json) AS supporting_documents,
-            COALESCE(
-                JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'int'), 
-                '[]'::json
-            ) AS internal_faculty_details,
-            COALESCE(
-                JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'ext'), 
-                '[]'::json
-            ) AS external_faculty_details,
-            COALESCE(
-                JSON_AGG(DISTINCT sg.goals_name) FILTER (WHERE isg.active = TRUE AND sg.active = TRUE), 
-                '[]'::json
-            ) AS sdg_goals,
-            COALESCE(
-                JSON_AGG(DISTINCT ma.name) FILTER (WHERE ipra.active = TRUE AND ma.active = TRUE), 
-                '[]'::json
-            ) AS applicants_names
-        FROM 
-            ipr
-        INNER JOIN ipr_school ips ON ips.ipr_lid = ipr.id
-        INNER JOIN ipr_campus ipc ON ipc.ipr_lid = ipr.id
-        LEFT JOIN ipr_documents ipd ON ipd.ipr_lid = ipr.id
-        INNER JOIN invention_type ivt ON ivt.id = ipr.invention_type AND ivt.active = TRUE
-        INNER JOIN patent_status ps ON ps.id = ipr.patent_status AND ps.active = TRUE
-        LEFT JOIN ipr_faculty ipf ON ipf.ipr_lid = ipr.id AND ipf.active = TRUE
-        LEFT JOIN faculties f ON ipf.faculty_lid = f.id AND f.active = TRUE
-        LEFT JOIN faculty_type ft ON f.faculty_type_lid = ft.id
-        LEFT JOIN ipr_sdg_goals isg ON isg.ipr_lid = ipr.id AND isg.active = TRUE
-        LEFT JOIN sdg_goals sg ON isg.goals_lid = sg.id AND sg.active = TRUE
-        LEFT JOIN ipr_applicants ipra ON ipra.ipr_lid = ipr.id AND ipra.active = TRUE
-        LEFT JOIN master_input_data ma ON ipra.applicant_lid = ma.id AND ma.active = TRUE
-        WHERE 
-            ipr.id = ${iprId}
-            AND ips.active = TRUE 
-            AND ipc.active = TRUE 
-        GROUP BY 
-            ipr.id,
-            ivt.invention_type,
-            ps.patent_status`
-     return data;
-
-}
-
-
+   return data;
+};
 
 export const deleteIPRModel = async (iprId: number) => {
+   const data = await sql`UPDATE ipr SET active = false,modified_date=now(),modified_by='1' WHERE id = ${iprId}`;
 
-    const data = await sql`UPDATE ipr SET active = false,modified_date=now(),modified_by='1' WHERE id = ${iprId}`;
-
-    return data;
-
-} 
+   return data;
+};
 
 export const downloadIprFilesModel = async (iprId: number) => {
-    const data = await sql`SELECT * FROM ipr_documents WHERE ipr_lid = ${iprId} AND active=TRUE`;
-    return data;
- }
+   const data = await sql`SELECT * FROM ipr_documents WHERE ipr_lid = ${iprId} AND active=TRUE`;
+   return data;
+};

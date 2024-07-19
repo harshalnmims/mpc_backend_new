@@ -1,18 +1,16 @@
-import { infiniteScrollQueryBuilder,paginationQueryBuilder } from '$utils/db/query-builder';
+import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
 import { conferenceDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
-import sql from '$config/db'; 
+import sql from '$config/db';
 import { number } from 'zod';
 import confereRoutes from '$routes/research-routes/conference-routes';
 
+export const getConferenceModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+   console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
 
-
-export const getConferenceModel = async({ page, limit, sort, order, search, filters }: paginationDefaultType) =>{
-    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
- 
-    const data = await paginationQueryBuilder<Session>({
-       baseQuery: `WITH conference_details AS (
+   const data = await paginationQueryBuilder<Session>({
+      baseQuery: `WITH conference_details AS (
                             SELECT 
                                 c.id,
                                 c.paper_title,
@@ -52,60 +50,65 @@ export const getConferenceModel = async({ page, limit, sort, order, search, filt
                         LEFT JOIN school_details sd ON sd.conference_id = cnd.id
                         LEFT JOIN campus_details cd ON cd.conference_id = cnd.id
                                         `,
-       filters: {
-     
-       },
-       page: page || 1,
-       pageSize: limit || 10,
-       search: search || '',
-       searchColumns: ['cnd.paper_title', 'sd.nmims_school', 'cd.nmims_campus', 'cnd.isbn_no', 'cnd.conference_name', 'cnd.proceeding_published'],
-       sort: {
-          column: sort || 'cnd.id',
-          order: order || 'desc',
-       },
-    });
- 
-    return data;
- }
+      filters: {},
+      page: page || 1,
+      pageSize: limit || 10,
+      search: search || '',
+      searchColumns: [
+         'cnd.paper_title',
+         'sd.nmims_school',
+         'cd.nmims_campus',
+         'cnd.isbn_no',
+         'cnd.conference_name',
+         'cnd.proceeding_published',
+      ],
+      sort: {
+         column: sort || 'cnd.id',
+         order: order || 'desc',
+      },
+   });
 
-export const insertConferenceModel = async(conferenceData : conferenceDetails) => {
-    console.log('conferenceData ===>>>>>', conferenceData)
-    
-    const data = await sql`SELECT * FROM insert_conference(${JSON.parse(JSON.stringify(conferenceData))}, '1');`;
-    return data;
- }
+   return data;
+};
 
+export const insertConferenceModel = async (conferenceData: conferenceDetails) => {
+   console.log('conferenceData ===>>>>>', conferenceData);
 
-export const updateConferencemodels = async(updateConferenceData : conferenceDetails) => {
-    console.log('updateConferenceData in models  ===>>>>>', updateConferenceData)
-    
-    const data = await sql`SELECT * FROM upsert_conference(${JSON.parse(JSON.stringify(updateConferenceData))}, '1');`;
-    return data;
+   const data = await sql`SELECT * FROM insert_conference(${JSON.parse(JSON.stringify(conferenceData))}, '1');`;
+   return data;
+};
 
-}
+export const updateConferencemodels = async (updateConferenceData: conferenceDetails) => {
+   console.log('updateConferenceData in models  ===>>>>>', updateConferenceData);
 
-export const deleteConferenceModel = async(conferenceId : number) => {
-    console.log('conferenceId models  ====>>>>>>', conferenceId);
-    
-    const data = await sql`UPDATE conference SET active = false,modified_date=now(),modified_by='1' WHERE id = ${conferenceId}`;
+   const data = await sql`SELECT * FROM upsert_conference(${JSON.parse(JSON.stringify(updateConferenceData))}, '1');`;
+   return data;
+};
 
-    return data.count > 0 ? {
-        status:200,
-        message:'Deleted Successfully !'
-    } : {
-        status:400,
-        message:'Failed To Delete !'
-    }
-}
+export const deleteConferenceModel = async (conferenceId: number) => {
+   console.log('conferenceId models  ====>>>>>>', conferenceId);
 
-export const getConferenceDocumentsAbbr = async() => {
-    const data = await sql`SELECT id,abbr FROM conference_documents_abbr WHERE active=TRUE`;
-    return data
-} 
+   const data =
+      await sql`UPDATE conference SET active = false,modified_date=now(),modified_by='1' WHERE id = ${conferenceId}`;
 
+   return data.count > 0
+      ? {
+           status: 200,
+           message: 'Deleted Successfully !',
+        }
+      : {
+           status: 400,
+           message: 'Failed To Delete !',
+        };
+};
+
+export const getConferenceDocumentsAbbr = async () => {
+   const data = await sql`SELECT id,abbr FROM conference_documents_abbr WHERE active=TRUE`;
+   return data;
+};
 
 export const conferenceEditViewModel = async (conferenceId: number) => {
-    const data = await sql`
+   const data = await sql`
              		SELECT 
                 c.id AS conference_id,
                 c.paper_title,
@@ -221,12 +224,11 @@ export const conferenceEditViewModel = async (conferenceId: number) => {
 			
 				
     `;
-    return data;
-}
+   return data;
+};
 
-
-export const conferenceViewModel = async(conferenceId: number) => {
-        const data = await sql`SELECT 
+export const conferenceViewModel = async (conferenceId: number) => {
+   const data = await sql`SELECT 
                 c.id AS conference_id,
                 c.paper_title,
                 c.conference_name,
@@ -248,14 +250,8 @@ export const conferenceViewModel = async(conferenceId: number) => {
                 JSON_AGG(DISTINCT cd.filename) FILTER (WHERE cda.abbr = 'cd') AS conference_documents,
                 JSON_AGG(DISTINCT cd.filename) FILTER (WHERE cda.abbr = 'ad') AS conference_awards,
 
-                COALESCE(
-                    JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'int'), 
-                    '[]'::json
-                ) AS internal_faculty_details,
-                COALESCE(
-                    JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'ext'), 
-                    '[]'::json
-                ) AS external_faculty_details,
+                COALESCE(JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'int'), '["No Data Found"]'::json) AS internal_faculty_details,
+				COALESCE(JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'ext'), '["No Data Found"]'::json) AS external_faculty_details,
 
                 COALESCE(MAX(s.id), 0) AS sponsor_details
 
@@ -286,16 +282,14 @@ export const conferenceViewModel = async(conferenceId: number) => {
                 AND c.active = TRUE
             GROUP BY 
                 c.id`;
-                return data;
+   return data;
+};
 
-} 
+export const conferenceFilesModel = async (conferenceId: number, abbr: string) => {
+   console.log('conferenceId in model  ===>>>', conferenceId);
+   console.log('abbr in model ===>>>', abbr);
 
-
-export const conferenceFilesModel = async (conferenceId : number, abbr:string) => {
-    console.log('conferenceId in model  ===>>>', conferenceId)
-    console.log('abbr in model ===>>>', abbr);
-
-    const data = await sql`
+   const data = await sql`
             SELECT 
                 cd.id AS document_id,
                 cd.conference_lid,
@@ -313,5 +307,5 @@ export const conferenceFilesModel = async (conferenceId : number, abbr:string) =
                 AND cda.active = TRUE;
 `;
 
-return data;
- }
+   return data;
+};
