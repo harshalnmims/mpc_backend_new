@@ -124,7 +124,7 @@ const singleFileSchema = z.object({
 	encoding: z.string(),
 	mimetype: z.string().refine(
 	  (mimetype) => ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+		'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream'
 	  ].includes(mimetype),
 	  {
 		message: 'Only PDF,DOCX and Excel files are allowed!',
