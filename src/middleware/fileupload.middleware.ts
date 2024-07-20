@@ -6,6 +6,8 @@ import { string } from 'zod';
 import { SupportingDocument } from 'types/research.master';
 import { Request, Response } from 'express';
 import AdmZip from 'adm-zip';
+import { pathToFileURL } from 'url';
+
 
 
 
@@ -147,10 +149,39 @@ export async function downloadFile(filenames: string[], req: Request, res: Respo
         res.setHeader('Content-Length', zipBuffer.length.toString());
 
         res.end(zipBuffer);
+
     } catch (err) {
         console.error('Error processing request:', err);
         res.status(500).send('Error processing request');
     }
 }
 
+
+export async function getUploadedFile(fileArray :  any){
+
+
+    const filesPromises = fileArray.map(async (path: any) => {
+    const params = {
+      Bucket: process.env.bucketName || '',
+      Key: path.document_name
+    };
+
+    const data = await s3.getObject(params).promise();
+    const buffer = Buffer.isBuffer(data.Body) ? data.Body : Buffer.from(data.Body as string);
+
+    return {
+      key: path,
+      url: path.document_name,
+      lastModified: data.LastModified,
+      size: data.ContentLength,
+      name: path.filename,
+      buffer: buffer.toJSON()
+    };
+       
+  });
+
+const files = await Promise.all(filesPromises);
+return files;      
+
+}
 

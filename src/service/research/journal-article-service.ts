@@ -1,13 +1,14 @@
 import { getLogger } from '$config/logger-context';
 import { getJournalArticlePublished, insertJournalArticleModel, updateJournalArticleModel,
-    deleteJournalArticleModel,journalPaginateModal,journalViewData,journalFiles,journalUpdateViewData
+    deleteJournalArticleModel,journalPaginateModal,journalViewData,journalFiles,journalUpdateViewData,
+    getJournalDocuments
  } from '$model/journal-article-model';
 import { paginationDefaultType } from 'types/db.default';
 import { journalArticleDetails } from 'types/research.types';
 import {renderModal,getPolicyCadre,getNmimsAuthors,getAllAuthors,getAbdcIndexed, getPaperType,
    getSchool,getCampus
 } from '$model/master-model';
-import {uploadFile} from '$middleware/fileupload.middleware'
+import {getUploadedFile, uploadFile} from '$middleware/fileupload.middleware'
 import { Request,Response } from 'express';
 import { downloadFile } from '$middleware/fileupload.middleware';
 import { string } from 'zod';
@@ -60,9 +61,7 @@ export const journalPaginateService = async ({
 };
 
 export const insertJournalArticleService = async (journalDetails: journalArticleDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
-    const logger = getLogger();
-   //  logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
-
+   
        console.log('json data journal ',JSON.stringify(journalDetails))
          
        let uploadDocuments = await uploadFile(documents);
@@ -110,7 +109,6 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
  }
 
  export const journalRenderService = async () => {
-   const logger = getLogger();
    
    const foreignAuthors =  await renderModal('fa');
    const StudentAuthors =  await renderModal('sa');
@@ -135,15 +133,19 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
  }
 
  export const journalDownloadFileService = async (journalPaperId : number,req:Request,res:Response) => {
-   // const logger = getLogger();
 
    const data = await journalFiles(journalPaperId);
 
-  let files : string[] = data.map(dt => dt.document_name); 
+   let files : string[] = data.map(dt => dt.document_name); 
    await downloadFile(files, req,res);
  }
 
  export const journalUpdateViewService = async (journalId :number) => {
+
+   const journalDocuments = await getJournalDocuments(journalId);
+   const files = await getUploadedFile(journalDocuments)
+   console.log('uploaded files ',files)
+   
    const journalData = await journalUpdateViewData(journalId);
    const foreignAuthors =  await renderModal('fa');
    const StudentAuthors =  await renderModal('sa');
@@ -156,6 +158,12 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
    const school = await getSchool();
    const campus = await getCampus();
    return {
-      foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus,journalData
+    files,foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus,journalData
    };
+ }
+
+ export const journalFilesService = async (journalId :number,req:Request,res:Response) => {
+   const journalDocuments = await getJournalDocuments(journalId);
+   let files : string[] = journalDocuments.map(dt => dt.document_name); 
+   await downloadFile(files,req,res);
  }
