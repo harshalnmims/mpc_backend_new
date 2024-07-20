@@ -89,7 +89,6 @@ async function uploadResearchToS3(filename: string, fileContent: Buffer) : Promi
 
     console.log("BucketXXXXX",params);
 
-    // Upload the image to the S3 bucket
     s3.upload(params, function(err: Error, data: AWS.S3.ManagedUpload.SendData) {
         if (err) {
             console.log('Error uploading image:', err);
@@ -121,17 +120,14 @@ export async function downloadFile(filenames: string[], req: Request, res: Respo
     }
 
     try {
-        // Create a new zip instance
         const zip = new AdmZip();
 
-        // Fetch each file from S3 and add to the zip
         for (const filename of filenames) {
             const params: AWS.S3.GetObjectRequest = {
                 Bucket: process.env.bucketName || '',
                 Key: filename,
             };
 
-            // Fetch file from S3
             const data = await s3.getObject(params).promise();
             console.log('file names ',filename,data)
 
@@ -143,16 +139,13 @@ export async function downloadFile(filenames: string[], req: Request, res: Respo
             }
         }
 
-        // Generate the zip file buffer
         const zipBuffer = zip.toBuffer();
 
-        // Set headers for the zip file
         const zipFileName = 'downloaded_files.zip';
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', `attachment; filename=${zipFileName}`);
         res.setHeader('Content-Length', zipBuffer.length.toString());
 
-        // Send the zip file buffer
         res.end(zipBuffer);
     } catch (err) {
         console.error('Error processing request:', err);
