@@ -1,5 +1,5 @@
 import { getLogger } from '$config/logger-context';
-import { downloadFile, uploadFile } from '$middleware/fileupload.middleware';
+import { downloadFile, getUploadedFile, uploadFile } from '$middleware/fileupload.middleware';
 import {getCaseStudyModel, insertCaseStudyModel, updateCaseStudyModel ,
     deleteCaseStudyModel,CaseStudyPaginateModel,CaseStudyViewModel,
     CaseStudyUpdateViewModel,caseStudyFiles
@@ -103,9 +103,10 @@ export const updateCaseStudyService = async (updateCaseStudyData : caseStudyDeta
  };
 
  export const CaseStudyViewService = async (caseStudyId : number) => {
-   
+    const caseStudyFilesData = await caseStudyFiles(caseStudyId);
+    const filesUrls = await getUploadedFile(caseStudyFilesData);
     const data = await CaseStudyViewModel(caseStudyId);
-    return data;
+    return {files : filesUrls , caseData : data};
  };
 
  export const CaseStudyUpdateViewService = async (caseStudyId:number) => {

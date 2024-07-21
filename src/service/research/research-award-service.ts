@@ -1,5 +1,5 @@
 import { getLogger } from '$config/logger-context';
-import { downloadFile, uploadFile } from '$middleware/fileupload.middleware';
+import { downloadFile, getUploadedFile, uploadFile } from '$middleware/fileupload.middleware';
 import { getCampus, getSchool } from '$model/master-model';
 import { getResearchAwardModel, insertResearchAwardModel, updateResearchAwardModel, 
     deleteResearchAwardModel,researchAwardPaginateModel,researchAwardViewModel,researchAwardUpdateViewModel,awardFiles
@@ -95,9 +95,10 @@ export const researchAwardRenderService = async () => {
 }
 
 export const researchAwardViewService = async (awardId : number) => {
-    
+   const researchAwardFilesData = await awardFiles(awardId);
+   const filesUrls = await getUploadedFile(researchAwardFilesData);
    const data = await researchAwardViewModel(awardId)
-   return data;
+   return {files : filesUrls ,researchAwardData : data};
 }
 
 export const researchAwardUpdViewService = async (awardId : number) => {

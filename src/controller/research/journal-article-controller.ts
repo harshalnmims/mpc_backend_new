@@ -2,7 +2,7 @@ import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
     deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService,journalUpdateViewService,
-    journalDownloadFileService,journalFilesService} from '$service/research/journal-article-service';
+    journalDownloadFileService} from '$service/research/journal-article-service';
 import { journalFiles } from '$model/journal-article-model';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
@@ -173,8 +173,4 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  
  }
 
- export const journalFilesController = async (req : Request , res : Response , next  : NextFunction) => {
-    const id  = req.query.id ;
-    await journalFilesService(Number(id),req,res);
 
- }

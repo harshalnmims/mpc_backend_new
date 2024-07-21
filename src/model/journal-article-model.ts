@@ -428,8 +428,3 @@ GROUP BY jpas.id
 `
     return data;
 }
-
-export const getJournalDocuments = async (journalId : number) => { 
-  const data = await sql`SELECT document_name,filename FROM journal_supporting_documents WHERE journal_paper_lid=${journalId} AND active = TRUE`;
-  return data;
-}

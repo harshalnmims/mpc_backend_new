@@ -6,21 +6,18 @@ import { string } from 'zod';
 import { SupportingDocument } from 'types/research.master';
 import { Request, Response } from 'express';
 import AdmZip from 'adm-zip';
-import { pathToFileURL } from 'url';
-
-
-
-
 
  const config =  {
     "accessKeyId": process.env.accessKeyId,
     "secretAccessKey": process.env.secretAccessKey,
-    "bucketName" :  process.env.bucketName
+    "bucketName" :  process.env.bucketName,
+    "region" : process.env.awsRegion
    };
 
    AWS.config.update({
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
+    region: config.region
    });
 
    
@@ -80,13 +77,31 @@ export async function uploadMultiFile(documents : any) : Promise<SupportingDocum
      }
    }
 
+
+   function getContentType(filePath: any) {
+    const ext = require('path').extname(filePath).toLowerCase();
+    switch (ext) {
+      case '.pdf':
+        return 'application/pdf';
+      case '.xlsx':
+        return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      case '.xls':
+        return 'application/vnd.ms-excel';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+
+
+
 async function uploadResearchToS3(filename: string, fileContent: Buffer) : Promise<AwsData> {
     return new Promise((resolve,reject)=>{
 
     const params : AWS.S3.PutObjectRequest = {
         Bucket: process.env.bucketName || '',
         Key: filename,
-        Body: fileContent
+        Body: fileContent,
+        ContentType:getContentType(filename),
     };
 
     console.log("BucketXXXXX",params);
@@ -108,10 +123,7 @@ async function uploadResearchToS3(filename: string, fileContent: Buffer) : Promi
                 resolve(awsData);
         }
     });
-
-  
-})
-
+ })
 }
 
 
@@ -157,31 +169,45 @@ export async function downloadFile(filenames: string[], req: Request, res: Respo
 }
 
 
-export async function getUploadedFile(fileArray :  any){
+export async function getUploadedFile(fileArray: any[]) {
+    const filesPromises = fileArray.map(async (path) => {
+        const params = {
+            Bucket: process.env.bucketName || '',
+            Key: path.document_name,
+        };
+
+        const signedUrl = s3.getSignedUrl('getObject', params);
+        console.log('Signed URL:', signedUrl);
+
+        return {
+            url: signedUrl,
+            name: path.filename,
+        };
+    });
+
+    const files = await Promise.all(filesPromises);
+    return files;
+}
 
 
-    const filesPromises = fileArray.map(async (path: any) => {
-    const params = {
-      Bucket: process.env.bucketName || '',
-      Key: path.document_name
-    };
+export async function getMultiUploadedFile(fileArray: any[]) {
+    const filesPromises = fileArray.map(async (path) => {
+        const params = {
+            Bucket: process.env.bucketName || '',
+            Key: path.document_name,
+        };
 
-    const data = await s3.getObject(params).promise();
-    const buffer = Buffer.isBuffer(data.Body) ? data.Body : Buffer.from(data.Body as string);
+        const signedUrl = s3.getSignedUrl('getObject', params);
+        console.log('Signed URL:', signedUrl);
 
-    return {
-      key: path,
-      url: path.document_name,
-      lastModified: data.LastModified,
-      size: data.ContentLength,
-      name: path.filename,
-      buffer: buffer.toJSON()
-    };
-       
-  });
+        return {
+            url: signedUrl,
+            name: path.filename,
+            type_abbr : path.abbr
+        };
+    });
 
-const files = await Promise.all(filesPromises);
-return files;      
-
+    const files = await Promise.all(filesPromises);
+    return files;
 }
 

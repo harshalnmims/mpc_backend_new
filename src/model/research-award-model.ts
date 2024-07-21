@@ -155,6 +155,6 @@ export const researchAwardUpdateViewModel = async(awardId : number) => {
 }
 
 export const awardFiles = async (awardId : number) => {
-    const data = await sql`SELECT * FROM research_award_documents WHERE research_award_lid=${awardId}`;
+    const data = await sql`SELECT * FROM research_award_documents WHERE research_award_lid=${awardId} AND active= TRUE`;
     return data;
 } 

@@ -248,7 +248,7 @@ GROUP BY c.id`;
 }
 
 export const caseStudyFiles = async(caseStudyId : number) => {
-    const data = await sql`SELECT document_name FROM case_study_documents WHERE case_study_lid=${caseStudyId} AND active = TRUE`;
+    const data = await sql`SELECT * FROM case_study_documents WHERE case_study_lid=${caseStudyId} AND active = TRUE`;
     return data;
 }
 

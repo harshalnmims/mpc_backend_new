@@ -89,3 +89,9 @@ export const teachingFiles = async (teachingId: number,abbr:string) => {
    WHERE abbr=${abbr} AND active = TRUE) AND active = TRUE`;
    return data;
 }
+
+export const getTeachingFiles = async (teachingId: number) => {
+   const data = await sql`SELECT t.document_name,t.filename,ti.abbr FROM teaching_excellance_documents t
+INNER JOIN teaching_excellance_inputs ti ON t.input_lid = ti.id WHERE teaching_lid = ${teachingId} AND t.active = TRUE AND ti.active = TRUE`;
+   return data;
+}

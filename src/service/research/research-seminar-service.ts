@@ -1,5 +1,5 @@
 import { getLogger } from '$config/logger-context';
-import { downloadFile, uploadFile } from '$middleware/fileupload.middleware';
+import { downloadFile, getUploadedFile, uploadFile } from '$middleware/fileupload.middleware';
 import { getAbdcIndexed, getCampus, getMasterNmimsAuthors, getNmimsAuthors, getSchool } from '$model/master-model';
 import { getResearchSeminarModel, insertResearchSeminarModel, updateResearchSeminarModel,
      deleteResearchSeminarModel,ResearchSeminarPaginateModel,researchSeminarViewModel,researchSeminarUpdViewModel,
@@ -98,8 +98,10 @@ export const insertResearchSeminarService = async (researchSeminarData : seminar
 
  
  export const researchSeminarViewService = async(researchId : number) => {
+   const researchSeminarFiles = await seminarFiles(researchId);
+   const filesUrls = await getUploadedFile(researchSeminarFiles);
    const data = await researchSeminarViewModel(researchId);
-   return data;
+   return {files:filesUrls,researchSeminarData:data};
 }
 
 export const researchSeminarUpdateViewService = async(seminarId : number) => {

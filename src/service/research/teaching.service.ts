@@ -1,6 +1,6 @@
-import {getPaginateModel} from '$model/teaching.model';
+import {getPaginateModel, getTeachingFiles} from '$model/teaching.model';
 import { paginationDefaultType } from 'types/db.default';
-import {uploadMultiFile} from '$middleware/fileupload.middleware'
+import {getMultiUploadedFile, uploadMultiFile} from '$middleware/fileupload.middleware'
 import { Request,Response } from 'express';
 import { downloadFile } from '$middleware/fileupload.middleware';
 import { TeachingExcellance } from 'types/research.types';
@@ -148,6 +148,9 @@ async function getDropdownValue(typeName: string):Promise<DropdownValue | null> 
   
 export const teachingViewService = async (teachingId : number) => {
 
+  const teachingFiles = await getTeachingFiles(teachingId);
+  const filesUrls = await getMultiUploadedFile(teachingFiles);
+
   let teachingExcellanceData = await updateViewData(teachingId);
   console.log('received view ',JSON.stringify(teachingExcellanceData))
 
@@ -187,7 +190,7 @@ export const teachingViewService = async (teachingId : number) => {
   }
 
   console.log('modules ',modules)
-  return {teachingId : teachingId,type_abbr:'te',teaching_data : modules};
+  return {teachingId : teachingId,type_abbr:'te',teaching_data : modules,files:filesUrls};
 
 }
 
