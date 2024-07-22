@@ -210,4 +210,3 @@ export async function getMultiUploadedFile(fileArray: any[]) {
     const files = await Promise.all(filesPromises);
     return files;
 }
-

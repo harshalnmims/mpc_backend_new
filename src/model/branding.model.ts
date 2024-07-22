@@ -101,3 +101,11 @@ export const brandingFiles = async (brandingId: number,abbr:string) => {
    WHERE abbr=${abbr} AND active = TRUE) AND active = TRUE`;
    return data;
 }
+
+export const getbrandingFiles = async (brandingId: number) => {
+   const data = await sql`SELECT b.document_name,b.filename,bi.abbr FROM branding_advertisement_documents b
+INNER JOIN branding_advertisement_inputs bi ON b.input_lid = bi.id WHERE b.branding_lid = ${brandingId} 
+AND bi.active = TRUE AND b.active = TRUE 
+`;
+   return data;
+}

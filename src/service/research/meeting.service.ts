@@ -1,6 +1,6 @@
-import {getPaginateModel, getParticularInputs, meetingViewData, updateViewData} from '$model/meeting.model';
+import {getMeetingFiles, getPaginateModel, getParticularInputs, meetingViewData, updateViewData} from '$model/meeting.model';
 import { paginationDefaultType } from 'types/db.default';
-import {uploadMultiFile} from '$middleware/fileupload.middleware'
+import {getMultiUploadedFile, uploadMultiFile} from '$middleware/fileupload.middleware'
 import { Request,Response } from 'express';
 import { downloadFile } from '$middleware/fileupload.middleware';
 import { MeetingStakeholders } from 'types/research.types';
@@ -143,6 +143,8 @@ export const updateViewService = async (meetingId : number) => {
   }
 
   export const meetingViewService = async (meetingId : number) => {
+    const meetingFiles = await getMeetingFiles(meetingId);
+    const filesUrls = await getMultiUploadedFile(meetingFiles);
     let meetingStakholdersData = await updateViewData(meetingId);
     console.log('received view ',JSON.stringify(meetingStakholdersData))
   
@@ -183,7 +185,7 @@ export const updateViewService = async (meetingId : number) => {
     }
   
     console.log('modules ',modules)
-    return {meetingId : meetingId,meeting_data: modules , type_abbr : 'ms'};
+    return {meetingId : meetingId,meeting_data: modules , type_abbr : 'ms',files :  filesUrls};
 
   
   }
@@ -195,7 +197,6 @@ export const updateViewService = async (meetingId : number) => {
     }
 
     export const meetingDownloadFileService = async (meetingId : number,abbr:string,req:Request,res:Response) => {
-   // const logger = getLogger();
 
    const data = await meetingFiles(meetingId,abbr);
    let files : string[] = data.map((dt) => dt.document_name); 

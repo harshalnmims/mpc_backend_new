@@ -1,7 +1,8 @@
-import { downloadFile, uploadMultiFile } from '$middleware/fileupload.middleware';
+import { downloadFile, getMultiUploadedFile, uploadMultiFile } from '$middleware/fileupload.middleware';
 import {getPaginateModel,insertBrandingModel,deleteBrandingModel, brandingViewData,
     getParticularInputs,
-    updateViewData,updateBrandingModel,brandingFiles
+    updateViewData,updateBrandingModel,brandingFiles,
+    getbrandingFiles
 } from '$model/branding.model';
 import { paginationDefaultType } from 'types/db.default';
 import { BrandingAdvertisementDb, DropdownValue, Module } from 'types/research.master';
@@ -163,6 +164,8 @@ export const updateViewService = async (brandingId : number) => {
   }
 
   export const brandingViewService = async (brandingId : number) => {
+    let brandingFiles = await getbrandingFiles(brandingId);
+    let filesUrl = await getMultiUploadedFile(brandingFiles);
     let brandingData = await updateViewData(brandingId);
     console.log('received view ',JSON.stringify(brandingData))
   
@@ -209,7 +212,7 @@ export const updateViewService = async (brandingId : number) => {
     }
   
     console.log('modules ',modules)
-    return {brandingId : brandingId, branding_data: modules , type_abbr : 'ba'};
+    return {brandingId : brandingId, branding_data: modules , type_abbr : 'ba',files : filesUrl};
   
   }
   
