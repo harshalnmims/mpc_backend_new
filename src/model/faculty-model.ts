@@ -1,6 +1,6 @@
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
-import { paginationQueryBuilder } from '$utils/db/query-builder';
+import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
 import { Session } from 'types/base.types';
 
 
@@ -37,3 +37,34 @@ export const facultyPaginateModel = async ({ page , limit, sort, order, search, 
  
     return data;
  };
+
+ export const facultyScrollPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+   const data = await infiniteScrollQueryBuilder<Session>({
+      baseQuery: `SELECT DISTINCT u.id,u.first_name,u.last_name,u.username FROM public.user u INNER JOIN user_role ur ON u.id = ur.user_lid 
+      WHERE ur.role_lid = 2 AND u.active = TRUE AND ur.active = TRUE`,
+
+      filters: {
+         // 'usi.program_lid': filters.programLid,
+         // 'usi.session_lid': filters.sessionLid,
+         // 'usi.subject_lid': filters.subjectLid,
+      },
+      cursor: {
+         column: 'u.id',
+         value: Number(filters.cursor)
+      },
+      limit: limit.toString(),
+      search: search || '',
+      searchColumns: ['u.username', 'u.first_name', 'u.last_name'],
+      sort: {
+         column: sort || 'u.id',
+         order: order || 'desc',
+      },
+   });
+
+   return data;
+};
+
+export const facultyRenderModel = async () => {
+   const data = await sql`SELECT faculty_type,id FROM faculty_type WHERE active = TRUE `;
+   return data;
+}
