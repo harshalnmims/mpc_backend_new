@@ -80,7 +80,7 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
 
                         ipd.appln_no,
 
-                        ipd.filed_date,
+                        TO_CHAR(ipd.filed_date, 'YYYY-MM-DD') AS filed_date,
 
                         ipd.institute_affiliation,
 

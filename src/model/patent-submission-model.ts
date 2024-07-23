@@ -36,7 +36,7 @@ export const getPatentSubmissionModel = async ({
                 pd.id,
                 pd.title,
                 pd.appln_no,
-                pd.publication_date,
+                TO_CHAR(pd.publication_date, 'YYYY-MM-DD') AS publication_date,
                 pd.invention_type,
                 pd.patent_status
             FROM patent_details pd
