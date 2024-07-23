@@ -201,10 +201,12 @@ export type IPRDetails = {
    nmims_campus: string[];
    faculty_id: number[];
    supporting_documents?: SupportingDocument;
-};
+}; 
+
+
 
 export type EContent = {
-   eContentId: number;
+   eContentId ?: number;
    faculty_name: string;
    module: string;
    module_platform: string;
@@ -215,6 +217,7 @@ export type EContent = {
 };
 
 export type researchAwardDetails = {
+   research_award_id ?: number;
    award_name: string;
    award_details: string;
    award_date: string;
@@ -222,10 +225,12 @@ export type researchAwardDetails = {
    award_place: string;
    award_category: number;
    faculty_name: string;
-   supporting_documents: string[];
+   supporting_documents: SupportingDocument;
+
 };
 
 export type seminarDetails = {
+   research_seminar_id ?: number;
    topic: string;
    resource_person: string;
    paper_title: string;
@@ -246,12 +251,13 @@ export type seminarDetails = {
    impact_factor: string;
    nmims_school: string[];
    nmims_campus: string[];
-   supporting_documents: string[];
+   supporting_documents ?: SupportingDocument;
    abdc_indexed: number;
    nmims_authors: number[];
 };
 
 export type caseStudyDetails = {
+   case_study_id ?: number,
    title: string;
    edition: string;
    publish_year: number;
@@ -265,26 +271,26 @@ export type caseStudyDetails = {
    nmims_campus: string[];
    all_authors: number[];
    nmims_authors: number[];
-   supporting_documents: string[];
-};
+   supporting_documents ?: SupportingDocument ;
+}
 
-export type teachingDetails = {
-   pedagogy_innovation: string;
-   pedagogy_link: string;
-   fdp_program: string;
-   fdp_link: string;
-   student_workshops: string;
-   workshop_link: string;
-   niche: string;
-   niche_link: string;
-   program_orientation: string;
-   orientation_link: string;
-   pedagogy_innovation_documents: string[];
-   fdp_program_documents: string[];
-   students_workshops_documents: string[];
-   niche_documents: string[];
-   program_orientation_documents: string[];
-};
+// export type teachingDetails = {
+//    pedagogy_innovation: string;
+//    pedagogy_link: string;
+//    fdp_program: string;
+//    fdp_link: string;
+//    student_workshops: string;
+//    workshop_link: string;
+//    niche: string;
+//    niche_link: string;
+//    program_orientation: string;
+//    orientation_link: string;
+//    pedagogy_innovation_documents: string[];
+//    fdp_program_documents: string[];
+//    students_workshops_documents: string[];
+//    niche_documents: string[];
+//    program_orientation_documents: string[];
+// };
 
 export type meetingDetails = {
    ranking: string;

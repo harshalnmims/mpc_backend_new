@@ -339,4 +339,10 @@ export const deleteIPRModel = async (iprId: number) => {
 export const downloadIprFilesModel = async (iprId: number) => {
    const data = await sql`SELECT * FROM ipr_documents WHERE ipr_lid = ${iprId} AND active=TRUE`;
    return data;
-};
+}; 
+
+export const iprFiles = async (iprId: number) => {
+    const data = await sql`SELECT * FROM ipr_documents WHERE ipr_lid = ${iprId} AND active=TRUE`;
+    return data;
+ };
+ 

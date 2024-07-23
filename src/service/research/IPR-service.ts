@@ -8,6 +8,7 @@ import {
    iprEditViewModel,
    viewIprModel,
    downloadIprFilesModel,
+   iprFiles
 } from '$model/ipr-model';
 
 import { IPRDetails } from 'types/research.types';
@@ -25,7 +26,7 @@ import {
    getApplicantNames,
 } from '$model/master-model';
 
-import { uploadFile } from '$middleware/fileupload.middleware';
+import { getUploadedFile, uploadFile } from '$middleware/fileupload.middleware';
 
 import { Request, Response } from 'express';
 
@@ -173,8 +174,11 @@ export const viewIprService = async (iprId: number) => {
    const logger = getLogger();
 
    const data = await viewIprModel(iprId);
+   const IprFiles = await iprFiles(iprId)
+   const filesUrls = await getUploadedFile(IprFiles);
+   console.log('filesUrls ===>>>>>>', filesUrls);
 
-   return data;
+   return { files: filesUrls, iprDataList: data };;
 };
 
 export const deleteIPRService = async (iprId: number) => {

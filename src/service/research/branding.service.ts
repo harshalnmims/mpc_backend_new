@@ -157,8 +157,9 @@ export const updateViewService = async (brandingId : number) => {
     }
   
     console.log('modules ',modules)
-    return {brandingId : brandingId,branding_inputs : dropdownData , branding_data: modules , type_abbr : 'ba'};
-  
+    // return {brandingId : brandingId,branding_inputs : dropdownData , branding_data: modules , type_abbr : 'ba'};
+    return {brandingId : brandingId,dropdown_data : dropdownData , input_data: modules , type_abbr : 'ba'};
+
   }
 
   export const brandingViewService = async (brandingId : number) => {

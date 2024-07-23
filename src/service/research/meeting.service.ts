@@ -137,8 +137,9 @@ export const updateViewService = async (meetingId : number) => {
     }
   
     console.log('modules ',modules)
-    return {meetingId : meetingId,meeting_inputs : dropdownData , meeting_data: modules , type_abbr : 'ms'};
-  
+    // return {meetingId : meetingId,meeting_inputs : dropdownData , meeting_data: modules , type_abbr : 'ms'};
+    return {meetingId : meetingId,dropdown_data: dropdownData , input_data : modules , type_abbr : 'ms'};
+
   }
 
   export const meetingViewService = async (meetingId : number) => {
@@ -183,6 +184,7 @@ export const updateViewService = async (meetingId : number) => {
   
     console.log('modules ',modules)
     return {meetingId : meetingId,meeting_data: modules , type_abbr : 'ms'};
+
   
   }
   

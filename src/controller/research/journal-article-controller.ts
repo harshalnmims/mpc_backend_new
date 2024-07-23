@@ -51,6 +51,8 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
      let result = validateWithZod(journalPaper,journalDetails);
      let fileResult = validateWithZod(filesArraySchema, documents);
+     console.log('journal files ',documents)
+
 
      if(fileResult.success && result.success){
       data = await insertJournalArticleService(journalDetails,documents);
@@ -170,3 +172,5 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
     return res.status(200).json(data);
  
  }
+
+

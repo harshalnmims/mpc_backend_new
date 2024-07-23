@@ -11,15 +11,9 @@ import {
    bookPublicationFiles,
 } from '$model/book-publication-model';
 import { paginationDefaultType } from 'types/db.default';
-import { uploadFile } from '$middleware/fileupload.middleware';
-import {
-   renderModal,
-   getNmimsAuthors,
-   getAllAuthors,
-   getSchool,
-   getCampus,
-   getMasterAllAuthors,
-   getMasterNmimsAuthors,
+import {getUploadedFile, uploadFile} from '$middleware/fileupload.middleware';
+import {renderModal,getNmimsAuthors,getAllAuthors,
+   getSchool,getCampus,getMasterAllAuthors,getMasterNmimsAuthors
 } from '$model/master-model';
 
 import { Request, Response } from 'express';
@@ -130,10 +124,13 @@ export const bookPublicationEditViewService = async (bookPublicationId: number) 
    };
 };
 
-export const bookPublicationFormViewService = async (bookPublicationId: number) => {
+export const  bookPublicationFormViewService = async(bookPublicationId : number) => {
+   
+   const bookPublicationFilesData = await bookPublicationFiles(bookPublicationId);
+   const filesUrls = await getUploadedFile(bookPublicationFilesData);
    const data = await bookPublicationFormviewModel(bookPublicationId);
-   return data;
-};
+   return {files : filesUrls , bookPublicationData : data}
+}
 
 export const bookPublicationDownloadFileService = async (publicationId: number, req: Request, res: Response) => {
    // const logger = getLogger();

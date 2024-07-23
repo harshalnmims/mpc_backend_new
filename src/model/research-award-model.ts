@@ -1,4 +1,4 @@
-import { infiniteScrollQueryBuilder } from '$utils/db/query-builder';
+import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
 import { researchAwardDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
@@ -35,6 +35,43 @@ export const getResearchAwardModel = async ({ page, limit, sort, order, search, 
     return data;
  };
 
+ export const researchAwardPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+    console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
+ 
+    const data = await paginationQueryBuilder<Session>({
+       baseQuery: `SELECT 
+                r.id,
+                COALESCE(JSON_AGG(DISTINCT ras.school_name), '[]') AS nmims_school,
+				COALESCE(JSON_AGG(DISTINCT rac.campus_name), '[]') AS nmims_campus, 
+                COALESCE(r.faculty_name, 'No Data Filled!') AS faculty_name,
+                COALESCE(r.award_name, 'No Data Filled!') AS award_name,
+                COALESCE(r.award_details, 'No Data Filled!') AS award_details,
+                COALESCE(r.award_organization, 'No Data Filled!') AS award_organization
+                FROM research_award r
+                INNER JOIN research_award_school ras ON ras.research_award_lid = r.id
+                INNER JOIN research_award_campus rac ON ras.research_award_lid = r.id
+                WHERE r.active = TRUE AND rac.active = TRUE AND ras.active = TRUE
+                GROUP BY r.id
+ `,
+ 
+       filters: {
+          // 'usi.program_lid': filters.programLid,
+          // 'usi.session_lid': filters.sessionLid,
+          // 'usi.subject_lid': filters.subjectLid,
+       },
+       page : page,
+       pageSize: 10 ,
+       search: search || '',
+       searchColumns: ['faculty_name','award_name','award_details','award_organization','nmims_school','nmims_campus'],
+       sort: {
+          column: sort || 'r.id',
+          order: order || 'desc',
+       },
+    });
+ 
+    return data;
+ };
+ 
 
 export const insertResearchAwardModel = async(researchAwardData : researchAwardDetails) => {
     console.log('researchAwardData ===>>>>>', researchAwardData)
@@ -45,7 +82,6 @@ export const insertResearchAwardModel = async(researchAwardData : researchAwardD
 } 
 
 export const updateResearchAwardModel = async(updateResearchAwardData : researchAwardDetails) => {
-    console.log('updateResearchAwardData ===>>>>>', updateResearchAwardData)
     
     const data = await sql`SELECT * FROM upsert_research_award(${JSON.parse(JSON.stringify(updateResearchAwardData))}, '1');`;
     return data;
@@ -67,3 +103,58 @@ export const deleteResearchAwardModel = async(awardId : number) => {
 
 
 }
+
+export const researchAwardViewModel = async(awardId : number) => {
+    console.log('awardId in  models  ====>>>>>>', awardId);
+    
+    const data = await sql`SELECT 
+                    r.id,
+                    COALESCE(r.faculty_name, 'No Data') AS faculty_name,
+                    COALESCE(r.award_name, 'No Data') AS award_name,
+                    COALESCE(r.award_details, 'No Data') AS award_details,
+                    COALESCE(r.award_place, 'No Data') AS award_place,
+                    COALESCE(r.award_organization, 'No Data') AS award_organization,
+					r.award_category,
+				    COALESCE(r.award_date, NULL) AS award_date,
+					COALESCE(JSON_AGG(DISTINCT rs.school_name), '[]') AS nmims_school,
+					COALESCE(JSON_AGG(DISTINCT rc.campus_name), '[]') AS nmims_campus,
+					COALESCE(JSON_AGG(DISTINCT rsd.filename), '[]') AS supporting_documents
+                FROM research_award r
+				INNER JOIN research_award_school rs ON rs.research_award_lid = r.id
+				INNER JOIN research_award_campus rc ON rc.research_award_lid = r.id
+				INNER JOIN research_award_documents rsd ON rsd.research_award_lid = r.id
+                WHERE r.active = TRUE  AND rc.active = TRUE AND rsd.active = TRUE AND r.id = ${awardId}
+                GROUP BY r.id`;
+    return data
+
+
+}
+
+export const researchAwardUpdateViewModel = async(awardId : number) => {
+    console.log('awardId in  models  ====>>>>>>', awardId);
+    
+    const data = await sql`SELECT 
+                    r.id,
+                    COALESCE(r.faculty_name, 'No Data') AS faculty_name,
+                    COALESCE(r.award_name, 'No Data') AS award_name,
+                    COALESCE(r.award_details, 'No Data') AS award_details,
+                    COALESCE(r.award_place, 'No Data') AS award_place,
+                    COALESCE(r.award_organization, 'No Data') AS award_organization,
+					r.award_category,
+				    COALESCE(r.award_date, NULL) AS award_date,
+					COALESCE(JSON_AGG(DISTINCT rs.school_name), '[]'::json) AS nmims_school,
+					COALESCE(JSON_AGG(DISTINCT rc.campus_name), '[]'::json) AS nmims_campus
+                FROM research_award r
+				INNER JOIN research_award_school rs ON rs.research_award_lid = r.id
+				INNER JOIN research_award_campus rc ON rc.research_award_lid = r.id
+                WHERE r.active = TRUE  AND rc.active = TRUE AND  r.id = ${awardId}
+                GROUP BY r.id`;
+    return data
+
+
+}
+
+export const awardFiles = async (awardId : number) => {
+    const data = await sql`SELECT * FROM research_award_documents WHERE research_award_lid=${awardId} AND active= TRUE`;
+    return data;
+} 

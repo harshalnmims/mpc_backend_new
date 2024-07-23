@@ -1,5 +1,5 @@
 import { getJournalArticle, insertJournalArticleForm , updateJournalArticleForm, 
-    deleteJournalArticleForm,journalPaginate,journalRenderData,journalViewController,journalDownloadFile,journalUpdateViewController
+    deleteJournalArticleForm,journalPaginate,journalRenderData,journalViewController,journalDownloadFile,journalUpdateViewController,
 } from '$controller/research/journal-article-controller';
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';

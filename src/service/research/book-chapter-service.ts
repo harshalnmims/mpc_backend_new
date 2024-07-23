@@ -10,16 +10,10 @@ import {
 } from '$model/book-chapter-model';
 import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
-import { uploadFile } from '$middleware/fileupload.middleware';
-import {
-   renderModal,
-   getNmimsAuthors,
-   getAllAuthors,
-   getSchool,
-   getCampus,
-   getEditors,
-   getMasterAllAuthors,
-   getMasterNmimsAuthors,
+import {getUploadedFile, uploadFile} from '$middleware/fileupload.middleware';
+import {renderModal,getNmimsAuthors,getAllAuthors,
+   getSchool,getCampus,
+   getEditors,getMasterAllAuthors,getMasterNmimsAuthors
 } from '$model/master-model';
 
 import { downloadFile } from '$middleware/fileupload.middleware';
@@ -134,9 +128,12 @@ export const deleteBookChapterService = async (bookChapterId: number) => {
 
 export const bookChapterViewService = async (booChapterId: number) => {
    console.log('booChapterId in services ===>>>>>', booChapterId);
+   const bookChapterFiles = await bookChapterPublicationFiles(booChapterId);
+   const filesUrls = await getUploadedFile(bookChapterFiles);
+
    const data = await bookChapterPublicationFormviewModel(booChapterId);
-   return data;
-};
+   return {files : filesUrls ,bookChapterPublicationData : data};
+}
 
 export const bookChapterPublicationDownloadFileService = async (bookChapterId: number, req: Request, res: Response) => {
    // const logger = getLogger();

@@ -1,54 +1,42 @@
 import * as z from 'zod';
 
 export const journalPaper = z.object({
-   // body: z.object({
-   //  journal_paper : z.object({
-   nmims_school: z.array(z.string()).min(1, { message: 'School Is Required' }),
-   nmims_campus: z.array(z.string()).min(1, { message: 'Campus Is Required' }),
-   publish_year: z.number().refine(
-      (data) => {
-         return data >= 1900 && data <= 3000;
-      },
-      {
-         message: 'Invalid Year',
-      },
-   ),
-   all_authors: z.array(z.number().min(1, 'All authors are required')),
-   nmims_authors: z.array(z.number()).min(1, { message: 'NMIMS authors are required' }),
-   nmims_author_count: z.number().min(1, { message: 'Author count is required' }),
-   journal_name: z.string().min(1, 'Journal name is required'),
-   uid: z.string().min(1, 'UID is required'),
-   publisher: z.string().min(1, 'Publisher is required'),
-   other_authors: z.array(z.number()).optional(),
-   page_no: z.string().optional(),
-   issn_no: z.string().optional(),
-   scopus_site_score: z.number().optional(),
-   impact_factor: z.number().min(1, 'Impact factor is required'),
-   doi_no: z.string().min(1, 'DOI number is required'),
-   publication_date: z
-      .string()
-      .nullable()
-      .refine((date) => date != null, 'Publication date is required'),
-   title: z.string().min(1, 'Title is required'),
-   gs_indexed: z.string().optional(),
-   paper_type: z
-      .number()
-      .min(1, 'Paper type is required')
-      .refine((data) => data != 0, 'Paper Type Is Required'),
-   wos_indexed: z.boolean({ required_error: 'WOS indexed is required' }),
-   abdc_indexed: z
-      .number()
-      .min(1, 'ABDC indexed is required')
-      .refine((data) => data != 0, 'ABDC indexed Is Required'),
-   ugc_indexed: z.boolean({ required_error: 'UGC indexed is required' }),
-   scs_indexed: z.boolean({ required_error: 'SCS indexed is required' }),
-   foreign_authors_count: z.number().optional(),
-   foreign_authors: z.array(z.number()).optional(),
-   student_authors_count: z.number().optional(),
-   student_authors: z.array(z.number()).optional(),
-   // supporting_documents : z.array(),
-   // })
-   //   })
+	// body: z.object({
+    //  journal_paper : z.object({
+    nmims_school : z.array(z.string()).min(1,{message:'School Is Required'}),
+    nmims_campus : z.array(z.string()).min(1,{message:'Campus Is Required'}),
+	publish_year: z.number().refine((data) => {
+	  return data >= 1900 && data <= 3000;
+	}, {
+	  message: 'Invalid Year'
+	}),
+	all_authors: z.array(z.number().min(1, 'All authors are required')),
+	nmims_authors: z.array(z.number()).min(1, {message:'NMIMS authors are required'}),
+	nmims_author_count: z.number().min(1, { message: 'Author count is required' }),
+	journal_name: z.string().min(1, 'Journal name is required'),
+	uid: z.string().min(1, 'UID is required'),
+	publisher: z.string().min(1, 'Publisher is required'),
+	other_authors: z.array(z.number()).optional(),
+	page_no: z.string().optional(),
+	issn_no: z.string().optional(),
+	scopus_site_score: z.number().optional(),
+	impact_factor: z.number().min(1, 'Impact factor is required'),
+	doi_no: z.string().min(1, 'DOI number is required'),
+    publication_date: z.string().nullable().refine((date) => date!= null, 'Publication date is required'),
+	title: z.string().min(1, 'Title is required'),
+	gs_indexed: z.string().optional(),
+	paper_type: z.number().min(1, 'Paper type is required').refine(data => data!=0,'Paper Type Is Required'),
+	wos_indexed: z.boolean({required_error:'WOS indexed is required'}),
+	abdc_indexed: z.union([z.number(), z.null()]).optional(),
+	ugc_indexed: z.boolean({required_error:'UGC indexed is required'}),
+	scs_indexed: z.boolean({required_error:'Scopus indexed is required'}),
+	foreign_authors_count: z.number().optional(),
+	foreign_authors: z.array(z.number()).optional(),
+	student_authors_count: z.number().optional(),
+	student_authors: z.array(z.number()).optional(),
+	// supporting_documents : z.array(),
+	// })
+//   })
 });
 
 export const bookPublication = z.object({
@@ -129,59 +117,173 @@ const brandingItemSchema = z.object({
 export const brandingItemsSchema = z.array(brandingItemSchema);
 
 const singleFileSchema = z.object({
-   fieldname: z.string(),
-   originalname: z.string(),
-   encoding: z.string(),
-   mimetype: z
-      .string()
-      .refine(
-         (mimetype) =>
-            [
-               'application/pdf',
-               'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-               'application/vnd.ms-excel',
-               'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            ].includes(mimetype),
-         {
-            message: 'Only PDF,DOCX and Excel files are allowed!',
-         },
-      ),
-   buffer: z.instanceof(Buffer),
-   size: z.number(),
+	fieldname: z.string(),
+	originalname: z.string(),
+	encoding: z.string(),
+	mimetype: z.string().refine(
+	  (mimetype) => ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream'
+	  ].includes(mimetype),
+	  {
+		message: 'Only PDF,DOCX and Excel files are allowed!',
+	  }
+	),
+	buffer: z.instanceof(Buffer),
+	size: z.number()
+  });
+  
+  export const filesArraySchema = z.array(singleFileSchema);
+
+  export const caseStudy = z.object({
+
+	nmims_school : z.array(z.string()).min(1,{message:'School Is Required'}),
+    nmims_campus : z.array(z.string()).min(1,{message:'Campus Is Required'}),
+	all_authors: z.array(z.number()).min(1, {message:'All authors are required'}),
+	nmims_authors: z.array(z.number()).min(1, {message:'NMIMS authors are required'}),
+	title: z.string().min(1, 'Title is required'),
+	edition: z.string().optional(),
+	page_no: z.string().optional(),
+	volume_no: z.string().min(1, 'Volume number is required'),
+	publisher: z.string().min(1, 'Publisher is required'),
+	publish_year: z.number().refine((data) => {
+	  return data >= 1900 && data <= 3000;
+	}, {
+	  message: 'Invalid Year'
+	}),
+	publisher_category: z.number().min(1, 'Publisher category is required'),
+	url: z.string().min(1, 'Url is required'),
+	nmims_authors_count: z.number().min(1, { message: 'Author count is required' })
+	
+  });
+
+  
+export const researchSeminarObj = z.object({
+    nmims_school : z.array(z.string()).min(1,{message:'School Is Required'}),
+    nmims_campus : z.array(z.string()).min(1,{message:'Campus Is Required'}),
+	topic : z.string().min(1,{message:'Topic is required'}),
+	resource_person: z.string().optional(),
+	nmims_authors: z.array(z.number()).min(1, {message:'NMIMS authors are required'}),
+	paper_title: z.string().min(1, 'Title is required'),
+	journal_name: z.string().min(1, 'Journal name is required'),
+	publisher: z.string().min(1, 'Publisher is required'),
+	publisher_category: z.number().min(1, 'Publisher category is required'),
+	page_no: z.string().optional(),
+	issn_no:z.string().optional(),
+	scopus_site_score: z.string().optional(),
+	impact_factor: z.number().optional(),
+	scs_indexed: z.string().optional(),
+	wos_indexed: z.boolean({required_error:'WOS indexed is required'}),
+	gs_indexed: z.string().optional(),
+	abdc_indexed: z.union([z.number(), z.null()]).optional(),
+	ugc_indexed: z.boolean({required_error:'UGC indexed is required'}),
+	doi_no: z.union([z.string(), z.null()]).optional(),
+	uid: z.string().min(1, 'UID is required'),
+	publication_date: z.string().refine(date => {
+        return date !== '1970-01-01' && date !== '';
+    }, {
+        message: 'Publication date is required',
+    }),
+	research_date: z.string().refine(date => {
+        return date !== '1970-01-01' && date !== '';
+    }, {
+        message: 'Research seminar date is required',
+    }),
 });
 
-export const filesArraySchema = z.array(singleFileSchema);
+export const eContentObj =  z.object({
+	faculty_name : z.string().min(1,{message:'Faculty name is required'}),
+	module: z.string().min(1,{message:'Module developed name is required'}),
+	module_platform: z.string().min(1,{message:'Module platform is required'}),
+	document_link: z.string().min(1, {message:'Link for document and facility available is required'}),
+	facility_list: z.string().min(1, {message:'Link for development facility available is required'}),
+	media_link: z.string().min(1, {message:'Link to videos for media centre is required'}),
+	launching_date: z.string().refine(date => {
+        return date !== '1970-01-01' && date !== '';
+    }, {
+        message: 'Launching date is required',
+    }),
 
-export const conferencePublication = z
+});
+
+  export const researchAwardDataObj = z.object({
+	nmims_school : z.array(z.string()).min(1,{message:'School Is Required'}),
+    nmims_campus : z.array(z.string()).min(1,{message:'Campus Is Required'}),
+	faculty_name: z.string().min(1,{message:'Faculty name is required'}),
+	award_name: z.string().min(1,{message:'Award name is required'}),
+	award_details: z.string().min(1,{message:'Award details is required'}),
+	award_organization : z.string().min(1,{message:'Award organization is required'}),
+	award_place: z.string().min(1,{message:'Award place is required'}),
+	award_category: z.number().min(1,{message:'Award category is required'}),
+	award_date : z.string().refine(date => {
+        return date !== '1970-01-01' && date !== '';
+    }, {
+        message: 'Award date is required',
+    })
+  });
+
+
+
+
+  
+  export const researchProjectDetails = z
    .object({
-      nmims_school: z.array(z.string()).min(1, { message: 'School is required' }),
-      nmims_campus: z.array(z.string()).min(1, { message: 'Campus is required' }),
-      paper_title: z.string().min(1, { message: 'Title of the paper is required' }),
-      conference_name: z.string().min(1, { message: 'Name of conference is required' }),
-      all_authors: z.array(z.number()).min(1, { message: 'At least one author must be listed' }),
-      place: z.string().min(1, { message: 'Place of conference is required' }),
-      proceeding_published: z.boolean({ required_error: 'Proceedings published status is required' }),
-      conference_type: z.number().min(1, { message: 'Type of conference is required' }),
-      presenting_author: z.string().min(1, { message: 'Presenting author is required' }),
-      organizing_body: z.string().min(1, { message: 'Organizing body is required' }),
-      volume_no: z.string().optional(),
-      issn_no: z.string().optional(),
-      doi_no: z.string().min(1, { message: 'DOI number is required' }),
-      sponsored: z.number().min(1, { message: 'Sponsored by NMIMS/Other is required' }),
-      amount: z.string().min(1, { message: 'Amount spent in RS. by NMIMS is required' }),
-      publication_date: z
+      nmims_school: z.array(z.string()).min(1, { message: 'School Is Required' }),
+      nmims_campus: z.array(z.string()).min(1, { message: 'Campus Is Required' }),
+      research_status: z
+         .number()
+         .min(1, { message: 'Research Status is required' })
+         .refine((data) => data != 0, 'Patent Status is required'),
+      title: z.string().min(1, 'Title of Project is required'),
+      grant_proposal: z.number().min(1, 'Type of Grant is  required'),
+      grant_type: z.number().min(1, 'Grant Proposal is  required'),
+      thrust_area: z.string().min(1, 'Thrust area of Research is required'),
+      funding_amount: z.number().min(1, 'Funding Amount is required'),
+      funding_agency: z.string().min(1, 'Name of Funding Agency  is required'),
+      duration: z.string().min(1, 'Duration Of Project In Months is required'),
+      scheme: z.string().min(1, 'Scheme  is required'),
+      received_amount: z.number().min(1, 'Amount Received is required'),
+      grant_date: z
          .string()
-         .nullable()
-         .refine((date) => date != null, { message: 'Publication date is required' }),
+         .refine((date) => date !== '1970-01-01' && date !== '', { message: 'Submission/Grant Date' }),
+      payment_date: z
+         .string()
+         .refine((date) => date !== '1970-01-01' && date !== '', { message: 'Annual Payment Date' }),
       internal_authors: z.array(z.number()).optional(),
       external_authors: z.array(z.number()).optional(),
    })
    .refine((data) => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {
       message: 'At least one internal or external author must be present',
       path: ['internal_authors'],
-   });
+   }); 
 
-export const iprDetails = z
+
+   export const patentDetails = z
+   .object({
+      invention_type: z
+         .number()
+         .min(1, { message: 'Invention type is required' })
+         .refine((data) => data != 0, 'Invention type is required'),
+      sdg_goals: z.array(z.number()).min(1, { message: 'Sustainable Development Goals is required' }),
+      patent_status: z
+         .number()
+         .min(1, { message: 'Patent Status is required' })
+         .refine((data) => data != 0, 'Patent Status is required'),
+      title: z.string().min(1, 'Title of Patent / Invention is required'),
+      appln_no: z.number().min(1, 'Patent/Invention Application Number'),
+      publication_date: z
+         .string()
+         .refine((date) => date !== '1970-01-01' && date !== '', { message: 'Publication Date is required' }),
+      internal_authors: z.array(z.number()).optional(),
+      external_authors: z.array(z.number()).optional(),
+   })
+   .refine((data) => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {
+      message: 'At least one internal or external author must be present',
+      path: ['internal_authors'],
+   }); 
+
+
+
+   export const iprDetails = z
    .object({
       nmims_school: z.array(z.string()).min(1, { message: 'School Is Required' }),
       nmims_campus: z.array(z.string()).min(1, { message: 'Campus Is Required' }),
@@ -217,55 +319,31 @@ export const iprDetails = z
    .refine((data) => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {
       message: 'At least one internal or external author must be present',
       path: ['internal_authors'],
-   });
+   }); 
 
-export const patentDetails = z
+
+
+   export const conferencePublication = z
    .object({
-      invention_type: z
-         .number()
-         .min(1, { message: 'Invention type is required' })
-         .refine((data) => data != 0, 'Invention type is required'),
-      sdg_goals: z.array(z.number()).min(1, { message: 'Sustainable Development Goals is required' }),
-      patent_status: z
-         .number()
-         .min(1, { message: 'Patent Status is required' })
-         .refine((data) => data != 0, 'Patent Status is required'),
-      title: z.string().min(1, 'Title of Patent / Invention is required'),
-      appln_no: z.number().min(1, 'Patent/Invention Application Number'),
+      nmims_school: z.array(z.string()).min(1, { message: 'School is required' }),
+      nmims_campus: z.array(z.string()).min(1, { message: 'Campus is required' }),
+      paper_title: z.string().min(1, { message: 'Title of the paper is required' }),
+      conference_name: z.string().min(1, { message: 'Name of conference is required' }),
+      all_authors: z.array(z.number()).min(1, { message: 'At least one author must be listed' }),
+      place: z.string().min(1, { message: 'Place of conference is required' }),
+      proceeding_published: z.boolean({ required_error: 'Proceedings published status is required' }),
+      conference_type: z.number().min(1, { message: 'Type of conference is required' }),
+      presenting_author: z.string().min(1, { message: 'Presenting author is required' }),
+      organizing_body: z.string().min(1, { message: 'Organizing body is required' }),
+      volume_no: z.string().optional(),
+      issn_no: z.string().optional(),
+      doi_no: z.string().min(1, { message: 'DOI number is required' }),
+      sponsored: z.number().min(1, { message: 'Sponsored by NMIMS/Other is required' }),
+      amount: z.string().min(1, { message: 'Amount spent in RS. by NMIMS is required' }),
       publication_date: z
          .string()
-         .refine((date) => date !== '1970-01-01' && date !== '', { message: 'Publication Date is required' }),
-      internal_authors: z.array(z.number()).optional(),
-      external_authors: z.array(z.number()).optional(),
-   })
-   .refine((data) => (data.internal_authors?.length || 0) > 0 || (data.external_authors?.length || 0) > 0, {
-      message: 'At least one internal or external author must be present',
-      path: ['internal_authors'],
-   });
-
-export const researchProjectDetails = z
-   .object({
-      nmims_school: z.array(z.string()).min(1, { message: 'School Is Required' }),
-      nmims_campus: z.array(z.string()).min(1, { message: 'Campus Is Required' }),
-      research_status: z
-         .number()
-         .min(1, { message: 'Research Status is required' })
-         .refine((data) => data != 0, 'Patent Status is required'),
-      title: z.string().min(1, 'Title of Project is required'),
-      grant_proposal: z.number().min(1, 'Type of Grant is  required'),
-      grant_type: z.number().min(1, 'Grant Proposal is  required'),
-      thrust_area: z.string().min(1, 'Thrust area of Research is required'),
-      funding_amount: z.number().min(1, 'Funding Amount is required'),
-      funding_agency: z.string().min(1, 'Name of Funding Agency  is required'),
-      duration: z.string().min(1, 'Duration Of Project In Months is required'),
-      scheme: z.string().min(1, 'Scheme  is required'),
-      received_amount: z.number().min(1, 'Amount Received is required'),
-      grant_date: z
-         .string()
-         .refine((date) => date !== '1970-01-01' && date !== '', { message: 'Submission/Grant Date' }),
-      payment_date: z
-         .string()
-         .refine((date) => date !== '1970-01-01' && date !== '', { message: 'Annual Payment Date' }),
+         .nullable()
+         .refine((date) => date != null, { message: 'Publication date is required' }),
       internal_authors: z.array(z.number()).optional(),
       external_authors: z.array(z.number()).optional(),
    })
