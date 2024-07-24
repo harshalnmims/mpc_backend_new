@@ -1,8 +1,8 @@
 import {facultyPaginateModel,facultyScrollPaginateModel,facultyRenderModel,insertFacultyModel,facultyViewModel,facultyDeleteModel
-   ,facultyUpdateViewModel
+   ,facultyUpdateViewModel,updateFacultyModel
 } from "$model/faculty-model"
 import { paginationDefaultType } from "types/db.default";
-import { facultyDetails } from "types/research.types";
+import { facultyDetails, facultyUpdateDetails } from "types/research.types";
 
 export const facultyPaginateService = async ({
     page,
@@ -68,5 +68,10 @@ export const facultyDeleteService = async (faculty : number) => {
 
 export const facultyUpdateViewService = async (faculty : number) => {
    const data = await facultyUpdateViewModel(faculty);
+   return data;
+}
+
+export const updateFacultyService =  async (faculty : facultyUpdateDetails) => {
+   const data = await updateFacultyModel(faculty);
    return data;
 }

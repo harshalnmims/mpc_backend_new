@@ -1,10 +1,10 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { facultyPaginateService,facultyScrollPaginateService,facultyRenderService,insertFacultyService,
-   facultyViewService,facultyDeleteService,facultyUpdateViewService
+   facultyViewService,facultyDeleteService,facultyUpdateViewService,updateFacultyService
  } from "$service/research/faculty-service";
 import { validateWithZod } from '$middleware/validation.middleware';
-import { facultyObj } from '$validations/research.valid';
+import { facultyObj, facultyUpdObj } from '$validations/research.valid';
 
 export const facultyPaginateController = async(req : Request,res : Response,next : NextFunction) => {
     const {
@@ -81,5 +81,15 @@ export const facultyDeleteController = async (req: Request, res: Response, next:
 export const facultyUpdateViewController = async (req: Request, res: Response, next: NextFunction) => { 
    const id  = req.query.id;
    const data = await facultyUpdateViewService(Number(id));
+   return res.status(200).json(data);  
+}
+
+export const facultyUpdateController = async (req: Request, res: Response, next: NextFunction) => { 
+   const faculty = req.body.faculty_data;
+   let result = validateWithZod(facultyUpdObj,faculty);
+   let data;
+   if(result.success){
+   data = await updateFacultyService(faculty);
+   }
    return res.status(200).json(data);  
 }

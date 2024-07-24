@@ -408,7 +408,6 @@ export type BrandingAdvertisement = {
 }
 
 export type facultyDetails = {
-   faculty_lid ?: number;
    first_name : string;
    last_name : string,
    username : string,
@@ -417,4 +416,13 @@ export type facultyDetails = {
    designation : string,
    faculty_type : number;
    faculty_id : number;
+}
+
+export type facultyUpdateDetails = {
+   faculty_id : number;
+   faculty_name : string,
+   institute : string,
+   address : string,
+   designation : string,
+   faculty_type : number;
 }

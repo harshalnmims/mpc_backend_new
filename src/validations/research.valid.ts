@@ -236,5 +236,12 @@ export const eContentObj =  z.object({
 
   export const facultyObj = z.array(Faculty).min(1,{message:'Faculty details are required'});
 
-
+  export const facultyUpdObj =  z.object({
+	faculty_id  : z.number(),
+	faculty_name : z.string().min(1,{message:'Faculty name is required'}),
+    institute : z.string().min(1,{message :'Faculty institute name is required'}),
+	address : z.string().min(1,{message:'Faculty address is required'}),
+	designation : z.string().min(1,{message:'Faculty designation is required'}),
+    faculty_type : z.number().refine(data => data != 0,'Faculty type is required'),
+  })
 

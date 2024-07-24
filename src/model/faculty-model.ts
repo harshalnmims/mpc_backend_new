@@ -2,7 +2,7 @@ import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
 import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
 import { Session } from 'types/base.types';
-import { facultyDetails } from 'types/research.types';
+import { facultyDetails, facultyUpdateDetails } from 'types/research.types';
 
 
 export const facultyPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
@@ -42,7 +42,8 @@ export const facultyPaginateModel = async ({ page , limit, sort, order, search, 
  export const facultyScrollPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
    const data = await infiniteScrollQueryBuilder<Session>({
       baseQuery: `SELECT DISTINCT u.id,u.first_name,u.last_name,u.username FROM public.user u INNER JOIN user_role ur ON u.id = ur.user_lid 
-      WHERE ur.role_lid = 2 AND u.active = TRUE AND ur.active = TRUE`,
+      WHERE ur.role_lid = 2 AND u.active = TRUE AND ur.active = TRUE 
+      AND u.id NOT IN (SELECT DISTINCT faculty_lid FROM faculties WHERE active = TRUE AND faculty_lid IS NOT NULL)`,
 
       filters: {
          // 'usi.program_lid': filters.programLid,
@@ -108,17 +109,28 @@ export const facultyDeleteModel = async (facultyId : number) => {
 
 export const facultyUpdateViewModel = async (facultyId : number) => {
    const data =  await sql`SELECT 
-                           u.first_name,
-                           u.last_name,
-                           u.username,
+                           f.id,
+                           f.faculty_name,
                            f.institute_name,
                            f.address,
                            f.designation,
-                           ft.faculty_type
+                           f.faculty_type_lid AS faculty_type
                            FROM faculties f 
-                           INNER JOIN public.user u ON f.faculty_lid = u.id
-                           INNER JOIN faculty_type ft ON ft.id = f.faculty_type_lid 
-                           WHERE f.active = TRUE AND u.active = TRUE AND ft.active = TRUE
-                           AND f.id = ${facultyId};`;
+                           WHERE f.active = TRUE
+                           AND f.id = ${facultyId}
+`;
+    return data;
+}
+
+export const updateFacultyModel = async (facultyDetails : facultyUpdateDetails) => {
+   const data = await sql`UPDATE faculties 
+                          SET faculty_name=${facultyDetails.faculty_name},
+                          address = ${facultyDetails.address},
+                          designation = ${facultyDetails.designation},
+                          institute_name = ${facultyDetails.institute},
+                          faculty_type_lid = ${facultyDetails.faculty_type},
+                          modified_date = NOW(),
+                          modified_by = '1'
+                          WHERE id=${facultyDetails.faculty_id}`;
     return data;
 }

@@ -1,5 +1,5 @@
 import { facultyPaginateController,facultyScrollPaginateController,facultyRenderData,facultyInsertController,
-    facultyViewController,facultyDeleteController,facultyUpdateViewController
+    facultyViewController,facultyDeleteController,facultyUpdateViewController,facultyUpdateController
 } from '$controller/research/faculty-controller';
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
@@ -13,6 +13,7 @@ facultyRouter.post('/faculty-insert',asyncErrorHandler(facultyInsertController))
 facultyRouter.get('/faculty-view-data',asyncErrorHandler(facultyViewController));
 facultyRouter.get('/faculty-delete',asyncErrorHandler(facultyDeleteController))
 facultyRouter.get('/faculty-update-view',asyncErrorHandler(facultyUpdateViewController));
+facultyRouter.post('/faculty-update',asyncErrorHandler(facultyUpdateController));
 
 
 
