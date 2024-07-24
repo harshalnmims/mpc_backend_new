@@ -80,6 +80,7 @@ export async function uploadMultiFile(documents : any) : Promise<SupportingDocum
 
 function getContentType(filePath: any) {
     const ext = require('path').extname(filePath).toLowerCase();
+    console.log('file path ',ext)
     switch (ext) {
       case '.pdf':
         return 'application/pdf';

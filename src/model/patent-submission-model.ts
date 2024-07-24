@@ -216,6 +216,13 @@ export const deletePatentSubmissionModel = async (patentId: number) => {
 };
 
 export const downloadPatentFilesModel = async (patentId: number) => {
+    console.log('patentId ==>>>>', patentId)
    const data = await sql`SELECT * FROM patent_grant_documents WHERE patent_lid = ${patentId} AND active=TRUE`;
    return data;
-};
+}; 
+
+
+export const patentFiles = async (patentId: number) => {
+    const data = await sql`SELECT * FROM patent_grant_documents WHERE patent_lid = ${patentId} AND active=TRUE`;
+    return data;
+ };

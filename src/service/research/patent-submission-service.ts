@@ -7,6 +7,7 @@ import {
    patentEditViewModel,
    viewPatentModel,
    downloadPatentFilesModel,
+   patentFiles
 } from '$model/patent-submission-model';
 import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
@@ -22,7 +23,7 @@ import {
 import { patentDetails } from 'types/research.types';
 import { number } from 'zod';
 
-import { uploadFile } from '$middleware/fileupload.middleware';
+import { getUploadedFile, uploadFile } from '$middleware/fileupload.middleware';
 
 import { Request, Response } from 'express';
 
@@ -136,8 +137,12 @@ export const viewPatentService = async (patentId: number) => {
    const logger = getLogger();
 
    const data = await viewPatentModel(patentId);
+   const patentSubmissionFiles = await patentFiles(patentId)
+   const filesUrls = await getUploadedFile(patentSubmissionFiles);
+   console.log('filesUrls ===>>>>>>', filesUrls);
 
-   return data;
+   return { files: filesUrls, patentDataList: data };
+
 };
 
 export const deletePatentSubmissionService = async (patentId: number) => {

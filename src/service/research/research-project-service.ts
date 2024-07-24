@@ -7,6 +7,7 @@ import {
    researchProjectEditViewModel,
    viewResearchProjectModel,
    downloadResearchProjectFilesModel,
+   researchProjectFiles
 } from '$model/research-project-model';
 
 import exp from 'constants';
@@ -22,7 +23,7 @@ import {
    getResearchProjectStatus,
 } from '$model/master-model';
 
-import { uploadFile } from '$middleware/fileupload.middleware';
+import { getUploadedFile, uploadFile } from '$middleware/fileupload.middleware';
 
 import { Request, Response } from 'express';
 
@@ -145,6 +146,11 @@ export const viewResearchProjectService = async (researchProjectId: number) => {
    const logger = getLogger();
 
    const data = await viewResearchProjectModel(researchProjectId);
+   const researchFiles = await researchProjectFiles(researchProjectId)
+   const filesUrls = await getUploadedFile(researchFiles);
+   console.log('filesUrls ===>>>>>>', filesUrls);
+
+   return { files: filesUrls, researchProjectDataList: data };
 
    return data;
 };

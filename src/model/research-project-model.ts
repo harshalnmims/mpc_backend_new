@@ -233,4 +233,11 @@ export const downloadResearchProjectFilesModel = async (researchProjectId: numbe
    const data =
       await sql`SELECT * FROM research_project_documents WHERE research_project_lid = ${researchProjectId} AND active=TRUE`;
    return data;
-};
+}; 
+
+
+
+export const researchProjectFiles = async (researchProjectId: number) => {
+    const data = await sql`SELECT * FROM research_project_documents WHERE research_project_lid = ${researchProjectId} AND active=TRUE`;
+    return data;
+ };
