@@ -2,6 +2,7 @@ import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
 import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
 import { Session } from 'types/base.types';
+import { facultyDetails } from 'types/research.types';
 
 
 export const facultyPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
@@ -67,4 +68,57 @@ export const facultyPaginateModel = async ({ page , limit, sort, order, search, 
 export const facultyRenderModel = async () => {
    const data = await sql`SELECT faculty_type,id FROM faculty_type WHERE active = TRUE `;
    return data;
+}
+
+export const insertFacultyModel = async (facultyDetails : facultyDetails) => {
+   const data = await sql`SELECT * FROM insert_faculty_master(${JSON.parse(JSON.stringify(facultyDetails))}, '1');`;
+    return data;
+}
+
+export const facultyViewModel = async (facultyId : number) => {
+   const data =  await sql`SELECT 
+                           u.first_name,
+                           u.last_name,
+                           u.username,
+                           f.institute_name,
+                           f.address,
+                           f.designation,
+                           ft.faculty_type
+                           FROM faculties f 
+                           INNER JOIN public.user u ON f.faculty_lid = u.id
+                           INNER JOIN faculty_type ft ON ft.id = f.faculty_type_lid 
+                           WHERE f.active = TRUE AND u.active = TRUE AND ft.active = TRUE
+                           AND f.id = ${facultyId};`;
+    return data;
+}
+
+export const facultyDeleteModel = async (facultyId : number) => {
+   const data =  await sql`UPDATE faculties SET active = FALSE WHERE id = ${facultyId}`;
+    return data.count > 0 ?
+    {
+     status : 200,
+     message : 'Deleted Successfully !'
+    } 
+    :
+    {
+     status : 403,
+     message : 'Failed To Delete !'
+    };
+}
+
+export const facultyUpdateViewModel = async (facultyId : number) => {
+   const data =  await sql`SELECT 
+                           u.first_name,
+                           u.last_name,
+                           u.username,
+                           f.institute_name,
+                           f.address,
+                           f.designation,
+                           ft.faculty_type
+                           FROM faculties f 
+                           INNER JOIN public.user u ON f.faculty_lid = u.id
+                           INNER JOIN faculty_type ft ON ft.id = f.faculty_type_lid 
+                           WHERE f.active = TRUE AND u.active = TRUE AND ft.active = TRUE
+                           AND f.id = ${facultyId};`;
+    return data;
 }

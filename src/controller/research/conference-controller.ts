@@ -34,9 +34,7 @@ export const insertConferenceForm = async (req: Request, res: Response, next: Ne
     logger.info('INSIDE insertBookChapterForm CONTROLLER');
 
     const conferenceData = { ...req.body};
-
     const data = await insertConferenceService(conferenceData);
-
     console.log('data response conference controller  ====>>>>>>', data);
  
     return res.status(200).json(data);
@@ -48,9 +46,7 @@ export const updateConferenceForm = async  (req: Request, res: Response, next: N
     logger.info('INSIDE updateConferenceForm CONTROLLER');
 
     const updateConferenceData = { ...req.body};
-
     const data = await updateConferenceService(updateConferenceData);
-
     console.log('data response conference update  controller  ====>>>>>>', data);
  
     return res.status(200).json(data);
@@ -63,11 +59,9 @@ export const deleteConferenceForm = async (req: Request, res: Response, next: Ne
 
     const conferenceData = { ...req.body};
     const conferenceId = conferenceData.conference_id;
-
     const data = await deleteConferenceService(conferenceId);
 
     console.log('data response conference update  controller  ====>>>>>>', data);
- 
     return res.status(200).json(data);
 
 }

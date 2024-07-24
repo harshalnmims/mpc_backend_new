@@ -406,3 +406,15 @@ export type BrandingAdvertisement = {
    newspaper_article_link : string | null;
    documents : SupportingDocument;
 }
+
+export type facultyDetails = {
+   faculty_lid ?: number;
+   first_name : string;
+   last_name : string,
+   username : string,
+   institute : string,
+   address : string,
+   designation : string,
+   faculty_type : number;
+   faculty_id : number;
+}
