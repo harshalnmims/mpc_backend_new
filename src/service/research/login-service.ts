@@ -3,6 +3,7 @@ import { setRedisData } from "$utils/db/redis";
 import { Request, Response } from 'express';
 import { unauthorizedAccessError } from "$utils/error/error";
 import { CustomError } from "$utils/error/customError";
+import { generateRandomUUID } from "$utils/helper";
 
 
 export const loginService = async (username:string,password:string,req : Request,res : Response) => {
@@ -28,6 +29,9 @@ export const loginService = async (username:string,password:string,req : Request
     if(result.status !== 200){
       unauthorizedAccessError('loginFailed','Invalid Credentials !')
     }  
+
+      const randomId = generateRandomUUID();
+      console.log('random id ',randomId)
       const redisData = {
         username: username,
         accesstoken: result.headers.accesstoken,
@@ -36,11 +40,12 @@ export const loginService = async (username:string,password:string,req : Request
         sessiontoken: result.headers.sessiontoken
       } 
 
-      await setRedisData(username,redisData);
+      await setRedisData(randomId,redisData); 
       
-      res.cookie('username', username, {
+      res.cookie('user_id',randomId, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000, 
+        path:'/'
       });
    
     return {status:200,message:'LoggedIn Successfully !'}

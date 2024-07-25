@@ -7,6 +7,7 @@ import { addSessionUserToRequest } from '$middleware/index.middleware';
 import router from '$routes/index';
 import { main } from 'kafka';
 import dotenv from 'dotenv'; 
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 const app: Express = express();
@@ -25,6 +26,8 @@ app.use(
       credentials: true,
    }),
 );
+
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 process.env.NODE_ENV === 'production' &&
    main()
