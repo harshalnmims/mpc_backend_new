@@ -8,6 +8,7 @@ import {
    conferenceEditViewModel,
    conferenceViewModel,
    conferenceFilesModel,
+   getConferenceFilesModel
 } from '$model/conference-model';
 import { paginationDefaultType } from 'types/db.default';
 import { uploadMultiFile } from '$middleware/fileupload.middleware';
@@ -18,14 +19,17 @@ import {
    getSchool,
    getCampus,
    getEnternalFaculty,
-   getExternalFaculty,
+   getExternalFaculty
 } from '$model/master-model';
 import exp from 'constants';
 import { downloadFile } from '$middleware/fileupload.middleware';
 import { Request, Response } from 'express';
 
 import { conferenceDetails } from 'types/research.types';
-import { number } from 'zod';
+import { any, number, string } from 'zod';
+
+import { getMultiUploadedFile, uploadFile } from '$middleware/fileupload.middleware';
+
 
 export const getConferenceService = async ({ page, limit, sort, order, search, ...filters }: paginationDefaultType) => {
    const logger = getLogger();
@@ -138,11 +142,12 @@ export const updateConferenceService = async (
 
 export const viewConferenceService = async (conferenceId: number) => {
    const logger = getLogger();
-   console.log('conferenceId in service ====>>>>>', conferenceId);
 
    const data = await conferenceViewModel(conferenceId);
+   const conferenceFile = await getConferenceFilesModel(conferenceId);
+   const filesUrls = await getMultiUploadedFile(conferenceFile);
 
-   return data;
+   return {conferenceDetails : data, type_abbr:string, files:filesUrls}
 };
 
 export const deleteConferenceService = async (conferenceId: number) => {
@@ -154,7 +159,7 @@ export const deleteConferenceService = async (conferenceId: number) => {
    return data;
 };
 
-export const downloadconferenceFilesServicve = async (
+export const downloadConferenceFilesServicve = async (
    conferenceId: number,
    abbr: string,
    req: Request,

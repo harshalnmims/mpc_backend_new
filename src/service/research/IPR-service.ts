@@ -178,7 +178,7 @@ export const viewIprService = async (iprId: number) => {
    const filesUrls = await getUploadedFile(IprFiles);
    console.log('filesUrls ===>>>>>>', filesUrls);
 
-   return { files: filesUrls, iprDataList: data };;
+   return { files: filesUrls, iprDataList: data };
 };
 
 export const deleteIPRService = async (iprId: number) => {

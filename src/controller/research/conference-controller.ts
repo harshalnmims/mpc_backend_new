@@ -7,7 +7,7 @@ import {
    deleteConferenceService,
    conferenceEditViewService,
    viewConferenceService,
-   downloadconferenceFilesServicve,
+   downloadConferenceFilesServicve,
 } from '$service/research/conference-service';
 import exp from 'constants';
 import { Request, Response, NextFunction } from 'express';
@@ -138,6 +138,6 @@ export const downloadConferenceFiles = async (req: Request, res: Response, next:
    const abbr = req.query.abbr;
    console.log('abbr ===>>>>>', abbr);
 
-   const data = await downloadconferenceFilesServicve(Number(id), String(abbr), req, res);
+   const data = await downloadConferenceFilesServicve(Number(id), String(abbr), req, res);
    return data;
 };

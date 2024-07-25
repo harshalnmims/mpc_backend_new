@@ -309,3 +309,14 @@ export const conferenceFilesModel = async (conferenceId: number, abbr: string) =
 
    return data;
 };
+
+
+export const getConferenceFilesModel = async (conferenceId: number) => {
+    const data = await sql`SELECT cd.document_name, cd.filename, cda.abbr 
+        FROM conference_documents cd
+        INNER JOIN conference_documents_abbr cda 
+        ON cd.input_abbr = cda.id 
+        WHERE cd.conference_lid = ${conferenceId} AND cd.active = TRUE AND cda.active = TRUE`;
+    return data;
+ }
+
