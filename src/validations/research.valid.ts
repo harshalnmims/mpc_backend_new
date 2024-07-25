@@ -245,3 +245,7 @@ export const eContentObj =  z.object({
     faculty_type : z.number().refine(data => data != 0,'Faculty type is required'),
   })
 
+  export const loginCredentials = z.object({
+	username : z.string().min(1,{message:'Username is required'}),
+	password : z.string().min(1,{message:'Password is required'})
+  })

@@ -110,3 +110,9 @@ export type AwsData = {
     Key: string,
     Bucket: string
 }
+
+export type FetchResponse = {
+   status: number;
+   headers: Record<string, string>;
+   body: any;
+ }

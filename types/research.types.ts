@@ -426,3 +426,8 @@ export type facultyUpdateDetails = {
    designation : string,
    faculty_type : number;
 }
+
+export type loginDetails = {
+   username : string,
+   password : string
+}

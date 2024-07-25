@@ -1,5 +1,6 @@
 import postgres from 'postgres';
 import logger from '$config/logger';
+import { createClient, RedisClientType } from 'redis'
 
 const sql = postgres({
    user: process.env.DB_USER,
@@ -16,4 +17,5 @@ const sql = postgres({
    },
 });
 
-export default sql;
+
+export default sql

@@ -18,7 +18,7 @@ import researchSeminarRoutes from './research-routes/research-seminar-routes';
 import eContentRouter from './research-routes/e-content-routes';
 import researchAwardRoutes from './research-routes/research-award-routes';
 import facultyRoutes from './research-routes/faculty-routes'
-
+import loginRoutes from './research-routes/login-routes';
 //ankit
 
 const router = Router();
@@ -42,5 +42,6 @@ router.use('/',researchSeminarRoutes);
 router.use('/',eContentRouter);
 router.use('/',researchAwardRoutes);
 router.use('/',facultyRoutes);
+router.use('/',loginRoutes);
 
 export default router; 
