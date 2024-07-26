@@ -5,18 +5,16 @@ import {NextFunction, Request,Response} from 'express'
 export const validateUserSession = async (req:Request,res:Response,next:NextFunction) => {
     
     console.log('user cookies ',req.cookies)
-    // const userId = req.cookies.user_id;
-    const userId = "hjbfhwrf";
-
+    const userId = req.cookies.user_id;
 
     if(!userId || userId === undefined){
-      return res.status(401).json({status:401,message:'Invalid Cookie'})
+      return res.status(401).json({status:401,message:'Invalid Request'})
     }
 
     let data = await getRedisData(userId);
 
     if(data.status === 401){
-        return res.status(401).json({status:401,message:'Failed To Fetch Data'})
+        return res.status(401).json({status:401,message:'Invalid Request'})
     }
 
     const { status, headers, body }  = await serverFetch('https://portal.svkm.ac.in/api-gateway/auth/mobile/auth/validate-route', {
@@ -33,7 +31,7 @@ export const validateUserSession = async (req:Request,res:Response,next:NextFunc
       });
 
       if(status !== 200) {
-        return res.status(401).json({status:401,message:'Unauthorized Access !'})    
+        return res.status(401).json({status:401,message:'Session Timeout, Kindly Login!'})    
       }
 
       const {accesstoken, refreshtoken} = headers;
