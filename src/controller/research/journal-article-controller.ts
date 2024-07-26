@@ -43,11 +43,13 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
 
  export const insertJournalArticleForm = async (req: Request, res: Response, next: NextFunction) => {
-   //  const logger = getLogger();
     
      let journalDetails = JSON.parse(req.body.journal_paper);
      let data;
      let documents = req.files;
+     let userId = res.locals.username
+
+     console.log('locals username ',userId)
 
      let result = validateWithZod(journalPaper,journalDetails);
      let fileResult = validateWithZod(filesArraySchema, documents);
@@ -55,7 +57,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
 
      if(fileResult.success && result.success){
-      data = await insertJournalArticleService(journalDetails,documents);
+      data = await insertJournalArticleService(journalDetails,documents,userId);
      }
      return res.status(200).json(data);
  };
@@ -69,13 +71,15 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
     let data;
     let documents = req.files;
+    let username = res.locals.username;
+
 
     console.log('json for update ',JSON.stringify(journalDetails),documents)
     let result = validateWithZod(journalPaper,journalDetails);
     let fileResult = validateWithZod(filesArraySchema, documents);
 
     if(fileResult.success && result.success){
-      data = await updateJournalArticleService(journalDetails,documents,Number(journalId));
+      data = await updateJournalArticleService(journalDetails,documents,Number(journalId),username);
      }
      console.log('final json ',JSON.stringify(data))
      return res.status(200).json(data);
@@ -89,7 +93,8 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  
    //  const journalPaper = { ...req.body};
     const journalPaperId  = req.query.id
-    const data = await deleteJournalArticleService(Number(journalPaperId));
+    let username = res.locals.username;
+    const data = await deleteJournalArticleService(Number(journalPaperId),username);
 
     return  res.status(200).json(data)
 

@@ -4,8 +4,9 @@ import {NextFunction, Request,Response} from 'express'
 
 export const validateUserSession = async (req:Request,res:Response,next:NextFunction) => {
     
-    console.log('user cookies ',req.cookies)
+    console.log('user cookies ',req.cookies.user_id)
     const userId = req.cookies.user_id;
+    // const userId = undefined;
 
     if(!userId || userId === undefined){
       return res.status(401).json({status:401,message:'Invalid Request'})
@@ -38,9 +39,9 @@ export const validateUserSession = async (req:Request,res:Response,next:NextFunc
 
       data = {...data, accesstoken: accesstoken, refreshtoken: refreshtoken}
       await setRedisData(userId, data);
-      const userName = data.username;
-      console.log("USERNAME IN MIDDLEWARE : ", userName);
-      req.body.username = userName;
+      console.log('username ',data.username)
+      res.locals.username = data.username;
       next()
+
 
 }

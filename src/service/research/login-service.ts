@@ -47,6 +47,6 @@ export const loginService = async (username:string,password:string,req : Request
         maxAge: 24 * 60 * 60 * 1000, 
         path:'/'
       });
-   
+         
     return {status:200,message:'LoggedIn Successfully !'}
 }

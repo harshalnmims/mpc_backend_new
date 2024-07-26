@@ -12,6 +12,7 @@ import {getUploadedFile, uploadFile} from '$middleware/fileupload.middleware'
 import { Request,Response } from 'express';
 import { downloadFile } from '$middleware/fileupload.middleware';
 import { string } from 'zod';
+import { getRedisData } from '$utils/db/redis';
 
 
 export const getJournalArticleService = async ({
@@ -60,18 +61,18 @@ export const journalPaginateService = async ({
    return data;
 };
 
-export const insertJournalArticleService = async (journalDetails: journalArticleDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertJournalArticleService = async (journalDetails: journalArticleDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,username : string) => {
             
        let uploadDocuments = await uploadFile(documents);
        journalDetails.supporting_documents  = uploadDocuments.map(data =>  data);
 
-       const data  = await insertJournalArticleModel(journalDetails);
+       const data  = await insertJournalArticleModel(journalDetails,username);
        console.log('final journal json ',JSON.stringify(data))
        return data;
  }; 
 
 
- export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails,documents : { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,journalId :number) => {
+ export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails,documents : { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,journalId :number,username:string) => {
 
  
     let uploadDocuments = await uploadFile(documents);
@@ -85,20 +86,20 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
     updateJournalDetails.journal_paper_id = journalId;
     console.log('upload documents ',uploadDocuments)
 
-    const data = await updateJournalArticleModel(updateJournalDetails);
+    const data = await updateJournalArticleModel(updateJournalDetails,username);
     const viewData = await journalUpdateViewData(journalId);
 
     return  {data,viewData};
  };
 
 
- export const deleteJournalArticleService = async(journalPaperId : number) => {
+ export const deleteJournalArticleService = async(journalPaperId : number,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
 
     console.log('journalPaperId in service ===>>>', journalPaperId);
  
-    const data = await deleteJournalArticleModel(journalPaperId);
+    const data = await deleteJournalArticleModel(journalPaperId,username);
 
     console.log('data ===>>>>>', data);
     return data

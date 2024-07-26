@@ -17,3 +17,4 @@ export async function getRedisData(key : any) {
 
     return JSON.parse(data)
 }
+

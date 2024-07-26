@@ -115,27 +115,27 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
 };
 
 
-export const insertJournalArticleModel = async (journalDetails: journalArticleDetails) => {
+export const insertJournalArticleModel = async (journalDetails: journalArticleDetails,username:string) => {
     console.log('journalDetails ===>>>>>', journalDetails)
     
-    const data = await sql`SELECT * FROM insert_journal_article(${JSON.parse(JSON.stringify(journalDetails))}, '1');`;
+    const data = await sql`SELECT * FROM insert_journal_article(${JSON.parse(JSON.stringify(journalDetails))},${username});`;
     return data;
  }; 
 
 
-export const updateJournalArticleModel = async (updateJournalDetails: journalArticleDetails) => {
+export const updateJournalArticleModel = async (updateJournalDetails: journalArticleDetails,username:string) => {
     console.log('updateJournalDetails in models  ===>>>>>', updateJournalDetails)
     
-    const data = await sql`SELECT * FROM upsert_journal_article(${JSON.parse(JSON.stringify(updateJournalDetails))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_journal_article(${JSON.parse(JSON.stringify(updateJournalDetails))}, ${username});`;
     return data;
  };
  
 
 
- export const deleteJournalArticleModel = async (journalPaperId: number) => {
+ export const deleteJournalArticleModel = async (journalPaperId: number,username:string) => {
     console.log('journalPaperId models  ====>>>>>>', journalPaperId);
     
-    const data = await sql`UPDATE journal_paper_article SET active = false,modified_date=now(),modified_by='1' WHERE id = ${journalPaperId}`;
+    const data = await sql`UPDATE journal_paper_article SET active = false,modified_date=now(),modified_by=${username} WHERE id = ${journalPaperId}`;
 
     return data.count > 0 ? {
         status:200,
