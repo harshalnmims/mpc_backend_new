@@ -92,3 +92,10 @@ export const meetingFiles = async (meetingId: number,abbr:string) => {
    WHERE abbr=${abbr} AND active = TRUE) AND active = TRUE`;
    return data;
 }
+
+export async function getMeetingFiles(meetingId : number){
+const data = await sql`SELECT mt.document_name,mt.filename,mi.abbr FROM meeting_stackholders_documents mt
+INNER JOIN meeting_stackholders_inputs mi ON mt.input_lid = mi.id WHERE mt.meeting_lid = ${meetingId}
+AND mt.active = TRUE AND mi.active = TRUE`;
+   return data;
+}

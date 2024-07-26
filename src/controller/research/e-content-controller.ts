@@ -7,7 +7,7 @@ import { eContentObj } from '$validations/research.valid';
 import { Request, Response, NextFunction } from 'express';
 
 export const insertEContent = async (req: Request, res: Response, next: NextFunction) => {
-
+     console.log('request body e content ',JSON.stringify(req.body))
      const eContent = req.body.e_content;
      let result = validateWithZod(eContentObj,eContent);
      let data;
@@ -16,6 +16,7 @@ export const insertEContent = async (req: Request, res: Response, next: NextFunc
      }
      return res.status(200).json(data);  
 }
+
 export const updateEContent = async (req: Request, res: Response, next: NextFunction) => {
   
     const eContent = req.body.e_content;

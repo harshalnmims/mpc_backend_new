@@ -17,10 +17,10 @@ import caseStudyRoutes from './research-routes/case-study-routes';
 import researchSeminarRoutes from './research-routes/research-seminar-routes';
 import eContentRouter from './research-routes/e-content-routes';
 import researchAwardRoutes from './research-routes/research-award-routes';
+import facultyRoutes from './research-routes/faculty-routes'
+import loginRoutes from './research-routes/login-routes';
 import patentRoutes from './research-routes/patent-submission-routes';
 import researchProjectRoutes from './research-routes/research-project-routes';
-
-//ankit
 
 const router = Router();
 
@@ -43,6 +43,8 @@ router.use('/',caseStudyRoutes);
 router.use('/',researchSeminarRoutes);
 router.use('/',eContentRouter);
 router.use('/',researchAwardRoutes);
+router.use('/',facultyRoutes);
+router.use('/',loginRoutes);
 router.use('/', patentRoutes);
 router.use('/', researchProjectRoutes);
 

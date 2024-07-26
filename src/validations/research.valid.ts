@@ -224,6 +224,7 @@ export const eContentObj =  z.object({
 
 
 
+
   
   export const researchProjectDetails = z
    .object({
@@ -351,3 +352,36 @@ export const eContentObj =  z.object({
       message: 'At least one internal or external author must be present',
       path: ['internal_authors'],
    });
+
+  const Faculty = z.object({
+	faculty_id : z.number(),
+    first_name : z.string().min(1,{message:'Faculty firstname is required'}),
+	last_name : z.string().min(1,{message:'Faculty lastname is required'}),
+	username : z.string().min(1,{message:'Faculty username is required'}),
+    institute : z.string().min(1,{message :'Faculty institute name is required'}),
+	address : z.string().min(1,{message:'Faculty address is required'}),
+	designation : z.string().min(1,{message:'Faculty designation is required'}),
+    faculty_type : z.number().refine(data => data != 0,'Faculty type is required'),
+  })
+
+  export const facultyObj = z.array(Faculty).min(1,{message:'Faculty details are required'});
+
+  export const facultyUpdObj =  z.object({
+	faculty_id  : z.number(),
+	faculty_name : z.string().min(1,{message:'Faculty name is required'}),
+    institute : z.string().min(1,{message :'Faculty institute name is required'}),
+	address : z.string().min(1,{message:'Faculty address is required'}),
+	designation : z.string().min(1,{message:'Faculty designation is required'}),
+    faculty_type : z.number().refine(data => data != 0,'Faculty type is required'),
+  })
+
+  export const loginCredentials = z.object({
+	username : z.string().min(1,{message:'Username is required'}),
+	password : z.string().min(1,{message:'Password is required'})
+  })
+
+
+
+
+ 
+

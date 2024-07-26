@@ -380,26 +380,51 @@ export type MeetingStakeholders = {
 };
 
 export type BrandingAdvertisement = {
-   branding_id?: number;
-   faculty_recognition: string | null;
-   faculty_recognition_link: string | null;
-   faculty_awards: string | null;
-   faculty_awards_link: string | null;
-   staff_awards: string | null;
-   staff_awards_link: string | null;
-   alumni_awards: string | null;
-   alumni_awards_link: string | null;
-   student_awards: string | null;
-   student_awards_link: string | null;
-   international_ventures: string | null;
-   international_ventures_link: string | null;
-   conference_participation: string | null;
-   conference_participation_link: string | null;
-   organizing_conference: string | null;
-   organizing_conference_link: string | null;
-   student_event: string | null;
-   student_event_link: string | null;
-   newspaper_article: string | null;
-   newspaper_article_link: string | null;
-   documents: SupportingDocument;
-};
+   branding_id ?: number ;
+   faculty_recognition : string | null;
+   faculty_recognition_link : string | null;
+   faculty_awards : string | null;
+   faculty_awards_link : string | null;
+   staff_awards : string | null;
+   staff_awards_link : string | null;
+   alumni_awards :string | null;
+   alumni_awards_link : string | null;
+   student_awards : string | null;
+   student_awards_link : string | null;
+   international_ventures : string | null;
+   international_ventures_link : string | null;
+   conference_participation : string | null;
+   conference_participation_link : string | null;
+   organizing_conference : string | null;
+   organizing_conference_link : string| null;
+   student_event : string | null;
+   student_event_link : string | null;
+   newspaper_article : string  | null ;
+   newspaper_article_link : string | null;
+   documents : SupportingDocument;
+}
+
+export type facultyDetails = {
+   first_name : string;
+   last_name : string,
+   username : string,
+   institute : string,
+   address : string,
+   designation : string,
+   faculty_type : number;
+   faculty_id : number;
+}
+
+export type facultyUpdateDetails = {
+   faculty_id : number;
+   faculty_name : string,
+   institute : string,
+   address : string,
+   designation : string,
+   faculty_type : number;
+}
+
+export type loginDetails = {
+   username : string,
+   password : string
+}
