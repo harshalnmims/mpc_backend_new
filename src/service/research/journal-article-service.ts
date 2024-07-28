@@ -1,7 +1,7 @@
 import { getLogger } from '$config/logger-context';
 import { getJournalArticlePublished, insertJournalArticleModel, updateJournalArticleModel,
     deleteJournalArticleModel,journalPaginateModal,journalViewData,journalFiles,journalUpdateViewData,
-    
+    checkFormStatusModel
  } from '$model/journal-article-model';
 import { paginationDefaultType } from 'types/db.default';
 import { journalArticleDetails } from 'types/research.types';
@@ -45,7 +45,7 @@ export const journalPaginateService = async ({
    order,
    search,
    ...filters
-}: paginationDefaultType) => {
+}: paginationDefaultType,username : string) => {
    const logger = getLogger();
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
 
@@ -56,7 +56,7 @@ export const journalPaginateService = async ({
       order,
       search,
       ...filters,
-   });
+   }, username);
 
    return data;
 };
@@ -156,5 +156,12 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
    return {
     foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus,journalData
    };
+ }
+
+ export const checkFormStatusService = async (journalId :number) => { 
+  
+   const data = await checkFormStatusModel(journalId);
+   return data;
+
  }
 

@@ -2,7 +2,7 @@ import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
     deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService,journalUpdateViewService,
-    journalDownloadFileService} from '$service/research/journal-article-service';
+    journalDownloadFileService,checkFormStatusService} from '$service/research/journal-article-service';
 import { journalFiles } from '$model/journal-article-model';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
@@ -113,6 +113,10 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
           ...filters
        } = { ...req.body, ...req.params, ...req.query };
 
+   let username = res.locals.username;    
+
+   console.log('data filters ',filters)    
+
    const data = await journalPaginateService({
        page ,
        limit,
@@ -120,7 +124,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
        sort,
        order,
        filters,
-    });
+    }, username);
  
     return res.status(200).json(data); 
    // {
@@ -177,5 +181,12 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
     return res.status(200).json(data);
  
  }
+
+ export const checkFormStatusController = async (req : Request , res : Response , next  : NextFunction) => {
+   const id  = req.query.id ;
+   console.log('journal id ',id)
+   const data = await checkFormStatusService(Number(id));
+   return res.status(200).json(data);
+}
 
 

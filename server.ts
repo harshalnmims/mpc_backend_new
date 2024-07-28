@@ -4,7 +4,6 @@ import { addChildLogger, requestLogger } from '$middleware/logger.middleware';
 import { customErrorHandler } from '$middleware/error.middleware';
 import logger from '$config/logger';
 import { addSessionUserToRequest } from '$middleware/index.middleware';
-import session from 'express-session'; 
 import router from '$routes/index';
 import { main } from 'kafka';
 import dotenv from 'dotenv'; 
@@ -30,12 +29,6 @@ app.use(
 
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-app.use(session({
-   secret: process.env.SESSION_SECRET || 'secret-key',
-   resave: false,
-   saveUninitialized: true,
-   cookie: { secure: process.env.NODE_ENV === 'production' } 
-}));
 
 process.env.NODE_ENV === 'production' &&
    main()

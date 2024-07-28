@@ -36,7 +36,7 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
     return data;
  };
 
- export const journalPaginateModal = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+ export const journalPaginateModal = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
    console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
 
    const data = await paginationQueryBuilder<Session>({
@@ -47,7 +47,8 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
                         jpa.publisher,
                         jpa.impact_factor,
                         jpa.publish_year,
-                        jpa.total_authors
+                        jpa.total_authors,
+                        jpa.created_by
                      FROM journal_paper_article jpa
                      WHERE jpa.active=TRUE
                   ),
@@ -78,8 +79,17 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
                      INNER JOIN policy_cadre pc ON pc.id = jpc.policy_cadre_lid
                      WHERE jpa.active=TRUE AND jpc.active=TRUE AND pc.active=TRUE
                      GROUP BY jpa.id
-                  )
-
+                  ),
+				  form_status AS (
+				    SELECT 
+					jpa.id AS paper_id,  
+					fs.abbr  
+					FROM journal_paper_article jpa
+					INNER JOIN journal_form_status jfs ON jpa.id = jfs.journal_lid
+					INNER JOIN form_status fs ON fs.id = jfs.status_lid 
+					WHERE jfs.journal_lid = jpa.id AND jfs.active = TRUE 
+					AND fs.active = TRUE
+				  )
                   SELECT
                      pd.id,
                      pd.journal_name,
@@ -89,15 +99,18 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
                      pd.total_authors,
                      sd.nmims_school,
                      cd.nmims_campus,
-                     pcd.policy_cadre
+                     pcd.policy_cadre,
+					 fst.abbr AS status
                   FROM paper_details pd
                   LEFT JOIN school_details sd ON pd.id = sd.paper_id
                   LEFT JOIN campus_details cd ON pd.id = cd.paper_id
                   LEFT JOIN policy_details pcd ON pd.id = pcd.paper_id
+				  LEFT JOIN form_status fst ON pd.id = fst.paper_id
+                  WHERE pd.created_by = '${username}'
 `,
 
       filters: {
-         // 'usi.program_lid': filters.programLid,
+        //  'sd.nmims_school': filters.nmims_school,
          // 'usi.session_lid': filters.sessionLid,
          // 'usi.subject_lid': filters.subjectLid,
       },
@@ -426,5 +439,10 @@ WHERE
     jpas.id = ${journalId} AND jpas.active=TRUE AND jpc.active = TRUE AND jps.active=TRUE
 GROUP BY jpas.id
 `
+    return data;
+}
+
+export const checkFormStatusModel = async (journalId : number) => {
+    const data = await sql`SELECT * FROM journal_form_status(${journalId})`;
     return data;
 }
