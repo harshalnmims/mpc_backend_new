@@ -151,7 +151,7 @@ export const renderModal = async (abbr : string) => {
  }
 
  export const getFormLevels = async () => {
-    const data = await sql`SELECT * FROM form_level WHERE active = TRUE`;
+    const data = await sql`SELECT * FROM form_status WHERE active = TRUE`;
     return data;
  }
 
