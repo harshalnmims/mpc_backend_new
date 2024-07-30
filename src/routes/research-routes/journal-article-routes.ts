@@ -1,6 +1,6 @@
 import { getJournalArticle, insertJournalArticleForm , updateJournalArticleForm, 
     deleteJournalArticleForm,journalPaginate,journalRenderData,journalViewController,journalDownloadFile,journalUpdateViewController,
-    checkFormStatusController
+    checkFormStatusController,journalFormInfiniteController,journalApprovalInsertController
 } from '$controller/research/journal-article-controller';
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
@@ -22,7 +22,8 @@ journalDetailsRouter.get('/journal-view-data',asyncErrorHandler(validateUserSess
 journalDetailsRouter.get('/journal-download-files',asyncErrorHandler(validateUserSession),asyncErrorHandler(journalDownloadFile))
 journalDetailsRouter.get('/journal-update-view',asyncErrorHandler(validateUserSession),asyncErrorHandler(journalUpdateViewController))
 journalDetailsRouter.get('/check-journal-form-status',asyncErrorHandler(validateUserSession),asyncErrorHandler(checkFormStatusController))
-
+journalDetailsRouter.get('/journal-form-infinite',asyncErrorHandler(validateUserSession),asyncErrorHandler(journalFormInfiniteController))
+journalDetailsRouter.post('/journal-approval-insert',asyncErrorHandler(validateUserSession),asyncErrorHandler(journalApprovalInsertController))
 
 export default journalDetailsRouter;
 

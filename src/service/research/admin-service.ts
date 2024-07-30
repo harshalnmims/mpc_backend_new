@@ -2,9 +2,9 @@ import { getAdminCampus, getAdminSchool , adminPaginateModel } from '$model/admi
 import { getFormLevels , getAdminModules} from '$model/master-model';
 import { paginationDefaultType } from 'types/db.default';
 
-export const adminRenderService = async (username : string) => {
+export const adminRenderService = async (username : string,id:number) => {
     const level = await getFormLevels();
-    const modules = await getAdminModules();
+    const modules = await getAdminModules(id);
     const campus = await getAdminCampus(username);
     const school = await getAdminSchool(username);
 

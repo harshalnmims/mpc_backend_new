@@ -155,7 +155,7 @@ export const renderModal = async (abbr : string) => {
     return data;
  }
 
- export const getAdminModules = async () => {
-    const data = await sql`SELECT * FROM admin_modules WHERE active = TRUE`;
+ export const getAdminModules = async (id : number) => {
+    const data = await sql`SELECT * FROM admin_modules WHERE id = ${id} AND active = TRUE`;
     return data;
  }

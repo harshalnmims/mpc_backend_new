@@ -3,7 +3,8 @@ import {adminRenderService,adminPaginateService} from '$service/research/admin-s
 
 export const adminRenderController = async (req:Request,res:Response,next:NextFunction) => {
    let username = res.locals.username;
-   const data = await adminRenderService(username);
+   let id = req.query.id;
+   const data = await adminRenderService(username,Number(id));
    return res.status(200).json(data);
 } 
 

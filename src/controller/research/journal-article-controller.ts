@@ -2,11 +2,11 @@ import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
     deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService,journalUpdateViewService,
-    journalDownloadFileService,checkFormStatusService} from '$service/research/journal-article-service';
+    journalDownloadFileService,checkFormStatusService,journalFormInfiniteService,journalApprovalInsertService} from '$service/research/journal-article-service';
 import { journalFiles } from '$model/journal-article-model';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
-import { filesArraySchema } from '$validations/research.valid';
+import { approvalObj, filesArraySchema } from '$validations/research.valid';
 import { journalPaper } from '$validations/research.valid';
 import AWS from 'aws-sdk';
 import { AwsData } from 'types/base.types';
@@ -187,6 +187,40 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
    console.log('journal id ',id)
    const data = await checkFormStatusService(Number(id));
    return res.status(200).json(data);
+}
+
+export const journalFormInfiniteController  = async (req: Request, res: Response, next: NextFunction) => {
+ 
+   const {
+      page = 1,
+      limit = 10,
+      sort = '',
+      order = 'desc',
+      search = '',
+      ...filters
+   } = { ...req.body, ...req.params, ...req.query };
+
+   const data = await journalFormInfiniteService({
+      page,
+      limit,
+      search,
+      sort,
+      order,
+      filters,
+   });
+
+   return res.status(200).json(data);
+};
+
+export const journalApprovalInsertController = async (req: Request, res: Response, next: NextFunction) => { 
+  const approvalData = req.body.approval_data;
+  let userId = res.locals.username;
+  let result = validateWithZod(approvalObj,approvalData);
+  let data;
+  if(result.success){
+   data = await journalApprovalInsertService(approvalData,userId);
+  }
+  return res.status(200).json(data);
 }
 
 

@@ -171,3 +171,9 @@ export const downloadPublicationFiles = async (req : Request , res : Response , 
     await bookPublicationDownloadFileService(Number(id), req, res);
 
  }
+
+ export const bookPublicationInfinite = async (req : Request , res : Response , next  : NextFunction) => {
+
+    console.log('inifinite hitted');
+    return res.status(200).json({data:''});
+ }

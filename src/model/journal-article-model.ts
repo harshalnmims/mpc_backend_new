@@ -1,6 +1,6 @@
 import { infiniteScrollQueryBuilder,paginationQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
-import { journalArticleDetails } from 'types/research.types';
+import { ApprovalDetails, journalArticleDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import { HTTP_STATUS } from '$constants/http.constant';
 import { CustomError } from '$utils/error/customError';
@@ -446,3 +446,77 @@ export const checkFormStatusModel = async (journalId : number) => {
     const data = await sql`SELECT * FROM journal_form_status(${journalId})`;
     return data;
 }
+
+export const journalFormInfiniteModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+    console.log('admin filters ',filters)
+      
+      if(filters.campus === 'All'){
+        delete filters.campus
+      }
+  
+      if(filters.school === 'All'){
+        delete filters.school
+      }
+  
+      if(filters.status === 'All'){
+        delete filters.status
+      }
+  
+    const data = await infiniteScrollQueryBuilder<Session>({
+       baseQuery: ` SELECT 
+        DISTINCT u.id,
+	    jfs.id AS form_lid,
+		fs.abbr AS status,
+		jpa.journal_name AS form_name,
+        u.first_name,
+        u.last_name,
+        u.username
+      FROM public.user u 
+      INNER JOIN user_role ur ON ur.user_lid = u.id
+      INNER JOIN journal_form_status jfs ON jfs.faculty_lid = u.id
+	  INNER JOIN form_status fs ON fs.id = jfs.status_lid 
+	  INNER JOIN journal_paper_article jpa ON jpa.id = jfs.journal_lid
+      INNER JOIN user_campus uc ON uc.user_lid = u.id
+      INNER JOIN campus c ON uc.campus_lid = c.id
+      INNER JOIN user_organization uo ON uo.user_lid = u.id
+      INNER JOIN organization o ON uo.organization_lid = o.id
+      WHERE ur.role_lid = 2
+        AND jfs.level_lid = (
+            SELECT level 
+            FROM form_level 
+            WHERE role_lid = 3 AND active = TRUE
+        )
+        AND ur.active = TRUE
+        AND jfs.active = TRUE
+        AND c.active = TRUE
+        AND uc.active = TRUE
+        AND uo.active = TRUE
+        AND o.active = TRUE
+  `,
+  
+       filters: {
+          'c.id': filters.campus ,
+          'o.id': filters.school ,
+          'jfs.status_lid' : filters.status
+       },
+       
+       cursor: {
+          column: 'u.id',
+          value: Number(filters.cursor)
+       },
+       limit: limit.toString(),
+       search: search || '',
+       searchColumns: ['u.username', 'u.first_name', 'u.last_name'],
+       sort: {
+          column: sort || 'u.id',
+          order: order || 'desc',
+       },
+    });
+  
+    return data;
+  };
+
+  export const journalApprovalInsertModel = async(approvalDetails : ApprovalDetails,username : string) => {
+   const data =  await sql`SELECT * FROM insert_journal_approval_details(${JSON.parse(JSON.stringify(approvalDetails))},${username});`;
+   return data;
+  }

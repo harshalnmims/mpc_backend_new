@@ -1,10 +1,10 @@
 import { getLogger } from '$config/logger-context';
 import { getJournalArticlePublished, insertJournalArticleModel, updateJournalArticleModel,
     deleteJournalArticleModel,journalPaginateModal,journalViewData,journalFiles,journalUpdateViewData,
-    checkFormStatusModel
+    checkFormStatusModel,journalFormInfiniteModel,journalApprovalInsertModel
  } from '$model/journal-article-model';
 import { paginationDefaultType } from 'types/db.default';
-import { journalArticleDetails } from 'types/research.types';
+import { ApprovalDetails, journalArticleDetails } from 'types/research.types';
 import {renderModal,getPolicyCadre,getNmimsAuthors,getAllAuthors,getAbdcIndexed, getPaperType,
    getSchool,getCampus
 } from '$model/master-model';
@@ -165,3 +165,28 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
 
  }
 
+export const journalFormInfiniteService = async ({
+    page,
+    limit,
+    sort,
+    order,
+    search,
+    ...filters
+ }: paginationDefaultType) => {
+   
+    const data = await journalFormInfiniteModel({
+       page,
+       limit,
+       sort,
+       order,
+       search,
+       ...filters,
+    });
+ 
+    return data;
+ };
+
+ export const journalApprovalInsertService = async (approvalDetails : ApprovalDetails ,username : string) => {
+   const data = await journalApprovalInsertModel(approvalDetails,username);
+   return data;
+ }
