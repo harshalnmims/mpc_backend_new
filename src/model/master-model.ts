@@ -213,10 +213,6 @@ export const getExternalAuthors = async () => {
  }  
 
 
-
-
-
-
  export const getInventionType = async () => {
 
     const data = await sql`select * from invention_type where active=TRUE`;
@@ -236,10 +232,6 @@ export const getExternalAuthors = async () => {
     }
 
  }  
-
-
-
-
 
 
  export const getPatentStatus = async () => {
@@ -296,7 +288,37 @@ export const getExternalAuthors = async () => {
 
     }
 
+ }  
+
+
+ 
+ export const getMasterDatatype = async () => {
+
+    const data = await sql`SELECT 
+            id AS id,
+            input_name AS name
+        FROM 
+            public.master_inputs
+        WHERE 
+            active = true`;
+
+    return data.count > 0 ? {
+
+        status:200,
+
+        message:data
+
+    } : {
+
+        status:400,
+
+        message:'Failed To Fetch!'
+
+    }
+
  } 
+
+
 
 
 

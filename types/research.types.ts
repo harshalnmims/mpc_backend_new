@@ -428,3 +428,20 @@ export type loginDetails = {
    username : string,
    password : string
 }
+
+
+export type masterDataDetails = {
+   master_id : number;
+   first_name : string,
+   last_name : string,
+   username : string,
+   input_data_type : number;
+} 
+
+export type updMasterDetails = {
+   [x: string]: any;
+   master_id ?: number;
+   master_input_name : string;
+   master_type: number;
+
+}

@@ -21,6 +21,7 @@ import facultyRoutes from './research-routes/faculty-routes'
 import loginRoutes from './research-routes/login-routes';
 import patentRoutes from './research-routes/patent-submission-routes';
 import researchProjectRoutes from './research-routes/research-project-routes';
+import masterDataRoutes from './research-routes/master-data-routes';
 
 const router = Router();
 
@@ -47,5 +48,6 @@ router.use('/',facultyRoutes);
 router.use('/',loginRoutes);
 router.use('/', patentRoutes);
 router.use('/', researchProjectRoutes);
+router.use('/', masterDataRoutes);
 
 export default router;
