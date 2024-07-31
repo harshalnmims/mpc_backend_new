@@ -1,6 +1,6 @@
 import {
   masterDataPaginate, renderMasterData, masterDataScrollPaginate, insertMasterInput,
-  masterDataEditViewForm, updateMasterInput
+  masterDataEditViewForm, updateMasterInput, viewMasterDataForm, deleteMasterDataForm
  } from '$controller/research/master-data-controller';
  
  import { asyncErrorHandler } from '$middleware/error.middleware';
@@ -21,5 +21,7 @@ import {
  masterDataRoutes.post('/master-input-data-insert', asyncErrorHandler(insertMasterInput));
  masterDataRoutes.get('/master-input-data-edit-view', asyncErrorHandler(masterDataEditViewForm));
  masterDataRoutes.post('/master-input-data-update', asyncErrorHandler(updateMasterInput));
+ masterDataRoutes.get('/master-input-data-form-view', asyncErrorHandler(viewMasterDataForm));
+ masterDataRoutes.get('/master-input-data-delete', asyncErrorHandler(deleteMasterDataForm));
 
  export default masterDataRoutes;

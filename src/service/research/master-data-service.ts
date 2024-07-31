@@ -1,7 +1,7 @@
 import { getLogger } from '$config/logger-context';
 import { 
     masterPaginateModel, masterDataScrollPaginateModel, insertMasterDataModel, masterDataEditViewModel,
-    upsertMasterDataModel
+    upsertMasterDataModel, viewMasterDataModel, masterDataDelete
  } from '$model/master-data-model';
 import { paginationDefaultType } from 'types/db.default';
 import {getMasterDatatype, getPatentStatus
@@ -103,6 +103,16 @@ export const upsertMasterInputService = async(masterData : updMasterDetails) => 
    return data
 
 } 
+
+export const viewMasterDataService = async(masterId : number) => {
+   const data = await viewMasterDataModel(masterId);
+   return data;
+}
+
+export const deleteMasterDataService = async(masterId : number) => {
+   const data = await masterDataDelete(masterId);
+   return data;
+}
 
 
 

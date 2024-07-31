@@ -333,7 +333,13 @@ export const viewIprModel = async (iprId: number) => {
 export const deleteIPRModel = async (iprId: number) => {
    const data = await sql`UPDATE ipr SET active = false,modified_date=now(),modified_by='1' WHERE id = ${iprId}`;
 
-   return data;
+    return data.count > 0 ? {
+    status:200,
+    message:'Deleted Successfully !'
+} : {
+    status:400,
+    message:'Failed To Delete !'
+};
 };
 
 export const downloadIprFilesModel = async (iprId: number) => {

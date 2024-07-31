@@ -441,6 +441,7 @@ export type masterDataDetails = {
 export type updMasterDetails = {
    [x: string]: any;
    master_id ?: number;
+   faculty_lid : number;
    master_input_name : string;
    master_type: number;
 

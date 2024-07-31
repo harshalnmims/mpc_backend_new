@@ -396,6 +396,7 @@ export const masterDataObj = z.object({
 
 export const updMasterDetails = z.object({
    master_id: z.number(),
+   faculty_lid: z.number(),
    master_input_name: z.string().min(1, { message: 'Faculty name is required' }),
    master_type: z.object({
      value: z.string().min(1, { message: 'Type of input data is required' }),

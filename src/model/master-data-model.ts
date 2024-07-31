@@ -22,7 +22,7 @@ export const masterPaginateModel = async ({ page, limit, sort, order, search, fi
                ON 
                    mid.input_type = mi.id
                WHERE 
-                   mi.active = true
+                   mi.active = true AND mid.active = true
            )
 
            SELECT
@@ -92,6 +92,7 @@ export const masterDataEditViewModel = async(masterId : number) => {
    const data = await sql`SELECT 
                     mid.id AS master_id,
                     mid.name AS master_input_name,
+                    mid.faculty_lid AS faculty_lid,
                     mid.input_type AS input_type,
                     mi.input_name AS input_data_type
                 FROM 
@@ -102,7 +103,7 @@ export const masterDataEditViewModel = async(masterId : number) => {
                     mid.input_type = mi.id
                 WHERE 
 					mid.id = ${masterId} AND
-                    mi.active = true`;
+                    mi.active = true AND mid.active = true`;
    return data;
 } 
 
@@ -118,5 +119,36 @@ export const upsertMasterDataModel = async (masterData : updMasterDetails, maste
    return data;
 };
 
+export const viewMasterDataModel = async(masterId : number) => {
+   const data = await sql`SELECT 
+                    mid.id AS id,
+                    mid.name AS master_input_name,
+					mid.faculty_lid AS faculty_lid,
+                    mi.input_name AS master_type
+                FROM 
+                    public.master_input_data mid
+                INNER JOIN 
+                    public.master_inputs mi
+                ON 
+                    mid.input_type = mi.id
+                WHERE 
+					mid.id = ${masterId} AND
+                    mi.active = true AND mid.active = true`;
+
+      return data
+}
+
+
+export const masterDataDelete = async(masterId : number) => {
+   const data = await sql`UPDATE master_input_data SET active = false,modified_date=now(),modified_by='1' WHERE id = ${masterId}`;
+
+   return data.count > 0 ? {
+   status:200,
+   message:'Deleted Successfully !'
+} : {
+   status:400,
+   message:'Failed To Delete !'
+}; 
+}
 
 
