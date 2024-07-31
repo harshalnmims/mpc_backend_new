@@ -15,3 +15,9 @@ export const getDashboardModules = async (req : Request,res : Response ,next : N
   const data = await getDashboardService();
   return res.status(200).json(data);;
 }
+
+export const logoutController = async (req : Request,res : Response ,next : NextFunction) => {
+   const data = await getDashboardService();
+   return res.status(200).json(data);;
+ }
+ 

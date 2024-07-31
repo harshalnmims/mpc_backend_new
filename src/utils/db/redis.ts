@@ -18,3 +18,19 @@ export async function getRedisData(key : any) {
     return JSON.parse(data)
 }
 
+
+export async function deleteRedisData(key : any){
+  if(key === undefined || !key) {
+    return {status:401,message:'Cookie Not Found'}
+  }
+
+  const deleteCookies =  await redisClient.del(key);
+  console.log('deleteCookies =====>>>>>', deleteCookies);
+  return deleteCookies === 1 ? {
+           status : 200,
+           message : 'Session deleted'
+  } : {
+           status : 401,
+           message : ' Failed  to session deleted' 
+  }
+}
