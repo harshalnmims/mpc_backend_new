@@ -121,6 +121,7 @@ export const deleteBookChapterService = async(bookChapterId: number, username: s
     const data = await deleteBookChapterModel(bookChapterId,username);
  
     return data;
+}
 
 export const bookChapterViewService = async (booChapterId: number) => {
    console.log('booChapterId in services ===>>>>>', booChapterId);

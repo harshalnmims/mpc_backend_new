@@ -23,7 +23,7 @@ export const getBookChapterPublication = async ({
                         bcp.publish_year,
                         bcp.book_title,
                         bcp.isbn_no,
-                        bcp.publisher
+                        bcp.publisher,
                         bcp.created_by
                     FROM book_chapter_publication bcp
                     WHERE bcp.active = true

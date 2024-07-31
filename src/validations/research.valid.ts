@@ -376,10 +376,17 @@ export const facultyUpdObj = z.object({
 })
 
 export const loginCredentials = z.object({
-   username: z.string().min(1, { message: 'Username is required' }),
-   password: z.string().min(1, { message: 'Password is required' })
-})
+	username : z.string().min(1,{message:'Username is required'}),
+	password : z.string().min(1,{message:'Password is required'})
+  })
 
+  const Approval = z.object({
+	form_lid : z.number(),
+	form_status : z.number().min(1,{message:'Form status is required'}),
+	level : z.number()
+  })
+
+  export const approvalObj = z.array(Approval);
 
 
 export const masterDataObj = z.object({

@@ -125,8 +125,7 @@ export const viewConferenceForm = async (req: Request, res: Response, next: Next
    const conferenceId = Number(id);
 
    const data = await viewConferenceService(conferenceId);
-
-   console.log('data response conference update  controller  ====>>>>>>', data);
+   console.log('data response conference view  controller  ====>>>>>>', data);
 
    return res.status(200).json(data);
 };

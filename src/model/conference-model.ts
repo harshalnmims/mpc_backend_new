@@ -246,15 +246,11 @@ export const conferenceViewModel = async (conferenceId: number) => {
                 COALESCE(JSON_AGG(DISTINCT md.name), '[]'::json) AS all_authors,
                 COALESCE(JSON_AGG(DISTINCT cs.school_name), '[]'::json) AS nmims_school,
                 COALESCE(JSON_AGG(DISTINCT cc.campus_name), '[]'::json) AS nmims_campus,
-
                 JSON_AGG(DISTINCT cd.filename) FILTER (WHERE cda.abbr = 'cd') AS conference_documents,
                 JSON_AGG(DISTINCT cd.filename) FILTER (WHERE cda.abbr = 'ad') AS conference_awards,
-
                 COALESCE(JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'int'), '["No Data Found"]'::json) AS internal_faculty_details,
 				COALESCE(JSON_AGG(DISTINCT f.faculty_name) FILTER (WHERE ft.abbr = 'ext'), '["No Data Found"]'::json) AS external_faculty_details,
-
                 COALESCE(MAX(s.id), 0) AS sponsor_details
-
             FROM 
                 public.conference c
             LEFT JOIN 
