@@ -100,7 +100,7 @@ export const iprRenderService = async () => {
 
 export const insertIPRService = async (
    iprData: IPRDetails,
-   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,username:string
 ) => {
    const logger = getLogger();
 
@@ -112,7 +112,7 @@ export const insertIPRService = async (
 
    console.log('iprData data in service ===>>>>>>', iprData);
 
-   const data = await insertIPRModel(iprData);
+   const data = await insertIPRModel(iprData,username);
 
    return data;
 };
@@ -152,7 +152,7 @@ export const iprEditViewService = async (iprId: number) => {
 export const updateIPRService = async (
    iprId: number,
    iprData: IPRDetails,
-   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined ,username:string
 ) => {
    const logger = getLogger();
 
@@ -165,7 +165,7 @@ export const updateIPRService = async (
 
    console.log('details for update ipr data ===>>>>', iprData);
 
-   const data = await updateIPRModel(iprData);
+   const data = await updateIPRModel(iprData,username);
 
    return data;
 };
@@ -181,9 +181,9 @@ export const viewIprService = async (iprId: number) => {
    return { files: filesUrls, iprDataList: data };
 };
 
-export const deleteIPRService = async (iprId: number) => {
+export const deleteIPRService = async (iprId: number,username:string) => {
    const logger = getLogger();
-   const data = await deleteIPRModel(iprId);
+   const data = await deleteIPRModel(iprId,username);
 
    return data;
 };

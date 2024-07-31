@@ -54,8 +54,9 @@ export const insertConferenceForm = async (req: Request, res: Response, next: Ne
    let result = validateWithZod(conferencePublication, conferenceData);
    let fileResult = validateWithZod(filesArraySchema, files);
    console.log('result ===>>>>>>', result);
+   let username = res.locals.username;
    if (result.success && fileResult.success) {
-      data = await insertConferenceService(conferenceData, files);
+      data = await insertConferenceService(conferenceData, files, username);
    }
 
    console.log('data response conference controller  ====>>>>>>', data);
@@ -94,9 +95,10 @@ export const updateConferenceForm = async (req: Request, res: Response, next: Ne
    let result = validateWithZod(conferencePublication, updateConferenceData);
    let fileResult = validateWithZod(filesArraySchema, documents);
    console.log('result ===>>>>>>', result);
+   let username = res.locals.username;
 
    if (result.success && fileResult.success) {
-      data = await updateConferenceService(conferenceId, updateConferenceData, documents);
+      data = await updateConferenceService(conferenceId, updateConferenceData, documents,username);
    }
 
    console.log('data response conference update  controller  ====>>>>>>', data);
@@ -105,13 +107,14 @@ export const updateConferenceForm = async (req: Request, res: Response, next: Ne
 };
 
 export const deleteConferenceForm = async (req: Request, res: Response, next: NextFunction) => {
+    let username = res.locals.username;
    const logger = getLogger();
    logger.info('INSIDE updateConferenceForm CONTROLLER');
 
    const id = req.query.id;
    const conferenceId = Number(id);
 
-   const data = await deleteConferenceService(conferenceId);
+   const data = await deleteConferenceService(conferenceId,username);
 
    console.log('data response conference update  controller  ====>>>>>>', data);
    return res.status(200).json(data);

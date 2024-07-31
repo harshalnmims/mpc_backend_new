@@ -133,8 +133,8 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
    return data;
 };
 
-export const insertIPRModel = async (iprDetails: IPRDetails) => {
-   const data = await sql`SELECT * FROM insert_ipr(${JSON.parse(JSON.stringify(iprDetails))}, '1');`;
+export const insertIPRModel = async (iprDetails: IPRDetails,username:string) => {
+   const data = await sql`SELECT * FROM insert_ipr(${JSON.parse(JSON.stringify(iprDetails))}, ${username});`;
 
    return data;
 };
@@ -264,8 +264,8 @@ export const iprEditViewModel = async (iprId: number) => {
    return data;
 };
 
-export const updateIPRModel = async (updateIprDetails: IPRDetails) => {
-   const data = await sql`SELECT * FROM upsert_ipr(${JSON.parse(JSON.stringify(updateIprDetails))}, '1');`;
+export const updateIPRModel = async (updateIprDetails: IPRDetails,username:string) => {
+   const data = await sql`SELECT * FROM upsert_ipr(${JSON.parse(JSON.stringify(updateIprDetails))}, ${username});`;
 
    return data;
 };
@@ -330,8 +330,8 @@ export const viewIprModel = async (iprId: number) => {
    return data;
 };
 
-export const deleteIPRModel = async (iprId: number) => {
-   const data = await sql`UPDATE ipr SET active = false,modified_date=now(),modified_by='1' WHERE id = ${iprId}`;
+export const deleteIPRModel = async (iprId: number,username:string) => {
+   const data = await sql`UPDATE ipr SET active = false,modified_date=now(),modified_by=${username} WHERE id = ${iprId}`;
 
     return data.count > 0 ? {
     status:200,

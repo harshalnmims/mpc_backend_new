@@ -71,25 +71,25 @@ export const getConferenceModel = async ({ page, limit, sort, order, search, fil
    return data;
 };
 
-export const insertConferenceModel = async (conferenceData: conferenceDetails) => {
+export const insertConferenceModel = async (conferenceData: conferenceDetails,username: string) => {
    console.log('conferenceData ===>>>>>', conferenceData);
 
-   const data = await sql`SELECT * FROM insert_conference(${JSON.parse(JSON.stringify(conferenceData))}, '1');`;
+   const data = await sql`SELECT * FROM insert_conference(${JSON.parse(JSON.stringify(conferenceData))}, ${username});`;
    return data;
 };
 
-export const updateConferencemodels = async (updateConferenceData: conferenceDetails) => {
+export const updateConferencemodels = async (updateConferenceData: conferenceDetails,username: string) => {
    console.log('updateConferenceData in models  ===>>>>>', updateConferenceData);
 
-   const data = await sql`SELECT * FROM upsert_conference(${JSON.parse(JSON.stringify(updateConferenceData))}, '1');`;
+   const data = await sql`SELECT * FROM upsert_conference(${JSON.parse(JSON.stringify(updateConferenceData))},  ${username});`;
    return data;
 };
 
-export const deleteConferenceModel = async (conferenceId: number) => {
+export const deleteConferenceModel = async (conferenceId: number, username: string) => {
    console.log('conferenceId models  ====>>>>>>', conferenceId);
 
    const data =
-      await sql`UPDATE conference SET active = false,modified_date=now(),modified_by='1' WHERE id = ${conferenceId}`;
+      await sql`UPDATE conference SET active = false,modified_date=now(),modified_by= ${username} WHERE id = ${conferenceId}`;
 
    return data.count > 0
       ? {

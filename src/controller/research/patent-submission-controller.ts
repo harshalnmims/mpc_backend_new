@@ -63,8 +63,9 @@ export const insertPatentSubmissionForm = async (req: Request, res: Response, ne
    let result = validateWithZod(patentDetails, patentData);
    let fileResult = validateWithZod(filesArraySchema, files);
    console.log('result ===>>>>>>', result);
+   let username= res.locals.username;
    if (result.success && fileResult.success) {
-      data = await insertPatentSubmissionService(patentData, files);
+      data = await insertPatentSubmissionService(patentData, files,username);
    }
 
    return res.status(200).json(data);
@@ -94,8 +95,9 @@ export const updatePatentSubmissionForm = async (req: Request, res: Response, ne
    let result = validateWithZod(patentDetails, updatePatentData);
    let fileResult = validateWithZod(filesArraySchema, files);
    console.log('result ===>>>>>>', result);
+   let username= res.locals.username;
    if (result.success && fileResult.success) {
-      data = await updatePatentSubmissionService(patentId, updatePatentData, files);
+      data = await updatePatentSubmissionService(patentId, updatePatentData, files,username);
    }
 
    console.log('data responce in controller ===>>>>', data);
@@ -121,8 +123,9 @@ export const deletePatentSubmissionForm = async (req: Request, res: Response, ne
    const id = req.query.id;
    const patentId = Number(id);
    console.log('patentId ===>>>>', patentId);
+   let username= res.locals.username;
 
-   const data = await deletePatentSubmissionService(patentId);
+   const data = await deletePatentSubmissionService(patentId,username);
 
    console.log(' data response in case of delete controller ===>>>>', data);
 

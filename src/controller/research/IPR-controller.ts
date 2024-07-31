@@ -70,13 +70,14 @@ export const insertIpr = async (req: Request, res: Response, next: NextFunction)
    let iprData = JSON.parse(req.body.ipr_data);
    console.log('iprData ankit ===>>>>>', iprData);
    let data;
+   let username = res.locals.username;
    let files = req.files;
    console.log('files ===>>>>>', files);
    let result = validateWithZod(iprDetails, iprData);
    let fileResult = validateWithZod(filesArraySchema, files);
    console.log('result ===>>>>>>', result);
    if (result.success && fileResult.success) {
-      data = await insertIPRService(iprData, files);
+      data = await insertIPRService(iprData, files,username);
    }
 
    return res.status(200).json(data);
@@ -104,10 +105,11 @@ export const updateIPR = async (req: Request, res: Response, next: NextFunction)
    let files = req.files;
    console.log('files ===>>>>>', files);
    let result = validateWithZod(iprDetails, iprData);
+   let username = res.locals.username;
    let fileResult = validateWithZod(filesArraySchema, files);
    console.log('result ===>>>>>>', result);
    if (result.success && fileResult.success) {
-      data = await updateIPRService(iprId, iprData, files);
+      data = await updateIPRService(iprId, iprData, files,username);
    }
 
    console.log('data responce in controller ===>>>>', data);
@@ -133,8 +135,9 @@ export const deleteIPR = async (req: Request, res: Response, next: NextFunction)
    const id = req.query.id;
    const iprId = Number(id);
    console.log('iprId ===>>>>', iprId);
+   let username = res.locals.username;
 
-   const data = await deleteIPRService(iprId);
+   const data = await deleteIPRService(iprId,username);
 
    return res.status(200).json(data);
 };

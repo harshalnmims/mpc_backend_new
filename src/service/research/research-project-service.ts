@@ -80,7 +80,7 @@ export const researchProjectRenderService = async () => {
 
 export const insertResearchProjectService = async (
    researchData: researchProjectDetails,
-   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,username:string
 ) => {
    const logger = getLogger();
 
@@ -92,12 +92,12 @@ export const insertResearchProjectService = async (
 
    console.log('researchData data in service ===>>>>>>', researchData);
 
-   const data = await insertResearchProjectModel(researchData);
+   const data = await insertResearchProjectModel(researchData,username);
 
    return data;
 };
 
-export const researchProjectEditViewService = async (researchProjectId: number) => {
+export const researchProjectEditViewService = async (researchProjectId: number,username:string) => {
    const logger = getLogger();
 
    const ResearchProjectDataList = await researchProjectEditViewModel(researchProjectId);
@@ -124,7 +124,7 @@ export const researchProjectEditViewService = async (researchProjectId: number) 
 export const updateResearchProjectService = async (
    researchProjectId: number,
    updateResearchData: researchProjectDetails,
-   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,username:string
 ) => {
    const logger = getLogger();
 
@@ -137,15 +137,15 @@ export const updateResearchProjectService = async (
 
    console.log('updateResearchData ===>>>>>>', updateResearchData);
 
-   const data = await updateResearchProjectModel(updateResearchData);
+   const data = await updateResearchProjectModel(updateResearchData,username);
 
    return data;
 };
 
-export const viewResearchProjectService = async (researchProjectId: number) => {
+export const viewResearchProjectService = async (researchProjectId: number,username:string) => {
    const logger = getLogger();
 
-   const data = await viewResearchProjectModel(researchProjectId);
+   const data = await viewResearchProjectModel(researchProjectId,username);
    const researchFiles = await researchProjectFiles(researchProjectId)
    const filesUrls = await getUploadedFile(researchFiles);
    console.log('filesUrls ===>>>>>>', filesUrls);
@@ -155,12 +155,12 @@ export const viewResearchProjectService = async (researchProjectId: number) => {
    return data;
 };
 
-export const deleteResearchProjectService = async (researchprojectId: number) => {
+export const deleteResearchProjectService = async (researchprojectId: number,username:string) => {
    const logger = getLogger();
    logger.info('INSIDE GET  PATENT SUBMISSION');
    console.log('researchprojectId in service ====>>>>>', researchprojectId);
 
-   const data = await deleteResearchProjectModel(researchprojectId);
+   const data = await deleteResearchProjectModel(researchprojectId,username);
 
    return data;
 };

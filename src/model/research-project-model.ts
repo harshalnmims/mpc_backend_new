@@ -71,10 +71,10 @@ export const ResearchProjectPaginateModel = async ({
    return data;
 };
 
-export const insertResearchProjectModel = async (researchData: researchProjectDetails) => {
-   console.log('researchData ===>>>>>', researchData);
+export const insertResearchProjectModel = async (researchData: researchProjectDetails,username:string) => {
+   console.log('researchData ===>>>>>', researchData);                                               
 
-   const data = await sql`SELECT * FROM insert_research_project(${JSON.parse(JSON.stringify(researchData))}, '1');`;
+   const data = await sql`SELECT * FROM insert_research_project(${JSON.parse(JSON.stringify(researchData))}, ${username});`;
    return data;
 };
 
@@ -163,15 +163,15 @@ export const researchProjectEditViewModel = async (researchProjectId: number) =>
    return data;
 };
 
-export const updateResearchProjectModel = async (updateResearchData: researchProjectDetails) => {
+export const updateResearchProjectModel = async (updateResearchData: researchProjectDetails,username:string) => {
    console.log('updateResearchData ===>>>>>', updateResearchData);
 
    const data =
-      await sql`SELECT * FROM upsert_research_project(${JSON.parse(JSON.stringify(updateResearchData))}, '1');`;
+      await sql`SELECT * FROM upsert_research_project(${JSON.parse(JSON.stringify(updateResearchData))}, ${username});`;
    return data;
 };
 
-export const viewResearchProjectModel = async (researchProjectId: number) => {
+export const viewResearchProjectModel = async (researchProjectId: number,username:string) => {
    const data = await sql`SELECT                        
             		rp.id AS research_project_id,
                     rp.title,
@@ -212,11 +212,11 @@ export const viewResearchProjectModel = async (researchProjectId: number) => {
    return data;
 };
 
-export const deleteResearchProjectModel = async (researchProjectId: number) => {
+export const deleteResearchProjectModel = async (researchProjectId: number,username:string) => {
    console.log('researchprojectId in  models  ====>>>>>>', researchProjectId);
 
    const data =
-      await sql`UPDATE research_project SET active = false,modified_date=now(),modified_by='1' WHERE id = ${researchProjectId}`;
+      await sql`UPDATE research_project SET active = false,modified_date=now(),modified_by= ${username} WHERE id = ${researchProjectId}`;
 
    return data.count > 0
       ? {

@@ -68,7 +68,7 @@ export const renderConferenceListsService = async () => {
 
 export const insertConferenceService = async (
    conferenceData: conferenceDetails,
-   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,username:string
 ) => {
    const logger = getLogger();
    console.log('documents in service ===>>>>>>', documents);
@@ -83,7 +83,7 @@ export const insertConferenceService = async (
    delete conferenceData.external_authors;
 
    console.log('Updated conferenceData ===>>>>>', conferenceData);
-   const data = await insertConferenceModel(conferenceData);
+   const data = await insertConferenceModel(conferenceData,username);
 
    return data;
 };
@@ -115,7 +115,7 @@ export const conferenceEditViewService = async (conferenceId: number) => {
 export const updateConferenceService = async (
    conferenceId: number,
    updateConferenceData: conferenceDetails,
-   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,username:string
 ) => {
    const logger = getLogger();
 
@@ -135,7 +135,7 @@ export const updateConferenceService = async (
 
    console.log('updateConferenceData ===>>>>>>>', updateConferenceData);
 
-   const data = await updateConferencemodels(updateConferenceData);
+   const data = await updateConferencemodels(updateConferenceData,username);
 
    return data;
 };
@@ -150,11 +150,11 @@ export const viewConferenceService = async (conferenceId: number) => {
    return {conferenceDetails : data, type_abbr:string, files:filesUrls}
 };
 
-export const deleteConferenceService = async (conferenceId: number) => {
+export const deleteConferenceService = async (conferenceId: number,username:string) => {
    const logger = getLogger();
    console.log('conferenceId in service ====>>>>>', conferenceId);
 
-   const data = await deleteConferenceModel(conferenceId);
+   const data = await deleteConferenceModel(conferenceId,username);
 
    return data;
 };

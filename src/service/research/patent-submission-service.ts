@@ -73,7 +73,7 @@ export const PatentRenderService = async () => {
 
 export const insertPatentSubmissionService = async (
    patentData: patentDetails,
-   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,username:string
 ) => {
    const logger = getLogger();
    let uploadDocuments = await uploadFile(documents);
@@ -84,7 +84,7 @@ export const insertPatentSubmissionService = async (
 
    console.log('patentData data in service ===>>>>>>', patentData);
 
-   const data = await insertPatentSubmissionModel(patentData);
+   const data = await insertPatentSubmissionModel(patentData,username);
 
    return data;
 };
@@ -116,7 +116,7 @@ export const patentEditViewService = async (patentId: number) => {
 export const updatePatentSubmissionService = async (
    patentId: number,
    updatePatentData: patentDetails,
-   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,
+   documents: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined,username:string
 ) => {
    const logger = getLogger();
    let uploadDocuments = await uploadFile(documents);
@@ -128,7 +128,7 @@ export const updatePatentSubmissionService = async (
 
    console.log('details for update data ===>>>>', updatePatentData);
 
-   const data = await updatePatentSubmissionModel(updatePatentData);
+   const data = await updatePatentSubmissionModel(updatePatentData,username);
 
    return data;
 };
@@ -145,11 +145,11 @@ export const viewPatentService = async (patentId: number) => {
 
 };
 
-export const deletePatentSubmissionService = async (patentId: number) => {
+export const deletePatentSubmissionService = async (patentId: number,username:string) => {
    const logger = getLogger();
    console.log('patentId in service ====>>>>>', patentId);
 
-   const data = await deletePatentSubmissionModel(patentId);
+   const data = await deletePatentSubmissionModel(patentId,username);
 
    return data;
 };

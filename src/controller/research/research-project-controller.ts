@@ -66,9 +66,10 @@ export const insertResearchForm = async (req: Request, res: Response, next: Next
    console.log('files ===>>>>>', files);
    let result = validateWithZod(researchProjectDetails, researchData);
    let fileResult = validateWithZod(filesArraySchema, files);
+   let username =res.locals.username;
    console.log('result ===>>>>>>', result);
    if (result.success && fileResult.success) {
-      data = await insertResearchProjectService(researchData, files);
+      data = await insertResearchProjectService(researchData, files,username);
    }
 
    return res.status(200).json(data);
@@ -78,8 +79,9 @@ export const researchProjectEditViewForm = async (req: Request, res: Response, n
    const logger = getLogger();
    const id = req.query.id;
    const iprId = Number(id);
+   let username =res.locals.username;
 
-   const data = await researchProjectEditViewService(iprId);
+   const data = await researchProjectEditViewService(iprId,username);
 
    console.log('data response in controller ====>>>>', data);
    return res.status(200).json(data);
@@ -98,8 +100,9 @@ export const updateResearchForm = async (req: Request, res: Response, next: Next
    let result = validateWithZod(researchProjectDetails, updateResearchData);
    let fileResult = validateWithZod(filesArraySchema, files);
    console.log('result ===>>>>>>', result);
+   let username = res.locals.username;
    if (result.success && fileResult.success) {
-      data = await updateResearchProjectService(researchProjectId, updateResearchData, files);
+      data = await updateResearchProjectService(researchProjectId, updateResearchData, files,username);
    }
 
    console.log('data responce in controller ===>>>>', data);
@@ -111,9 +114,10 @@ export const viewResearchProjectForm = async (req: Request, res: Response, next:
    const logger = getLogger();
 
    const id = req.query.id;
+   let username = res.locals.username;
    const researchProjectId = Number(id);
    console.log('researchProjectId ===>>>>', researchProjectId);
-   const data = await viewResearchProjectService(researchProjectId);
+   const data = await viewResearchProjectService(researchProjectId,username);
 
    console.log('data respoinse in controller ===>>>>>', data);
 
@@ -124,7 +128,8 @@ export const deleteResearchForm = async (req: Request, res: Response, next: Next
    const logger = getLogger();
    const researchprojectId = req.query.id;
    console.log('iprId ', researchprojectId);
-   const data = await deleteResearchProjectService(Number(researchprojectId));
+   let username = res.locals.username;
+   const data = await deleteResearchProjectService(Number(researchprojectId),username);
 
    console.log(' data response in case of delete controller ===>>>>', data);
 
