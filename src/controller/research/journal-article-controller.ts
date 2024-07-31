@@ -2,11 +2,11 @@ import { getLogger } from '$config/logger-context';
 import {
     getJournalArticleService, insertJournalArticleService, updateJournalArticleService, 
     deleteJournalArticleService,journalPaginateService,journalRenderService,journalViewService,journalUpdateViewService,
-    journalDownloadFileService} from '$service/research/journal-article-service';
+    journalDownloadFileService,checkFormStatusService,journalFormInfiniteService,journalApprovalInsertService} from '$service/research/journal-article-service';
 import { journalFiles } from '$model/journal-article-model';
 import { Request, Response, NextFunction } from 'express';
 import { validateWithZod } from '$middleware/validation.middleware';
-import { filesArraySchema } from '$validations/research.valid';
+import { approvalObj, filesArraySchema } from '$validations/research.valid';
 import { journalPaper } from '$validations/research.valid';
 import AWS from 'aws-sdk';
 import { AwsData } from 'types/base.types';
@@ -43,12 +43,14 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
 
  export const insertJournalArticleForm = async (req: Request, res: Response, next: NextFunction) => {
-   //  const logger = getLogger();
     
      let journalDetails = JSON.parse(req.body.journal_paper);
      let username = req.body.username;
      let data;
      let documents = req.files;
+     let userId = res.locals.username
+
+     console.log('locals username ',userId)
 
      let result = validateWithZod(journalPaper,journalDetails);
      let fileResult = validateWithZod(filesArraySchema, documents);
@@ -56,7 +58,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
 
      if(fileResult.success && result.success){
-      data = await insertJournalArticleService(journalDetails,documents,username);
+      data = await insertJournalArticleService(journalDetails,documents,userId);
      }
      return res.status(200).json(data);
  };
@@ -70,13 +72,15 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
     let data;
     let documents = req.files;
+    let username = res.locals.username;
+
 
     console.log('json for update ',JSON.stringify(journalDetails),documents)
     let result = validateWithZod(journalPaper,journalDetails);
     let fileResult = validateWithZod(filesArraySchema, documents);
 
     if(fileResult.success && result.success){
-      data = await updateJournalArticleService(journalDetails,documents,Number(journalId));
+      data = await updateJournalArticleService(journalDetails,documents,Number(journalId),username);
      }
      console.log('final json ',JSON.stringify(data))
      return res.status(200).json(data);
@@ -90,7 +94,8 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  
    //  const journalPaper = { ...req.body};
     const journalPaperId  = req.query.id
-    const data = await deleteJournalArticleService(Number(journalPaperId));
+    let username = res.locals.username;
+    const data = await deleteJournalArticleService(Number(journalPaperId),username);
 
     return  res.status(200).json(data)
 
@@ -109,6 +114,10 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
           ...filters
        } = { ...req.body, ...req.params, ...req.query };
 
+   let username = res.locals.username;    
+
+   console.log('data filters ',filters)    
+
    const data = await journalPaginateService({
        page ,
        limit,
@@ -116,7 +125,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
        sort,
        order,
        filters,
-    });
+    }, username);
  
     return res.status(200).json(data); 
    // {
@@ -173,5 +182,46 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
     return res.status(200).json(data);
  
  }
+
+ export const checkFormStatusController = async (req : Request , res : Response , next  : NextFunction) => {
+   const id  = req.query.id ;
+   console.log('journal id ',id)
+   const data = await checkFormStatusService(Number(id));
+   return res.status(200).json(data);
+}
+
+export const journalFormInfiniteController  = async (req: Request, res: Response, next: NextFunction) => {
+ 
+   const {
+      page = 1,
+      limit = 10,
+      sort = '',
+      order = 'desc',
+      search = '',
+      ...filters
+   } = { ...req.body, ...req.params, ...req.query };
+
+   const data = await journalFormInfiniteService({
+      page,
+      limit,
+      search,
+      sort,
+      order,
+      filters,
+   });
+
+   return res.status(200).json(data);
+};
+
+export const journalApprovalInsertController = async (req: Request, res: Response, next: NextFunction) => { 
+  const approvalData = req.body.approval_data;
+  let userId = res.locals.username;
+  let result = validateWithZod(approvalObj,approvalData);
+  let data;
+  if(result.success){
+   data = await journalApprovalInsertService(approvalData,userId);
+  }
+  return res.status(200).json(data);
+}
 
 

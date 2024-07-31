@@ -1,10 +1,10 @@
 import { getLogger } from '$config/logger-context';
 import { getJournalArticlePublished, insertJournalArticleModel, updateJournalArticleModel,
     deleteJournalArticleModel,journalPaginateModal,journalViewData,journalFiles,journalUpdateViewData,
-    
+    checkFormStatusModel,journalFormInfiniteModel,journalApprovalInsertModel
  } from '$model/journal-article-model';
 import { paginationDefaultType } from 'types/db.default';
-import { journalArticleDetails } from 'types/research.types';
+import { ApprovalDetails, journalArticleDetails } from 'types/research.types';
 import {renderModal,getPolicyCadre,getNmimsAuthors,getAllAuthors,getAbdcIndexed, getPaperType,
    getSchool,getCampus
 } from '$model/master-model';
@@ -12,6 +12,7 @@ import {getUploadedFile, uploadFile} from '$middleware/fileupload.middleware'
 import { Request,Response } from 'express';
 import { downloadFile } from '$middleware/fileupload.middleware';
 import { string } from 'zod';
+import { getRedisData } from '$utils/db/redis';
 
 
 export const getJournalArticleService = async ({
@@ -44,7 +45,7 @@ export const journalPaginateService = async ({
    order,
    search,
    ...filters
-}: paginationDefaultType) => {
+}: paginationDefaultType,username : string) => {
    const logger = getLogger();
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
 
@@ -55,12 +56,12 @@ export const journalPaginateService = async ({
       order,
       search,
       ...filters,
-   });
+   }, username);
 
    return data;
 };
 
-export const insertJournalArticleService = async (journalDetails: journalArticleDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, username: string) => {
+export const insertJournalArticleService = async (journalDetails: journalArticleDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,username : string) => {
             
        let uploadDocuments = await uploadFile(documents);
        journalDetails.supporting_documents  = uploadDocuments.map(data =>  data);
@@ -71,7 +72,7 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
  }; 
 
 
- export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails,documents : { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,journalId :number) => {
+ export const updateJournalArticleService = async (updateJournalDetails: journalArticleDetails,documents : { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,journalId :number,username:string) => {
 
  
     let uploadDocuments = await uploadFile(documents);
@@ -85,20 +86,20 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
     updateJournalDetails.journal_paper_id = journalId;
     console.log('upload documents ',uploadDocuments)
 
-    const data = await updateJournalArticleModel(updateJournalDetails);
+    const data = await updateJournalArticleModel(updateJournalDetails,username);
     const viewData = await journalUpdateViewData(journalId);
 
     return  {data,viewData};
  };
 
 
- export const deleteJournalArticleService = async(journalPaperId : number) => {
+ export const deleteJournalArticleService = async(journalPaperId : number,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
 
     console.log('journalPaperId in service ===>>>', journalPaperId);
  
-    const data = await deleteJournalArticleModel(journalPaperId);
+    const data = await deleteJournalArticleModel(journalPaperId,username);
 
     console.log('data ===>>>>>', data);
     return data
@@ -157,3 +158,35 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
    };
  }
 
+ export const checkFormStatusService = async (journalId :number) => { 
+  
+   const data = await checkFormStatusModel(journalId);
+   return data;
+
+ }
+
+export const journalFormInfiniteService = async ({
+    page,
+    limit,
+    sort,
+    order,
+    search,
+    ...filters
+ }: paginationDefaultType) => {
+   
+    const data = await journalFormInfiniteModel({
+       page,
+       limit,
+       sort,
+       order,
+       search,
+       ...filters,
+    });
+ 
+    return data;
+ };
+
+ export const journalApprovalInsertService = async (approvalDetails : ApprovalDetails ,username : string) => {
+   const data = await journalApprovalInsertModel(approvalDetails,username);
+   return data;
+ }

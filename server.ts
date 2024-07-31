@@ -29,6 +29,7 @@ app.use(
 
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
+
 process.env.NODE_ENV === 'production' &&
    main()
       .then(() => logger.info('Kafka connected Successfully'))

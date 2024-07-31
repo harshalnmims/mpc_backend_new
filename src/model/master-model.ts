@@ -149,3 +149,18 @@ export const renderModal = async (abbr : string) => {
         message:'Failed To Fetch!'
     }
  }
+
+ export const getFormLevels = async () => {
+    const data = await sql`SELECT * FROM form_status WHERE active = TRUE`;
+    return data;
+ }
+
+ export const getAdminModules = async (id : number) => {
+    const data = await sql`SELECT * FROM admin_modules WHERE id = ${id} AND active = TRUE`;
+    return data;
+ }
+
+ export const getDashboardModel = async () => {
+    const data = await sql`SELECT * FROM modules WHERE active = TRUE`;
+    return data;
+ }

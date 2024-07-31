@@ -1,6 +1,6 @@
 import { getBookPublication, insertBookPublicationForm , updateBookPublicationForm, 
     deleteBookPublicationForm, bookPublicationEditviewForm, bookPublicationViewForm, downloadPublicationFiles,
-    renderBookPublicationList
+    renderBookPublicationList , bookPublicationInfinite
 } from '$controller/research/book-publication-controller'
 import { asyncErrorHandler } from '$middleware/error.middleware';
 import { Router } from 'express';
@@ -17,6 +17,7 @@ bookPublicationRoutes.post('/book-publication-update',  upload.array("supporting
 bookPublicationRoutes.post('/book-publication-delete', asyncErrorHandler(deleteBookPublicationForm));
 bookPublicationRoutes.get('/book-publication-view-form', asyncErrorHandler(bookPublicationViewForm));
 bookPublicationRoutes.get('/book-publication-download-file', asyncErrorHandler(downloadPublicationFiles));
+bookPublicationRoutes.get('/book-publication-form-infinite', asyncErrorHandler(bookPublicationInfinite));
 
 
 export default bookPublicationRoutes;

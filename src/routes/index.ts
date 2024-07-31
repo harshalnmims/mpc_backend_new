@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import facultyRouter from './faculty';
 import SpecialUserRouter from './special-user';
-import supportAdminRouter from './support-admin';
 
 import journalDetailsRouter from './research-routes/journal-article-routes'
 // import iprRoutes from './research-routes/ipr-routes'
@@ -19,13 +18,13 @@ import eContentRouter from './research-routes/e-content-routes';
 import researchAwardRoutes from './research-routes/research-award-routes';
 import facultyRoutes from './research-routes/faculty-routes'
 import loginRoutes from './research-routes/login-routes';
+import adminRouter from './research-routes/admin-routes';
 //ankit
 
 const router = Router();
 
 router.use('/faculty', facultyRouter);
 router.use('/special-user', SpecialUserRouter);
-router.use('/support-admin', supportAdminRouter);
 router.use('/research-project', journalDetailsRouter);
 // router.use('/', iprRoutes);
 router.use('/', journalDetailsRouter);
@@ -43,5 +42,5 @@ router.use('/',eContentRouter);
 router.use('/',researchAwardRoutes);
 router.use('/',facultyRoutes);
 router.use('/',loginRoutes);
-
+router.use('/',adminRouter);
 export default router; 
