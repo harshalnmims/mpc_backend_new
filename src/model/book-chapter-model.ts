@@ -18,6 +18,7 @@ export const getBookChapterPublication = async({ page, limit, sort, order, searc
                         bcp.book_title,
                         bcp.isbn_no,
                         bcp.publisher
+                        bcp.created_by
                     FROM book_chapter_publication bcp
                     WHERE bcp.active = true
                 ),
@@ -102,7 +103,7 @@ export const insertBookChapterModel = async(bookChapterData: bookChapterDetails,
 
 export const booChapterEditViewModel = async(booChapterId : number) => {
         const data = await sql`
-SELECT 
+            SELECT 
             bcp.id AS book_chapter_id,
             bcp.book_title,
             bcp.chapter_title,
