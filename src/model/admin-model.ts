@@ -93,11 +93,16 @@ export const adminPaginateModel = async ({ page, limit, sort, order, search, fil
 
 export const getAdminLevel = async (username : string) => {
   const data = await sql`SELECT 
-                          fl.level,
+                          fl.level
                           FROM public.user u 
                           INNER JOIN user_role ur ON ur.user_lid = u.id
                           INNER JOIN form_level fl ON fl.role_lid = ur.role_lid
                           WHERE u.username = ${username} AND u.active = TRUE AND ur.active = TRUE AND
                           fl.active = TRUE;`;
+  return data;
+}
+
+export const adminDashboardModulesModel = async () => {
+  const data = await sql`SELECT * FROM admin_modules WHERE active = TRUE`;
   return data;
 }

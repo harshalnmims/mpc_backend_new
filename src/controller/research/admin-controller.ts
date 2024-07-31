@@ -1,5 +1,5 @@
 import {Request,Response,NextFunction} from 'express'
-import {adminRenderService,adminPaginateService} from '$service/research/admin-service'
+import {adminRenderService,adminPaginateService,adminDashboardModulesService} from '$service/research/admin-service'
 
 export const adminRenderController = async (req:Request,res:Response,next:NextFunction) => {
    let username = res.locals.username;
@@ -30,3 +30,8 @@ export const adminPaginateController = async (req: Request, res: Response, next:
 
    return res.status(200).json(data);
 };
+
+export const adminDashboardModulesController = async (req: Request, res: Response, next: NextFunction) => {
+   const data = await adminDashboardModulesService();
+   return res.status(200).json(data);
+}

@@ -1,4 +1,4 @@
-import { getAdminCampus, getAdminSchool , adminPaginateModel , getAdminLevel} from '$model/admin-model';
+import { getAdminCampus, getAdminSchool , adminPaginateModel , getAdminLevel , adminDashboardModulesModel} from '$model/admin-model';
 import { getFormLevels , getAdminModules} from '$model/master-model';
 import { paginationDefaultType } from 'types/db.default';
 
@@ -31,3 +31,8 @@ export const adminPaginateService = async ({
  
     return data;
  };
+
+ export const adminDashboardModulesService = async () => {
+   const data = await adminDashboardModulesModel();
+   return data;
+ }

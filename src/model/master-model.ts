@@ -159,3 +159,8 @@ export const renderModal = async (abbr : string) => {
     const data = await sql`SELECT * FROM admin_modules WHERE id = ${id} AND active = TRUE`;
     return data;
  }
+
+ export const getDashboardModel = async () => {
+    const data = await sql`SELECT * FROM modules WHERE active = TRUE`;
+    return data;
+ }
