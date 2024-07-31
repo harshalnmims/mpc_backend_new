@@ -1,8 +1,13 @@
 import { getLogger } from '$config/logger-context';
-import { getBookChapterPublication, insertBookChapterModel, updateBookChapterModel, 
-    deleteBookChapterModel, booChapterEditViewModel, bookChapterPublicationFormviewModel,
-    bookChapterPublicationFiles
- } from '$model/book-chapter-model';
+import {
+   getBookChapterPublication,
+   insertBookChapterModel,
+   updateBookChapterModel,
+   deleteBookChapterModel,
+   booChapterEditViewModel,
+   bookChapterPublicationFormviewModel,
+   bookChapterPublicationFiles,
+} from '$model/book-chapter-model';
 import exp from 'constants';
 import { paginationDefaultType } from 'types/db.default';
 import {getUploadedFile, uploadFile} from '$middleware/fileupload.middleware';
@@ -12,7 +17,7 @@ import {renderModal,getNmimsAuthors,getAllAuthors,
 } from '$model/master-model';
 
 import { downloadFile } from '$middleware/fileupload.middleware';
-import { Request,Response } from 'express';
+import { Request, Response } from 'express';
 
 import { bookChapterDetails} from 'types/research.types';
 import { getRedisData } from '$utils/db/redis';
@@ -38,19 +43,22 @@ export const getBookChapterService = async ({
    });
 
    return data;
-}; 
+};
 
-export const renderBookChapterLists  = async() => {
+export const renderBookChapterLists = async () => {
    const nmimsAuthors = await getMasterNmimsAuthors();
    const allAuthors = await getMasterAllAuthors();
    const school = await getSchool();
    const campus = await getCampus();
    const editor = await getEditors();
    return {
-    nmimsAuthors,allAuthors,school,campus,editor
+      nmimsAuthors,
+      allAuthors,
+      school,
+      campus,
+      editor,
    };
-   
-}
+};
 
 export const insertBookChapterService = async (bookChapterData: bookChapterDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, username: string) => {
     const logger = getLogger();
@@ -66,8 +74,7 @@ export const insertBookChapterService = async (bookChapterData: bookChapterDetai
     return data;
  }
 
- export const bookChapterPublicationEditViewService = async(booChapterId : number) => {
-
+export const bookChapterPublicationEditViewService = async (booChapterId: number) => {
    console.log('booChapterId in services ===>>>>>', booChapterId);
    const bookChapterPublicationData = await booChapterEditViewModel(booChapterId);
    const nmimsAuthors = await getMasterNmimsAuthors();
@@ -77,19 +84,23 @@ export const insertBookChapterService = async (bookChapterData: bookChapterDetai
    const editor = await getEditors();
 
    return {
-      bookChapterPublicationData, nmimsAuthors,allAuthors,school,campus,editor
+      bookChapterPublicationData,
+      nmimsAuthors,
+      allAuthors,
+      school,
+      campus,
+      editor,
    };
-   
-}
+};
 
 export const updateBookChapterService = async(bookChapterData: bookChapterDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, booChapterId: number, username: string) => {
     const logger = getLogger();
     console.log('bookChapterData in service ====>>>>>', bookChapterData);
     let uploadDocuments = await uploadFile(documents);
 
-    if (uploadDocuments.length > 0) {
-      bookChapterData.supporting_documents = uploadDocuments.map(data => data);
-    } else {
+   if (uploadDocuments.length > 0) {
+      bookChapterData.supporting_documents = uploadDocuments.map((data) => data);
+   } else {
       bookChapterData.supporting_documents = [];
     }
     
@@ -111,24 +122,20 @@ export const deleteBookChapterService = async(bookChapterId: number, username: s
  
     return data;
 
-}
-
-export const bookChapterViewService = async(booChapterId : number) => {
-
+export const bookChapterViewService = async (booChapterId: number) => {
    console.log('booChapterId in services ===>>>>>', booChapterId);
    const bookChapterFiles = await bookChapterPublicationFiles(booChapterId);
    const filesUrls = await getUploadedFile(bookChapterFiles);
 
    const data = await bookChapterPublicationFormviewModel(booChapterId);
    return {files : filesUrls ,bookChapterPublicationData : data};
-
 }
 
-export const bookChapterPublicationDownloadFileService = async (bookChapterId : number,req:Request,res:Response) => {
+export const bookChapterPublicationDownloadFileService = async (bookChapterId: number, req: Request, res: Response) => {
    // const logger = getLogger();
 
    const data = await bookChapterPublicationFiles(bookChapterId);
 
-   let files : string[] = data.map(dt => dt.document_name); 
-   await downloadFile(files, req,res);
- }
+   let files: string[] = data.map((dt) => dt.document_name);
+   await downloadFile(files, req, res);
+};

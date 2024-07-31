@@ -39,6 +39,20 @@ export const renderModal = async (abbr : string) => {
    }
  }
 
+export const getExternalAuthors = async () => {
+    const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
+    WHERE ft.abbr= 'ext' AND f.active=TRUE AND ft.active=TRUE`;
+ 
+    return data.count > 0 ? {
+       status:200,
+       message:data
+   } : {
+       status:400,
+       message:'Failed To Fetch!'
+   }
+ } 
+
+
  export const getAllAuthors = async () => {
 
     const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
@@ -147,20 +161,164 @@ export const renderModal = async (abbr : string) => {
     } : {
         status:400,
         message:'Failed To Fetch!'
+ } 
+
+
+ export const getExternalFaculty = async () => {
+    const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
+    WHERE ft.abbr= 'ext' AND f.active=TRUE AND ft.active=TRUE`;
+ 
+    return data.count > 0 ? {
+       status:200,
+       message:data
+   } : {
+       status:400,
+       message:'Failed To Fetch!'
+   }
+ }
+
+ export const getEnternalFaculty = async () => {
+    const data = await sql`select f.id,f.faculty_name from faculties f INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id 
+    WHERE ft.abbr= 'int' AND f.active=TRUE AND ft.active=TRUE`;
+ 
+    return data.count > 0 ? {
+       status:200,
+       message:data
+   } : {
+       status:400,
+       message:'Failed To Fetch!'
+   }
+ }
+
+
+ export const getSdgGoals = async () => {
+
+    const data = await sql`select * from sdg_goals where active=TRUE`;
+
+    return data.count > 0 ? {
+
+        status:200,
+
+        message:data
+
+    } : {
+
+        status:400,
+
+        message:'Failed To Fetch!'
+
     }
- }
 
- export const getFormLevels = async () => {
-    const data = await sql`SELECT * FROM form_status WHERE active = TRUE`;
-    return data;
- }
+ }  
 
- export const getAdminModules = async (id : number) => {
-    const data = await sql`SELECT * FROM admin_modules WHERE id = ${id} AND active = TRUE`;
-    return data;
- }
 
- export const getDashboardModel = async () => {
-    const data = await sql`SELECT * FROM modules WHERE active = TRUE`;
-    return data;
- }
+ export const getInventionType = async () => {
+
+    const data = await sql`select * from invention_type where active=TRUE`;
+
+    return data.count > 0 ? {
+
+        status:200,
+
+        message:data
+
+    } : {
+
+        status:400,
+
+        message:'Failed To Fetch!'
+
+    }
+
+ }  
+
+
+ export const getPatentStatus = async () => {
+
+    const data = await sql`select * from patent_status where active=TRUE`;
+
+    return data.count > 0 ? {
+
+        status:200,
+
+        message:data
+
+    } : {
+
+        status:400,
+
+        message:'Failed To Fetch!'
+
+    }
+
+ } 
+
+
+ export const getApplicantNames = async () => {
+    const data = await sql` SELECT DISTINCT mid.id, mid.name
+                            FROM master_input_data mid
+                            INNER JOIN master_inputs mi ON mid.input_type = mi.id
+                            WHERE mi.abbr='ipr' AND mid.active = true AND mi.active = true`;
+    return data.count > 0 ? {
+        status:200,
+        message:data
+    } : {
+        status:400,
+        message:'Failed To Fetch!'
+    }
+ }  
+
+
+ export const getResearchProjectStatus = async () => {
+
+    const data = await sql`select * from research_project_status where active=TRUE`;
+
+    return data.count > 0 ? {
+
+        status:200,
+
+        message:data
+
+    } : {
+
+        status:400,
+
+        message:'Failed To Fetch!'
+
+    }
+
+ }  
+
+
+ 
+ export const getMasterDatatype = async () => {
+
+    const data = await sql`SELECT 
+            id AS id,
+            input_name AS name
+        FROM 
+            public.master_inputs
+        WHERE 
+            active = true`;
+
+    return data.count > 0 ? {
+
+        status:200,
+
+        message:data
+
+    } : {
+
+        status:400,
+
+        message:'Failed To Fetch!'
+
+    }
+
+ } 
+
+
+
+
+
+ 

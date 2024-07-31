@@ -11,9 +11,17 @@ const upload = multer();
 
 bookPublicationRoutes.get('/book-publication-paginate', asyncErrorHandler(getBookPublication));
 bookPublicationRoutes.get('/book-publication-render', asyncErrorHandler(renderBookPublicationList));
-bookPublicationRoutes.post('/book-publication-insert', upload.array("supporting_documents"), asyncErrorHandler(insertBookPublicationForm));
+bookPublicationRoutes.post(
+   '/book-publication-insert',
+   upload.array('supporting_documents'),
+   asyncErrorHandler(insertBookPublicationForm),
+);
 bookPublicationRoutes.get('/book-publication-edit-view', asyncErrorHandler(bookPublicationEditviewForm));
-bookPublicationRoutes.post('/book-publication-update',  upload.array("supporting_documents"),asyncErrorHandler(updateBookPublicationForm));
+bookPublicationRoutes.post(
+   '/book-publication-update',
+   upload.array('supporting_documents'),
+   asyncErrorHandler(updateBookPublicationForm),
+);
 bookPublicationRoutes.post('/book-publication-delete', asyncErrorHandler(deleteBookPublicationForm));
 bookPublicationRoutes.get('/book-publication-view-form', asyncErrorHandler(bookPublicationViewForm));
 bookPublicationRoutes.get('/book-publication-download-file', asyncErrorHandler(downloadPublicationFiles));

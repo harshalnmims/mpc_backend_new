@@ -1,12 +1,17 @@
-import { infiniteScrollQueryBuilder,paginationQueryBuilder } from '$utils/db/query-builder';
+import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
 import { Campus, Program, Session } from 'types/base.types';
 import { BookPublicationDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
 
-
-
-export const getBookDetailsPaginateModel = async({ page, limit, sort, order, search, filters }: paginationDefaultType) =>{
+export const getBookDetailsPaginateModel = async ({
+   page,
+   limit,
+   sort,
+   order,
+   search,
+   filters,
+}: paginationDefaultType) => {
    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
 
    const data = await paginationQueryBuilder<Session>({
@@ -69,7 +74,14 @@ export const getBookDetailsPaginateModel = async({ page, limit, sort, order, sea
       page: page || 1,
       pageSize: limit || 10,
       search: search || '',
-      searchColumns: ['bpd.publisher', 'sd.nmims_school', 'cd.nmims_campus', 'bpd.title', 'bpd.publish_year', 'aa.faculty_names'],
+      searchColumns: [
+         'bpd.publisher',
+         'sd.nmims_school',
+         'cd.nmims_campus',
+         'bpd.title',
+         'bpd.publish_year',
+         'aa.faculty_names',
+      ],
       sort: {
          column: sort || 'bpd.id',
          order: order || 'desc',
@@ -77,38 +89,37 @@ export const getBookDetailsPaginateModel = async({ page, limit, sort, order, sea
    });
 
    return data;
-}
-
+};
 
 export const getBookPublication = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
-    const data = await infiniteScrollQueryBuilder<Session>({
-       baseQuery: `select distinct concat(pu.first_name,' ',pu.last_name) AS full_name, pu.id as user_lid, pu.username 
+   const data = await infiniteScrollQueryBuilder<Session>({
+      baseQuery: `select distinct concat(pu.first_name,' ',pu.last_name) AS full_name, pu.id as user_lid, pu.username 
                        from mpc_user_role mur 
                       INNER JOIN user_session_info usi on usi.user_lid = mur.user_lid 
                       INNER JOIN mpc_role mr ON mr.id = mur.mpc_role_lid
                       INNER JOIN public.user pu on pu.id = usi.user_lid
                       WHERE mr.abbr = 'ca' `,
- 
-       filters: {
-          'usi.program_lid': filters.programLid,
-          'usi.session_lid': filters.sessionLid,
-          'usi.subject_lid': filters.subjectLid,
-       },
-       cursor: {
-          column: 'pu.id',
-          value: Number(filters.cursor)
-       },
-       limit: limit.toString(),
-       search: search || '',
-       searchColumns: ['pu.username', 'pu.first_name', 'pu.last_name'],
-       sort: {
-          column: sort || 'pu.id',
-          order: order || 'desc',
-       },
-    });
- 
-    return data;
- };
+
+      filters: {
+         'usi.program_lid': filters.programLid,
+         'usi.session_lid': filters.sessionLid,
+         'usi.subject_lid': filters.subjectLid,
+      },
+      cursor: {
+         column: 'pu.id',
+         value: Number(filters.cursor),
+      },
+      limit: limit.toString(),
+      search: search || '',
+      searchColumns: ['pu.username', 'pu.first_name', 'pu.last_name'],
+      sort: {
+         column: sort || 'pu.id',
+         order: order || 'desc',
+      },
+   });
+
+   return data;
+};
 
 
 export const insertBookPublicationModel = async (bookPublicationData: BookPublicationDetails,username:string) => {
@@ -133,18 +144,18 @@ export const updateBookPublicationModel = async (bookPublicationData: BookPublic
     
     const data = await sql`UPDATE book_publication SET active = false,modified_date=now(),modified_by=${username} WHERE id = ${bookPublicationId}`;
 
-    return data.count > 0 ? {
-        status:200,
-        message:'Deleted Successfully !'
-    } : {
-        status:400,
-        message:'Failed To Delete !'
-    }
-   
+   return data.count > 0
+      ? {
+           status: 200,
+           message: 'Deleted Successfully !',
+        }
+      : {
+           status: 400,
+           message: 'Failed To Delete !',
+        };
 };
 
-
-export const bookPublicationEditViewModel = async(bookPublicationId : number) => {
+export const bookPublicationEditViewModel = async (bookPublicationId: number) => {
    const data = await sql`SELECT 
     bp.id AS book_pulication_id,
     bp.title,
@@ -205,14 +216,11 @@ WHERE
     AND bpc.active = TRUE 
     AND bps.active = TRUE
 GROUP BY 
-    bp.id;`
-    return data;
-}
+    bp.id;`;
+   return data;
+};
 
-
-
-
-export const bookPublicationFormviewModel = async(bookPublicationId : number) => {
+export const bookPublicationFormviewModel = async (bookPublicationId: number) => {
    console.log('bookPublicationId in case of form view ===>>>>>', bookPublicationId);
    const data = await sql`SELECT 
     bp.id AS book_publication_id,
@@ -254,12 +262,11 @@ GROUP BY
     bp.nmims_authors_count, bp.created_by, bp.modified_by;
 `;
 
-   return data
-
-}
-
-
-export const bookPublicationFiles = async (bookPublicationId:number) => {
-   const data = await sql`SELECT * FROM book_publication_documents WHERE publication_lid = ${bookPublicationId} AND active=TRUE`;
    return data;
-}
+};
+
+export const bookPublicationFiles = async (bookPublicationId: number) => {
+   const data =
+      await sql`SELECT * FROM book_publication_documents WHERE publication_lid = ${bookPublicationId} AND active=TRUE`;
+   return data;
+};

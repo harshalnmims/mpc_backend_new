@@ -1,78 +1,139 @@
 import { getLogger } from '$config/logger-context';
 import {
-    getResearchProjectService, insertResearchProjectService, updateResearchProjectService,
-    deleteResearchProjectService
-   } from '$service/research/research-project-service';
+   getResearchProjectService,
+   insertResearchProjectService,
+   updateResearchProjectService,
+   deleteResearchProjectService,
+   researchProjectRenderService,
+   researchProjectEditViewService,
+   viewResearchProjectService,
+   researchProjectDownloadFilesService,
+} from '$service/research/research-project-service';
 import { Request, Response, NextFunction } from 'express';
 
+import { validateWithZod } from '$middleware/validation.middleware';
+
+import { filesArraySchema } from '$validations/research.valid';
+import { researchProjectDetails } from '$validations/research.valid';
+
+import AWS from 'aws-sdk';
+
+import { AwsData } from 'types/base.types';
+
 export const getResearchProjectForm = async (req: Request, res: Response, next: NextFunction) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET RESEARCH PROJECT CONTROLLER');
- 
-    const {
-       page = 1,
-       limit = 10,
-       sort = '',
-       order = 'desc',
-       search = '',
-       ...filters
-    } = { ...req.body, ...req.params, ...req.query };
- 
-    const data = await getResearchProjectService({
-       page,
-       limit,
-       search,
-       sort,
-       order,
-       filters,
-    });
- 
-    return res.status(200).json(data);
+   const {
+      page = 1,
+
+      limit = 10,
+
+      sort = '',
+
+      order = 'desc',
+
+      search = '',
+
+      ...filters
+   } = { ...req.body, ...req.params, ...req.query };
+
+   const data = await getResearchProjectService({
+      page,
+      limit,
+      search,
+      sort,
+      order,
+      filters,
+   });
+
+   console.log('data responce in controller ====>>>>>', data);
+   return res.status(200).json(data);
 };
 
+export const researchProjectRenderData = async (req: Request, res: Response, next: NextFunction) => {
+   const data = await researchProjectRenderService();
 
-export const insertResearchForm = async(req : Request, res : Response, next : NextFunction) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET RESEARCH PROJECT CONTROLLER');
+   console.log('journal data ', JSON.stringify(data));
 
-    const researchData = {...req.body};
-    let username = res.locals.username;
-
-    const data = await insertResearchProjectService(researchData,username);
-
-    console.log(' data response in case of insert controller ===>>>>', data);
-    return res.status(200).json(data)
-
+   return res.status(200).json(data);
 };
 
+export const insertResearchForm = async (req: Request, res: Response, next: NextFunction) => {
+   const logger = getLogger();
 
-export const updateResearchForm = async(req : Request, res : Response, next : NextFunction) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET RESEARCH PROJECT CONTROLLER');
+   let researchData = JSON.parse(req.body.ipr_data);
+   console.log('researchData ankit ===>>>>>', researchData);
+   let data;
+   let files = req.files;
+   console.log('files ===>>>>>', files);
+   let result = validateWithZod(researchProjectDetails, researchData);
+   let fileResult = validateWithZod(filesArraySchema, files);
+   console.log('result ===>>>>>>', result);
+   if (result.success && fileResult.success) {
+      data = await insertResearchProjectService(researchData, files);
+   }
 
-    const updateResearchData = {...req.body};
-    let username = res.locals.username;
-
-    const data = await updateResearchProjectService(updateResearchData,username);
-
-    console.log(' data response in case of insert controller ===>>>>', data);
-    return res.status(200).json(data)
-
+   return res.status(200).json(data);
 };
 
-export const deleteResearchForm = async(req : Request, res : Response, next : NextFunction) => {
-    const logger = getLogger();
-    logger.info('INSIDE GET PATENT SUBMISSION AND GRANT CONTROLLER');
+export const researchProjectEditViewForm = async (req: Request, res: Response, next: NextFunction) => {
+   const logger = getLogger();
+   const id = req.query.id;
+   const iprId = Number(id);
 
-    const researchData = {...req.body};
-    const researchprojectId = researchData.research_project_id;
-    let username = res.locals.username;
-    const data = await deleteResearchProjectService(researchprojectId,username);
+   const data = await researchProjectEditViewService(iprId);
 
-    console.log(' data response in case of delete controller ===>>>>', data);
+   console.log('data response in controller ====>>>>', data);
+   return res.status(200).json(data);
+};
 
-    return res.status(200).json(data)
+export const updateResearchForm = async (req: Request, res: Response, next: NextFunction) => {
+   const logger = getLogger();
 
-}
+   let updateResearchData = JSON.parse(req.body.update_research_project_data);
+   let researchProjectId = JSON.parse(req.body.research_project_id);
+   console.log('updateResearchData  ===>>>>>', updateResearchData);
+   console.log('researchProjectId  ===>>>>>', researchProjectId);
+   let data;
+   let files = req.files;
+   console.log('files ===>>>>>', files);
+   let result = validateWithZod(researchProjectDetails, updateResearchData);
+   let fileResult = validateWithZod(filesArraySchema, files);
+   console.log('result ===>>>>>>', result);
+   if (result.success && fileResult.success) {
+      data = await updateResearchProjectService(researchProjectId, updateResearchData, files);
+   }
 
+   console.log('data responce in controller ===>>>>', data);
 
+   return res.status(200).json(data);
+};
+
+export const viewResearchProjectForm = async (req: Request, res: Response, next: NextFunction) => {
+   const logger = getLogger();
+
+   const id = req.query.id;
+   const researchProjectId = Number(id);
+   console.log('researchProjectId ===>>>>', researchProjectId);
+   const data = await viewResearchProjectService(researchProjectId);
+
+   console.log('data respoinse in controller ===>>>>>', data);
+
+   return res.status(200).json(data);
+};
+
+export const deleteResearchForm = async (req: Request, res: Response, next: NextFunction) => {
+   const logger = getLogger();
+   const researchprojectId = req.query.id;
+   console.log('iprId ', researchprojectId);
+   const data = await deleteResearchProjectService(Number(researchprojectId));
+
+   console.log(' data response in case of delete controller ===>>>>', data);
+
+   return res.status(200).json(data);
+};
+
+export const downloadResearchProjectFiles = async (req: Request, res: Response, next: NextFunction) => {
+   const researchprojectId = req.query.id;
+   console.log('iprId ', researchprojectId);
+
+   await researchProjectDownloadFilesService(Number(researchprojectId), req, res);
+};
