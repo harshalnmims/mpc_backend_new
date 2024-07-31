@@ -36,25 +36,25 @@ export const getEditedBookPublicationModels = async ({ page, limit, sort, order,
  };
 
 
-export const insertEditedBookPublicationModel = async (editedBookPublicationData: EditedBookPublicationDetails) => {
+export const insertEditedBookPublicationModel = async (editedBookPublicationData: EditedBookPublicationDetails,username:string) => {
     console.log('editedBookPublicationData ===>>>>>', editedBookPublicationData)
     
-    const data = await sql`SELECT * FROM insert_edited_publications(${JSON.parse(JSON.stringify(editedBookPublicationData))}, '1');`;
+    const data = await sql`SELECT * FROM insert_edited_publications(${JSON.parse(JSON.stringify(editedBookPublicationData))}, ${username});`;
     return data;
  }; 
 
-export const updateEditedBookModel = async (updateEditedBookPublicationData: EditedBookPublicationDetails) => {
+export const updateEditedBookModel = async (updateEditedBookPublicationData: EditedBookPublicationDetails,username:string) => {
     console.log('updateEditedBookPublicationData ===>>>>>', updateEditedBookPublicationData)
     
-    const data = await sql`SELECT * FROM upsert_edited_publication(${JSON.parse(JSON.stringify(updateEditedBookPublicationData))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_edited_publication(${JSON.parse(JSON.stringify(updateEditedBookPublicationData))}, ${username});`;
     return data;
 
  }
 
-export const deleteEditedBookModel = async (editedbookId : number) => {
+export const deleteEditedBookModel = async (editedbookId : number,username:string) => {
     console.log('editedbookId models  ====>>>>>>', editedbookId);
     
-    const data = await sql`UPDATE edited_book_publication SET active = false,modified_date=now(),modified_by='1' WHERE id = ${editedbookId}`;
+    const data = await sql`UPDATE edited_book_publication SET active = false,modified_date=now(),modified_by=${username} WHERE id = ${editedbookId}`;
 
     return data.count > 0 ? {
         status:200,

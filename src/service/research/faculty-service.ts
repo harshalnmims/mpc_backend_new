@@ -51,8 +51,8 @@ export const facultyRenderService = async () => {
    return data;
 }
 
-export const insertFacultyService = async (faculty : facultyDetails) => {
-   const data = await insertFacultyModel(faculty);
+export const insertFacultyService = async (faculty : facultyDetails,username:string) => {
+   const data = await insertFacultyModel(faculty,username);
    return data;
 }
 
@@ -71,7 +71,7 @@ export const facultyUpdateViewService = async (faculty : number) => {
    return data;
 }
 
-export const updateFacultyService =  async (faculty : facultyUpdateDetails) => {
-   const data = await updateFacultyModel(faculty);
+export const updateFacultyService =  async (faculty: facultyUpdateDetails, username: string) => {
+   const data = await updateFacultyModel(faculty,username);
    return data;
 }

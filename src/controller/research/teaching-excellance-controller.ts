@@ -38,9 +38,9 @@ export const insertTeachingController = async (req : Request ,res : Response ,ne
 
      let result = validateWithZod(teachingItemsSchema,teaching_json);
      let fileResult = validateWithZod(filesArraySchema, files);
-
+let username = res.locals.username;
      if(fileResult.success && result.success){
-       data = await insertTeachingService(teaching_json,files);
+       data = await insertTeachingService(teaching_json,files,username);
       }
          
      return res.status(200).json(data); 
@@ -56,9 +56,9 @@ export const updateTeachingController = async (req : Request ,res : Response ,ne
 
     let result = validateWithZod(teachingItemsSchema,teaching_json);
     let fileResult = validateWithZod(filesArraySchema, files);
-
+    let username = res.locals.username;
     if(fileResult.success && result.success){
-      data = await updateTeachingService(teaching_json,files,teachingId);
+      data = await updateTeachingService(teaching_json,files,teachingId,username);
      }
         
     return res.status(200).json(data); 

@@ -15,6 +15,7 @@ import { downloadFile } from '$middleware/fileupload.middleware';
 import { Request,Response } from 'express';
 
 import { bookChapterDetails} from 'types/research.types';
+import { getRedisData } from '$utils/db/redis';
 
 export const getBookChapterService = async ({
    page,
@@ -51,15 +52,16 @@ export const renderBookChapterLists  = async() => {
    
 }
 
-export const insertBookChapterService = async (bookChapterData : bookChapterDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertBookChapterService = async (bookChapterData: bookChapterDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, username: string) => {
     const logger = getLogger();
     console.log('bookChapterData in service ====>>>>>', bookChapterData);
+
     let uploadDocuments = await uploadFile(documents);
     bookChapterData.supporting_documents  = uploadDocuments.map(data =>  data);
 
     console.log('bookChapterData ===>>>>>>', bookChapterData)
  
-    const data = await insertBookChapterModel(bookChapterData);
+    const data = await insertBookChapterModel(bookChapterData,username);
  
     return data;
  }
@@ -80,7 +82,7 @@ export const insertBookChapterService = async (bookChapterData : bookChapterDeta
    
 }
 
-export const updateBookChapterService = async(bookChapterData : bookChapterDetails ,documents :  { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, booChapterId: number) => {
+export const updateBookChapterService = async(bookChapterData: bookChapterDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, booChapterId: number, username: string) => {
     const logger = getLogger();
     console.log('bookChapterData in service ====>>>>>', bookChapterData);
     let uploadDocuments = await uploadFile(documents);
@@ -95,17 +97,17 @@ export const updateBookChapterService = async(bookChapterData : bookChapterDetai
     console.log('upload documents ', uploadDocuments);
     
  
-    const data = await updateBookChapterModel(bookChapterData);
+    const data = await updateBookChapterModel(bookChapterData,username);
  
     return data;
 
 }
 
-export const deleteBookChapterService = async(bookChapterId : number) => {
+export const deleteBookChapterService = async(bookChapterId: number, username: string) => {
     const logger = getLogger();
     console.log('bookChapterId in service ====>>>>>', bookChapterId);
  
-    const data = await deleteBookChapterModel(bookChapterId);
+    const data = await deleteBookChapterModel(bookChapterId,username);
  
     return data;
 

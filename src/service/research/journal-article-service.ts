@@ -60,12 +60,12 @@ export const journalPaginateService = async ({
    return data;
 };
 
-export const insertJournalArticleService = async (journalDetails: journalArticleDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertJournalArticleService = async (journalDetails: journalArticleDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, username: string) => {
             
        let uploadDocuments = await uploadFile(documents);
        journalDetails.supporting_documents  = uploadDocuments.map(data =>  data);
 
-       const data  = await insertJournalArticleModel(journalDetails);
+       const data  = await insertJournalArticleModel(journalDetails,username);
        console.log('final journal json ',JSON.stringify(data))
        return data;
  }; 

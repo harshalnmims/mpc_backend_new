@@ -81,6 +81,7 @@ export const insertBookPublicationForm = async (req: Request, res: Response, nex
     console.log('bookPublicationData ankit ===>>>>>', bookPublicationData)
     let data;
     let documents = req.files;
+    let username = res.locals.username;
 
     console.log('documents in controller ====>>>', documents);
 
@@ -90,7 +91,7 @@ export const insertBookPublicationForm = async (req: Request, res: Response, nex
     console.log('zod result ',JSON.stringify(fileResult))
  
     if(fileResult.success && result.success){
-      data = await insertBookPublicationService(bookPublicationData, documents);
+      data = await insertBookPublicationService(bookPublicationData, documents,username);
      }
 
     return res.status(200).json(data);
@@ -116,6 +117,7 @@ export const bookPublicationEditviewForm = async (req: Request, res: Response, n
     let bookPublicationId = JSON.parse(req.body.book_publication_id);
     console.log('bookPublicationId in controller update ===>>>>>', bookPublicationId);
     let documents = req.files;
+    let username= res.locals.username;
     let data
     console.log('documents ===>>>>>', documents);
     console.log('documents in controller ====>>>', documents);
@@ -127,7 +129,7 @@ export const bookPublicationEditviewForm = async (req: Request, res: Response, n
 
 
     if(result.success && fileResult.success){   
-    data = await updateBookPublicationService(bookPublicationId, bookPublicationData, documents);
+    data = await updateBookPublicationService(bookPublicationId, bookPublicationData, documents,username);
     }
     return res.status(200).json(data);
 
@@ -141,8 +143,9 @@ export const bookPublicationEditviewForm = async (req: Request, res: Response, n
    const bookPublicationId =  req.query.id;
    console.log('bookPublicationId Ankit Mishra====>>>>>>>', bookPublicationId);
    const id = Number(bookPublicationId);
+   let username=res.locals.username;
 
-    const data = await deleteBookPublicationService(id);
+    const data = await deleteBookPublicationService(id,username);
     console.log('data  responce in controller===>>>>>', data);
 
     return res.status(200).json(data);

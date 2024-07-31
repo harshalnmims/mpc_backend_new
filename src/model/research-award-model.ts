@@ -73,25 +73,25 @@ export const getResearchAwardModel = async ({ page, limit, sort, order, search, 
  };
  
 
-export const insertResearchAwardModel = async(researchAwardData : researchAwardDetails) => {
+export const insertResearchAwardModel = async(researchAwardData : researchAwardDetails,username:string) => {
     console.log('researchAwardData ===>>>>>', researchAwardData)
     
-    const data = await sql`SELECT * FROM insert_research_award(${JSON.parse(JSON.stringify(researchAwardData))}, '1');`;
+    const data = await sql`SELECT * FROM insert_research_award(${JSON.parse(JSON.stringify(researchAwardData))}, ${username});`;
     return data;
 
 } 
 
-export const updateResearchAwardModel = async(updateResearchAwardData : researchAwardDetails) => {
+export const updateResearchAwardModel = async(updateResearchAwardData : researchAwardDetails,username:string) => {
     
-    const data = await sql`SELECT * FROM upsert_research_award(${JSON.parse(JSON.stringify(updateResearchAwardData))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_research_award(${JSON.parse(JSON.stringify(updateResearchAwardData))}, ${username});`;
     return data;
 
 } 
 
-export const deleteResearchAwardModel = async(awardId : number) => {
+export const deleteResearchAwardModel = async(awardId : number,username:string) => {
     console.log('awardId in  models  ====>>>>>>', awardId);
     
-    const data = await sql`UPDATE research_award SET active = false,modified_date=now(),modified_by='1' WHERE id = ${awardId}`;
+    const data = await sql`UPDATE research_award SET active = false,modified_date=now(),modified_by=${username} WHERE id = ${awardId}`;
 
     return data.count > 0 ? {
         status:200,

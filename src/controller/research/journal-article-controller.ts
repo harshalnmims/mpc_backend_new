@@ -46,6 +46,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
    //  const logger = getLogger();
     
      let journalDetails = JSON.parse(req.body.journal_paper);
+     let username = req.body.username;
      let data;
      let documents = req.files;
 
@@ -55,7 +56,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
 
      if(fileResult.success && result.success){
-      data = await insertJournalArticleService(journalDetails,documents);
+      data = await insertJournalArticleService(journalDetails,documents,username);
      }
      return res.status(200).json(data);
  };

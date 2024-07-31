@@ -30,7 +30,7 @@ export const getPaginateService = async (
   return data;
 }
 
-export const insertBrandingService = async (brandingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertBrandingService = async (brandingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, username: string) => {
 
     let uploadDocuments = await uploadMultiFile(documents);
     console.log(uploadDocuments);
@@ -61,11 +61,12 @@ export const insertBrandingService = async (brandingDetails: any, documents: { [
 
     console.log('branding final json ',JSON.stringify(obj))
 
-    const data = await insertBrandingModel(obj);
+    const data = await insertBrandingModel(obj,username);
     return data;
 }
 
-export const updateBrandingService =  async (brandingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,brandingId : number) => {
+export const updateBrandingService =  async (brandingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, brandingId: number, username: any) => {
+ 
 
     let uploadDocuments = await uploadMultiFile(documents);
     console.log(uploadDocuments);
@@ -97,18 +98,18 @@ export const updateBrandingService =  async (brandingDetails: any, documents: { 
 
     console.log('branding upsert json ',JSON.stringify(obj))
 
-    const data = await updateBrandingModel(obj);
+    const data = await updateBrandingModel(obj,username);
     return data;
 }
 
-export const deleteBrandingService = async (brandingId : number) => {
-    const data = await deleteBrandingModel(brandingId);
+export const deleteBrandingService = async (brandingId: number, username: string) => {
+    const data = await deleteBrandingModel(brandingId,username);
     return data;
 }
 
 
  
-export const updateViewService = async (brandingId : number) => {
+export const updateViewService = async (brandingId: number, username: string) => {
     let dropdownData = await brandingViewData();
     let brandingData = await updateViewData(brandingId);
     console.log('received view ',JSON.stringify(brandingData))

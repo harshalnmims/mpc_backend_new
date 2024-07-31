@@ -4,8 +4,8 @@ import { paginationQueryBuilder } from '$utils/db/query-builder';
 import { Session } from 'types/base.types';
 import { paginationDefaultType } from 'types/db.default';
 
-export const insertEContent = async (eContent: EContent) => {
-    const data =  await sql`INSERT INTO e_content_development(faculty_name, module, module_platform, launching_date, document_link, media_link, facility_list, created_by, modified_by) VALUES (${eContent.faculty_name}, ${eContent.module}, ${eContent.module_platform}, ${eContent.launching_date}, ${eContent.document_link}, ${eContent.media_link}, ${eContent.facility_list}, '1', '1')`;
+export const insertEContent = async (eContent: EContent,username:string) => {
+    const data =  await sql`INSERT INTO e_content_development(faculty_name, module, module_platform, launching_date, document_link, media_link, facility_list, created_by, modified_by) VALUES (${eContent.faculty_name}, ${eContent.module}, ${eContent.module_platform}, ${eContent.launching_date}, ${eContent.document_link}, ${eContent.media_link}, ${eContent.facility_list}, ${username}, ${username})`;
     return data.count > 0 ? {
         status:200,
         message:'Inserted Successfully !'
@@ -15,7 +15,7 @@ export const insertEContent = async (eContent: EContent) => {
     }
 }
 
-export const updateEContent = async (eContent: EContent,eContentId : number) => {
+export const updateEContent = async (eContent: EContent,eContentId : number,username:string) => {
 
     const data = await sql`
     UPDATE e_content_development
@@ -28,7 +28,7 @@ export const updateEContent = async (eContent: EContent,eContentId : number) => 
       media_link = ${eContent.media_link},
       facility_list = ${eContent.facility_list},
       modified_date=now(),
-      modified_by = '1'
+      modified_by = ${username}
       WHERE id = ${eContentId}
   `;
      return data.count > 0 ? 
@@ -45,10 +45,10 @@ export const updateEContent = async (eContent: EContent,eContentId : number) => 
  }
 
 
-export const deleteEContent = async (eContentId: number) => {
+export const deleteEContent = async (eContentId: number,username:string) => {
     const data = await sql`
         UPDATE e_content_development
-        SET active = false, modified_date = now(), modified_by = '1'
+        SET active = false, modified_date = now(), modified_by = ${username}
         WHERE id = ${eContentId}
     `;
     return data.count > 0 ?

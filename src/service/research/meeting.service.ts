@@ -27,7 +27,7 @@ export const getPaginateService = async (
   return data;
 }
 
-export const insertMeetingService = async (meetingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertMeetingService = async (meetingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,username:string) => {
 
     let uploadDocuments = await uploadMultiFile(documents);
     console.log(uploadDocuments);
@@ -50,11 +50,11 @@ export const insertMeetingService = async (meetingDetails: any, documents: { [fi
 
     console.log('meeting final json ',JSON.stringify(obj))
 
-    const data = await insertMeetingModel(obj);
+    const data = await insertMeetingModel(obj,username);
     return data;
 }
 
-export const updateMeetingService = async (meetingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,meetingId:number) => {
+export const updateMeetingService = async (meetingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,meetingId:number,username:string) => {
 
     let uploadDocuments = await uploadMultiFile(documents);
     console.log(uploadDocuments);
@@ -78,7 +78,7 @@ export const updateMeetingService = async (meetingDetails: any, documents: { [fi
 
     console.log('meeting upsert json ',JSON.stringify(obj))
 
-    const data = await updateMeetingModel(obj);
+    const data = await updateMeetingModel(obj,username);
     return data;
 }
 

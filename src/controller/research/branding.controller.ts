@@ -30,12 +30,12 @@ export const insertBrandingController = async(req : Request ,res : Response ,nex
     let data;
     let files = req.files;
     let branding_json = JSON.parse(req.body.branding_advertisement);
-
+let username = res.locals.username;
     let result = validateWithZod(brandingItemsSchema,branding_json);
     let fileResult = validateWithZod(filesArraySchema, files);
 
     if(fileResult.success && result.success){
-      data = await insertBrandingService(branding_json,files);
+      data = await insertBrandingService(branding_json,files,username);
      }
         
     return res.status(200).json(data); 
@@ -43,13 +43,15 @@ export const insertBrandingController = async(req : Request ,res : Response ,nex
 
 export const deleteBrandingDelete = async (req : Request ,res : Response ,next : NextFunction) => {
     let id = req.query.id;
-    const data = await deleteBrandingService(Number(id));
+    let username = res.locals.username;
+    const data = await deleteBrandingService(Number(id),username);
     return res.status(200).json(data);
 }
 
 export const updateViewController = async (req : Request ,res : Response ,next : NextFunction) => {
     let id = req.query.id;
-    const data = await updateViewService(Number(id));
+    let username = res.locals.username;
+    const data = await updateViewService(Number(id),username);
     console.log('view json ',JSON.stringify(data))
     return res.status(200).json(data);
 }
@@ -64,6 +66,7 @@ export const brandingViewController = async (req : Request ,res : Response ,next
 export const updateBrandingController = async(req : Request ,res : Response ,next : NextFunction) => {
     let data;
     let files = req.files;
+    let username = res.locals.username;
     let branding_json = JSON.parse(req.body.json_data);
     let brandingId = JSON.parse(req.body.row_id);
 
@@ -71,7 +74,7 @@ export const updateBrandingController = async(req : Request ,res : Response ,nex
     let fileResult = validateWithZod(filesArraySchema, files);
 
     if(fileResult.success && result.success){
-      data = await updateBrandingService(branding_json,files,brandingId);
+      data = await updateBrandingService(branding_json,files,brandingId,username);
      }
         
     return res.status(200).json(data); 

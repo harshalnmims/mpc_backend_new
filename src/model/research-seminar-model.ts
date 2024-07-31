@@ -72,26 +72,26 @@ export const getResearchSeminarModel = async ({ page, limit, sort, order, search
  };
 
 
-export const insertResearchSeminarModel = async(researchSeminarData : seminarDetails) => {
+export const insertResearchSeminarModel = async(researchSeminarData : seminarDetails,username:string) => {
     console.log('researchSeminarData ===>>>>>', researchSeminarData)
     
-    const data = await sql`SELECT * FROM insert_research_seminar(${JSON.parse(JSON.stringify(researchSeminarData))}, '1');`;
+    const data = await sql`SELECT * FROM insert_research_seminar(${JSON.parse(JSON.stringify(researchSeminarData))}, ${username});`;
     return data;
 
 } 
 
-export const updateResearchSeminarModel = async(updateResearchSeminarData : seminarDetails) => {
+export const updateResearchSeminarModel = async(updateResearchSeminarData : seminarDetails,username:string) => {
     console.log('updateResearchSeminarData ===>>>>>', updateResearchSeminarData)
     
-    const data = await sql`SELECT * FROM upsert_research_seminar(${JSON.parse(JSON.stringify(updateResearchSeminarData))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_research_seminar(${JSON.parse(JSON.stringify(updateResearchSeminarData))},  ${username});`;
     return data;
 
 };
 
-export const deleteResearchSeminarModel = async (seminarId : number) => {
+export const deleteResearchSeminarModel = async (seminarId : number,username:string) => {
     console.log('seminarId in  models  ====>>>>>>', seminarId);
     
-    const data = await sql`UPDATE research_seminar SET active = false,modified_date=now(),modified_by='1' WHERE id = ${seminarId}`;
+    const data = await sql`UPDATE research_seminar SET active = false,modified_date=now(),modified_by= ${username} WHERE id = ${seminarId}`;
 
     return data.count > 0 ? {
         status:200,

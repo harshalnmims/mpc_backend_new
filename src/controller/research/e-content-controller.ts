@@ -9,10 +9,11 @@ import { Request, Response, NextFunction } from 'express';
 export const insertEContent = async (req: Request, res: Response, next: NextFunction) => {
      console.log('request body e content ',JSON.stringify(req.body))
      const eContent = req.body.e_content;
+     const username = res.locals.username;
      let result = validateWithZod(eContentObj,eContent);
      let data;
      if(result.success){
-     data = await insertEContentService(eContent);
+     data = await insertEContentService(eContent,username);
      }
      return res.status(200).json(data);  
 }
@@ -20,7 +21,8 @@ export const insertEContent = async (req: Request, res: Response, next: NextFunc
 export const updateEContent = async (req: Request, res: Response, next: NextFunction) => {
   
     const eContent = req.body.e_content;
-    const data = await updateEContentService(eContent);
+    const username = res.locals.username;
+    const data = await updateEContentService(eContent,username);
 
     return res.status(200).json(data);
 }
@@ -28,7 +30,8 @@ export const updateEContent = async (req: Request, res: Response, next: NextFunc
 export const deleteEContent = async (req: Request, res: Response, next: NextFunction) => {
 
     const eContentId = req.query.id;
-    const data = await deleteEContentService(Number(eContentId));
+    const username = res.locals.username;
+    const data = await deleteEContentService(Number(eContentId),username);
 
     return res.status(200).json(data);
 }
@@ -60,6 +63,7 @@ export const eContentViewData = async (req: Request, res: Response, next: NextFu
   
     const eContentId = req.query.id;
     const data = await eContentViewService(Number(eContentId));
+    const username = res.locals.username;
 
     return res.status(200).json(data);
 }

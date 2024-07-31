@@ -32,7 +32,7 @@ export const getTeachingPaginateService = async (
   return data;
 }
 
-export const insertTeachingService = async (teachingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertTeachingService = async (teachingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,username:string) => {
  
    
     let uploadDocuments = await uploadMultiFile(documents);
@@ -54,11 +54,11 @@ export const insertTeachingService = async (teachingDetails: any, documents: { [
 
     console.log('teaching final json ',JSON.stringify(obj))
 
-    const data = await insertTeachingModel(obj);
+    const data = await insertTeachingModel(obj,username);
     return data;
 }
 
-export const updateTeachingService = async (teachingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,teachingId : number) => {
+export const updateTeachingService = async (teachingDetails: any, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,teachingId : number,username:string) => {
  
    
   let uploadDocuments = await uploadMultiFile(documents);
@@ -81,7 +81,7 @@ export const updateTeachingService = async (teachingDetails: any, documents: { [
 
   console.log('teaching final json ',JSON.stringify(obj))
 
-  const data = await updateTeachingModel(obj);
+  const data = await updateTeachingModel(obj,username);
   return data;
 }
 

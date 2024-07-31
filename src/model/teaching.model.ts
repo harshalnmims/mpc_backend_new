@@ -47,15 +47,15 @@ export const teachingViewData = async() => {
   }
 } 
 
-export const insertTeachingModel = async (teachingDetails : TeachingExcellance) => {
-   const data = await sql`SELECT * FROM insert_teaching_excellance(${JSON.parse(JSON.stringify(teachingDetails))}, '1');`
+export const insertTeachingModel = async (teachingDetails : TeachingExcellance,username:string) => {
+   const data = await sql`SELECT * FROM insert_teaching_excellance(${JSON.parse(JSON.stringify(teachingDetails))}, ${username});`
    console.log('inserted data ',JSON.stringify(data))
 
    return data;
 }
 
-export const updateTeachingModel = async (teachingDetails : TeachingExcellance) => {
-   const data = await sql`SELECT * FROM upsert_teaching_excellance(${JSON.parse(JSON.stringify(teachingDetails))}, '1');`
+export const updateTeachingModel = async (teachingDetails : TeachingExcellance,username:string) => {
+   const data = await sql`SELECT * FROM upsert_teaching_excellance(${JSON.parse(JSON.stringify(teachingDetails))}, ${username});`
    console.log('updated data ',JSON.stringify(data))
 
    return data;

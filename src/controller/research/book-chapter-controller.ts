@@ -50,6 +50,7 @@ export const insertBookChapterForm = async (req: Request, res: Response, next: N
     console.log('bookChapterData ankit ===>>>>>', bookChapterData)
     let data;
     let documents = req.files;
+    let username = res.locals.username;
 
     console.log('documents in controller ====>>>', documents);
     let result = validateWithZod(bookChapterPublication,bookChapterData);
@@ -57,7 +58,7 @@ export const insertBookChapterForm = async (req: Request, res: Response, next: N
     let fileResult = validateWithZod(filesArraySchema, documents);
 
     if(fileResult.success && result.success){
-        data = await insertBookChapterService(bookChapterData, documents);
+        data = await insertBookChapterService(bookChapterData, documents,username);
        }
        
     console.log('data response in controller ===>>>>>>', data)
@@ -86,6 +87,7 @@ export const updateBookChapterForm = async (req: Request, res: Response , next: 
     console.log('booChapterId in controller update ===>>>>>', booChapterId);
     let documents = req.files;
     let data;
+    let username = res.locals.username;
     console.log('documents ===>>>>>', documents);
 
     let result = validateWithZod(bookChapterPublication,bookChapterData);
@@ -94,7 +96,7 @@ export const updateBookChapterForm = async (req: Request, res: Response , next: 
     
     console.log('fileResult ===>>>>>',fileResult);
     if(result.success && fileResult.success){
-        data = await updateBookChapterService(bookChapterData,documents,Number(booChapterId));
+        data = await updateBookChapterService(bookChapterData,documents,Number(booChapterId),username);
 
     }
        
@@ -110,11 +112,12 @@ export const deleteBookChapterForm = async (req: Request, res: Response , next: 
 
 
     const id =  req.query.id;
+    let username = res.locals.username;
     const booChapterId = Number(id);  
     console.log('booChapterId ==>>>>', booChapterId)
 
 
-    const data = await deleteBookChapterService(booChapterId);
+    const data = await deleteBookChapterService(booChapterId,username);
 
     console.log('data responce in controller ===>>>>', data);
     return res.status(200).json(data);
@@ -126,6 +129,7 @@ export const viewBookChapterformView = async(req: Request, res: Response , next:
     const logger = getLogger();
     const booChapterId =  req.query.id;
     const id = Number(booChapterId);
+ 
  
     console.log('id in controoler comming from frontend ====>>>>>', id);
     const data = await bookChapterViewService(Number(id));

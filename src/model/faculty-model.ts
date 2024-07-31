@@ -71,8 +71,8 @@ export const facultyRenderModel = async () => {
    return data;
 }
 
-export const insertFacultyModel = async (facultyDetails : facultyDetails) => {
-   const data = await sql`SELECT * FROM insert_faculty_master(${JSON.parse(JSON.stringify(facultyDetails))}, '1');`;
+export const insertFacultyModel = async (facultyDetails : facultyDetails,username:string) => {
+   const data = await sql`SELECT * FROM insert_faculty_master(${JSON.parse(JSON.stringify(facultyDetails))}, ${username});`;
     return data;
 }
 
@@ -122,7 +122,7 @@ export const facultyUpdateViewModel = async (facultyId : number) => {
     return data;
 }
 
-export const updateFacultyModel = async (facultyDetails : facultyUpdateDetails) => {
+export const updateFacultyModel = async (facultyDetails : facultyUpdateDetails,username:string) => {
    const data = await sql`UPDATE faculties 
                           SET faculty_name=${facultyDetails.faculty_name},
                           address = ${facultyDetails.address},
@@ -130,7 +130,7 @@ export const updateFacultyModel = async (facultyDetails : facultyUpdateDetails) 
                           institute_name = ${facultyDetails.institute},
                           faculty_type_lid = ${facultyDetails.faculty_type},
                           modified_date = NOW(),
-                          modified_by = '1'
+                          modified_by = ${username}
                           WHERE id=${facultyDetails.faculty_id}`;
     return data;
 }

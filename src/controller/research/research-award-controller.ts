@@ -64,11 +64,11 @@ export const insertResearchAwardForm = async(req : Request, res : Response, next
     let researchAwardData = JSON.parse(req.body.research_award);
     let data;
     let documents = req.files;
-
+let username = res.locals.username;
     let result = validateWithZod(researchAwardDataObj,researchAwardData);
     let fileResult = validateWithZod(filesArraySchema, documents);
     if(fileResult.success && result.success){
-     data = await insertResearchAwardService(researchAwardData,documents);
+     data = await insertResearchAwardService(researchAwardData,documents,username);
     }
     return res.status(200).json(data)
 
@@ -81,11 +81,12 @@ export const updateResearchAwardForm = async(req : Request, res : Response, next
     let researchAwardId = JSON.parse(req.body.research_award_id);
     let data;
     let documents = req.files;
+    let username = res.locals.username;
 
     let result = validateWithZod(researchAwardDataObj,researchAwardData);
     let fileResult = validateWithZod(filesArraySchema, documents);
     if(fileResult.success && result.success){
-     data = await updateResearchAwardService(researchAwardData,documents,researchAwardId);
+     data = await updateResearchAwardService(researchAwardData,documents,researchAwardId,username);
     }
     return res.status(200).json(data)
 
@@ -94,8 +95,9 @@ export const updateResearchAwardForm = async(req : Request, res : Response, next
 export const deleteResearchAwardForm = async (req : Request, res : Response, next : NextFunction) => {
    
     const awardId = req.query.id;
-    const data = await deleteResearchAwardService(Number(awardId));
-
+    let username = res.locals.username;
+    const data = await deleteResearchAwardService(Number(awardId),username);
+   
     return res.status(200).json(data)
 
 }

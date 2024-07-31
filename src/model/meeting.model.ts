@@ -48,15 +48,15 @@ export const meetingViewData = async() => {
   }
 } 
 
-export const insertMeetingModel = async (meetingDetails : MeetingStakeholders) => {
-   const data = await sql`SELECT * FROM insert_meeting_stackholder(${JSON.parse(JSON.stringify(meetingDetails))}, '1');`
+export const insertMeetingModel = async (meetingDetails : MeetingStakeholders,username:string) => {
+   const data = await sql`SELECT * FROM insert_meeting_stackholder(${JSON.parse(JSON.stringify(meetingDetails))}, ${username});`
    console.log('inserted data ',JSON.stringify(data))
 
    return data;
 }
 
-export const updateMeetingModel = async (meetingDetails : MeetingStakeholders) => {
-   const data = await sql`SELECT * FROM upsert_meeting_stackholder(${JSON.parse(JSON.stringify(meetingDetails))}, '1');`
+export const updateMeetingModel = async (meetingDetails : MeetingStakeholders,username:string) => {
+   const data = await sql`SELECT * FROM upsert_meeting_stackholder(${JSON.parse(JSON.stringify(meetingDetails))}, ${username});`
    console.log('inserted data ',JSON.stringify(data))
 
    return data;

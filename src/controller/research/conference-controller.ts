@@ -32,9 +32,9 @@ export const getConference = async (req: Request, res: Response, next: NextFunct
 export const insertConferenceForm = async (req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
     logger.info('INSIDE insertBookChapterForm CONTROLLER');
-
+let username=res.locals.username;
     const conferenceData = { ...req.body};
-    const data = await insertConferenceService(conferenceData);
+    const data = await insertConferenceService(conferenceData,username);
     console.log('data response conference controller  ====>>>>>>', data);
  
     return res.status(200).json(data);

@@ -56,18 +56,18 @@ export const getResearchSeminarService = async ({
     return data;
  };
 
-export const insertResearchSeminarService = async (researchSeminarData : seminarDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertResearchSeminarService = async (researchSeminarData : seminarDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,username:string) => {
          
        let uploadDocuments = await uploadFile(documents);
        researchSeminarData.supporting_documents  = uploadDocuments.map(data =>  data);
-       const data = await insertResearchSeminarModel(researchSeminarData);
+       const data = await insertResearchSeminarModel(researchSeminarData,username);
        console.log('final research json ',JSON.stringify(data))
        return data;
  
  };
 
 
- export const updateResearchSeminarService = async (researchSeminarData : seminarDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,seminarId : number) => {
+ export const updateResearchSeminarService = async (researchSeminarData : seminarDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,seminarId : number,username:string) => {
    
     let uploadDocuments = await uploadFile(documents);
     if(uploadDocuments.length > 0){
@@ -76,14 +76,14 @@ export const insertResearchSeminarService = async (researchSeminarData : seminar
       researchSeminarData.supporting_documents  = [];
     }
     researchSeminarData.research_seminar_id = seminarId;
-    const data = await updateResearchSeminarModel(researchSeminarData);
+    const data = await updateResearchSeminarModel(researchSeminarData,username);
  
     return data;
  };
 
- export const deleteResearchSeminalService = async(seminarId: number) => {
+ export const deleteResearchSeminalService = async(seminarId: number,username:string) => {
 
-    const data = await deleteResearchSeminarModel(seminarId);
+    const data = await deleteResearchSeminarModel(seminarId,username);
     return data;
  }
 

@@ -111,27 +111,27 @@ export const getBookPublication = async ({ page, limit, sort, order, search, fil
  };
 
 
-export const insertBookPublicationModel = async (bookPublicationData: BookPublicationDetails) => {
+export const insertBookPublicationModel = async (bookPublicationData: BookPublicationDetails,username:string) => {
     console.log('bookPublicationData ===>>>>>', bookPublicationData)
     
-    const data = await sql`SELECT * FROM insert_book_publication(${JSON.parse(JSON.stringify(bookPublicationData))}, '1');`;
+    const data = await sql`SELECT * FROM insert_book_publication(${JSON.parse(JSON.stringify(bookPublicationData))}, ${username});`;
     return data;
  }; 
 
 
-export const updateBookPublicationModel = async (bookPublicationData: BookPublicationDetails) => {
+export const updateBookPublicationModel = async (bookPublicationData: BookPublicationDetails,username:string) => {
     console.log('bookPublicationData in models  ===>>>>>', bookPublicationData)
     
-    const data = await sql`SELECT * FROM upsert_book_publication(${JSON.parse(JSON.stringify(bookPublicationData))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_book_publication(${JSON.parse(JSON.stringify(bookPublicationData))}, ${username});`;
     return data;
  };
  
 
 
- export const deleteBookPublicationModel = async (bookPublicationId: number) => {
+ export const deleteBookPublicationModel = async (bookPublicationId: number,username:string) => {
     console.log('bookPublicationId models  ====>>>>>>', bookPublicationId);
     
-    const data = await sql`UPDATE book_publication SET active = false,modified_date=now(),modified_by='1' WHERE id = ${bookPublicationId}`;
+    const data = await sql`UPDATE book_publication SET active = false,modified_date=now(),modified_by=${username} WHERE id = ${bookPublicationId}`;
 
     return data.count > 0 ? {
         status:200,

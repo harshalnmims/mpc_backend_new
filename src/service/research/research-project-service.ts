@@ -30,33 +30,33 @@ export const getResearchProjectService = async ({
     return data;
  };
 
-export const insertResearchProjectService = async (researchData : researchProjectDetails) => {
+export const insertResearchProjectService = async (researchData : researchProjectDetails,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET RESEARCH PROJECT  SERVICES');
     console.log('researchData in service ====>>>>>', researchData);
  
-    const data = await insertResearchProjectModel(researchData);
+    const data = await insertResearchProjectModel(researchData,username);
  
     return data;
  };
 
 
-export const updateResearchProjectService = async (updateResearchData : researchProjectDetails) => {
+export const updateResearchProjectService = async (updateResearchData : researchProjectDetails,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET RESEARCH PROJECT  SERVICES');
     console.log('updateResearchData in service ====>>>>>', updateResearchData);
  
-    const data = await updateResearchProjectModel(updateResearchData);
+    const data = await updateResearchProjectModel(updateResearchData,username);
  
     return data;
  };
 
-export const deleteResearchProjectService = async(researchprojectId : number) => {
+export const deleteResearchProjectService = async(researchprojectId : number,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET  PATENT SUBMISSION');
     console.log('researchprojectId in service ====>>>>>', researchprojectId);
  
-    const data = await deleteResearchProjectModel(researchprojectId);
+    const data = await deleteResearchProjectModel(researchprojectId,username);
  
     return data;
 

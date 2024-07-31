@@ -36,10 +36,10 @@ export const getBookConference = async ({ page, limit, sort, order, search, filt
     return data;
  };
 
-export const insertConferenceModel = async(conferenceData : conferenceDetails) => {
+export const insertConferenceModel = async(conferenceData : conferenceDetails,username:string) => {
     console.log('conferenceData ===>>>>>', conferenceData)
     
-    const data = await sql`SELECT * FROM insert_conference(${JSON.parse(JSON.stringify(conferenceData))}, '1');`;
+    const data = await sql`SELECT * FROM insert_conference(${JSON.parse(JSON.stringify(conferenceData))}, ${username});`;
     return data;
  }
 

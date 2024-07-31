@@ -30,12 +30,12 @@ export const getConferenceService = async ({
     return data;
  };
 
-export const insertConferenceService = async(conferenceData : conferenceDetails) => {
+export const insertConferenceService = async(conferenceData : conferenceDetails,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
     console.log('conferenceData in service ====>>>>>', conferenceData);
  
-    const data = await insertConferenceModel(conferenceData);
+    const data = await insertConferenceModel(conferenceData,username);
  
     return data;
 

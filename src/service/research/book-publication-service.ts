@@ -54,7 +54,7 @@ export const renderBookPublicationService  = async() => {
    
 }
 
-export const insertBookPublicationService = async (bookPublicationData: BookPublicationDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertBookPublicationService = async (bookPublicationData: BookPublicationDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined, username: any) => {
     const logger = getLogger();
    //  logger.info('INSIDE GET SUBJECT BOOK PUBLICATION  SERVICES');
     console.log('bookPublicationData ====>>>>>', bookPublicationData);
@@ -63,14 +63,14 @@ export const insertBookPublicationService = async (bookPublicationData: BookPubl
 
     console.log('bookPublicationData with the file in service ====>>>>>', bookPublicationData);
  
-    const data = await insertBookPublicationModel(bookPublicationData);
+    const data = await insertBookPublicationModel(bookPublicationData,username);
  
     return data;
  }; 
 
 
 
-export const updateBookPublicationService = async (bookPublicationId : number, bookPublicationData : BookPublicationDetails, documents :  { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const updateBookPublicationService = async (bookPublicationId : number, bookPublicationData : BookPublicationDetails, documents :  { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,username:string) => {
 
     const logger = getLogger();
 
@@ -88,18 +88,18 @@ export const updateBookPublicationService = async (bookPublicationId : number, b
 
     
  
-    const data = await updateBookPublicationModel(bookPublicationData);
+    const data = await updateBookPublicationModel(bookPublicationData,username);
  
     return data;
  };
 
 
- export const deleteBookPublicationService = async(bookPublicationId : number) => {
+ export const deleteBookPublicationService = async(bookPublicationId : number,username:string) => {
     const logger = getLogger();
 
     console.log('bookPublicationId in service ===>>>', bookPublicationId);
  
-    const data = await deleteBookPublicationModel(bookPublicationId);
+    const data = await deleteBookPublicationModel(bookPublicationId,username);
 
     return data
 

@@ -54,21 +54,21 @@ export const brandingViewData = async() => {
   }
 } 
 
-export const insertBrandingModel = async (brandingDetails : BrandingAdvertisement) => {
-   const data = await sql`SELECT * FROM insert_branding_advertising(${JSON.parse(JSON.stringify(brandingDetails))}, '1');`
+export const insertBrandingModel = async (brandingDetails: BrandingAdvertisement, username: string) => {
+   const data = await sql`SELECT * FROM insert_branding_advertising(${JSON.parse(JSON.stringify(brandingDetails))}, ${username});`
    console.log('inserted data ',JSON.stringify(data))
 
    return data;
 }
 
-export const updateBrandingModel = async (brandingDetails : BrandingAdvertisement) => {
-   const data = await sql`SELECT * FROM upsert_branding_advertisement(${JSON.parse(JSON.stringify(brandingDetails))}, '1');`
+export const updateBrandingModel = async (brandingDetails: BrandingAdvertisement, username: string) => {
+   const data = await sql`SELECT * FROM upsert_branding_advertisement(${JSON.parse(JSON.stringify(brandingDetails))}, ${username});`
    console.log('inserted data ',JSON.stringify(data))
 
    return data;
 }
 
-export const deleteBrandingModel = async (brandingId :number) => {
+export const deleteBrandingModel = async (brandingId: number, username: string) => {
    const data = await sql`UPDATE branding_advertisement SET active = false WHERE id = ${brandingId};`
    return data.count > 0 ?
    {

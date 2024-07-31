@@ -63,9 +63,9 @@ export const insertResearchSeminarForm = async(req : Request, res : Response, ne
 
     let result = validateWithZod(researchSeminarObj,researchSeminarDetails);
     let fileResult = validateWithZod(filesArraySchema, documents);
-
+let username= res.locals.username;
     if(fileResult.success && result.success){
-     data = await insertResearchSeminarService(researchSeminarDetails,documents);
+     data = await insertResearchSeminarService(researchSeminarDetails,documents,username);
     }
     return res.status(200).json(data);
 
@@ -81,9 +81,9 @@ export const updateResearchSeminarForm = async(req : Request, res : Response, ne
 
     let result = validateWithZod(researchSeminarObj,researchSeminarDetails);
     let fileResult = validateWithZod(filesArraySchema, documents);
-
+    let username= res.locals.username;
     if(fileResult.success && result.success){
-     data = await updateResearchSeminarService(researchSeminarDetails,documents,Number(seminarId));
+     data = await updateResearchSeminarService(researchSeminarDetails,documents,Number(seminarId),username);
     }
 
     console.log(' data response in case of insert controller ===>>>>', data);
@@ -94,8 +94,8 @@ export const updateResearchSeminarForm = async(req : Request, res : Response, ne
 export const deleteResearchSeminarForm = async(req : Request, res : Response, next : NextFunction) => {
 
     const seminarId = req.query.id;
-
-    const data = await deleteResearchSeminalService(Number(seminarId));
+    let username= res.locals.username;
+    const data = await deleteResearchSeminalService(Number(seminarId),username);
     return res.status(200).json(data)
 }
 

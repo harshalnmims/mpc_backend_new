@@ -59,16 +59,16 @@ export const getCaseStudyService = async ({
     return data;
  };
 
-export const insertCaseStudyService = async (caseStudyData : caseStudyDetails,documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertCaseStudyService = async (caseStudyData : caseStudyDetails,documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,username:string) => {
      
      let uploadDocuments = await uploadFile(documents);
      caseStudyData.supporting_documents  = uploadDocuments.map(data =>  data);
 
-    const data = await insertCaseStudyModel(caseStudyData);
+    const data = await insertCaseStudyModel(caseStudyData,username);
     return data;
  };
 
-export const updateCaseStudyService = async (updateCaseStudyData : caseStudyDetails,documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,caseStudyId:number) => {
+export const updateCaseStudyService = async (updateCaseStudyData : caseStudyDetails,documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,caseStudyId:number,username:string) => {
    
      let uploadDocuments = await uploadFile(documents);
 
@@ -79,16 +79,16 @@ export const updateCaseStudyService = async (updateCaseStudyData : caseStudyDeta
      }
 
      updateCaseStudyData.case_study_id = caseStudyId;
-     const data = await updateCaseStudyModel(updateCaseStudyData);
+     const data = await updateCaseStudyModel(updateCaseStudyData,username);
    
     return data;
  };
 
- export const deleteCaseStudyService = async (caseStudyId : number) => {
+ export const deleteCaseStudyService = async (caseStudyId : number,username:string) => {
   
     console.log('updateCaseStudyData in service ====>>>>>', caseStudyId);
  
-    const data = await deleteCaseStudyModel(caseStudyId);
+    const data = await deleteCaseStudyModel(caseStudyId,username);
  
     return data;
  };

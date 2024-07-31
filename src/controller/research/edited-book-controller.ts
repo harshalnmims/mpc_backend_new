@@ -35,7 +35,8 @@ export const getEditedBookPublication = async (req: Request, res: Response, next
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
     const editedBookPublicationData = { ...req.body};
-    const data = await insertEditedBookPublicationService(editedBookPublicationData);
+    let username= res.locals.username;
+    const data = await insertEditedBookPublicationService(editedBookPublicationData,username);
 
     console.log('data responce in controller ===>>>>', data)
  
@@ -46,7 +47,8 @@ export const getEditedBookPublication = async (req: Request, res: Response, next
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT FACULTY CONTROLLER');
     const updateEditedBookPublicationData = { ...req.body};
-    const data = await updateEditedBookService(updateEditedBookPublicationData);
+    let username = res.locals.username;
+    const data = await updateEditedBookService(updateEditedBookPublicationData,username);
 
     console.log('data responce in controller ===>>>>', data)
  
@@ -59,8 +61,9 @@ export const getEditedBookPublication = async (req: Request, res: Response, next
     logger.info('INSIDE deleteEditedBookForm CONTROLLER');
     const editedbook = { ...req.body};
     const editedbookId = editedbook.edited_publication_id;
+    let username=res.locals.username;
 
-    const data = await deleteEditedBookService(editedbookId);
+    const data = await deleteEditedBookService(editedbookId,username);
 
     return res.status(200).json(data) 
 

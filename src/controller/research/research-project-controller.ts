@@ -36,8 +36,9 @@ export const insertResearchForm = async(req : Request, res : Response, next : Ne
     logger.info('INSIDE GET RESEARCH PROJECT CONTROLLER');
 
     const researchData = {...req.body};
+    let username = res.locals.username;
 
-    const data = await insertResearchProjectService(researchData);
+    const data = await insertResearchProjectService(researchData,username);
 
     console.log(' data response in case of insert controller ===>>>>', data);
     return res.status(200).json(data)
@@ -50,8 +51,9 @@ export const updateResearchForm = async(req : Request, res : Response, next : Ne
     logger.info('INSIDE GET RESEARCH PROJECT CONTROLLER');
 
     const updateResearchData = {...req.body};
+    let username = res.locals.username;
 
-    const data = await updateResearchProjectService(updateResearchData);
+    const data = await updateResearchProjectService(updateResearchData,username);
 
     console.log(' data response in case of insert controller ===>>>>', data);
     return res.status(200).json(data)
@@ -64,8 +66,8 @@ export const deleteResearchForm = async(req : Request, res : Response, next : Ne
 
     const researchData = {...req.body};
     const researchprojectId = researchData.research_project_id;
-
-    const data = await deleteResearchProjectService(researchprojectId);
+    let username = res.locals.username;
+    const data = await deleteResearchProjectService(researchprojectId,username);
 
     console.log(' data response in case of delete controller ===>>>>', data);
 

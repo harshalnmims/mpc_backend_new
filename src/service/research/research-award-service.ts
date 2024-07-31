@@ -55,16 +55,16 @@ export const getResearchAwardService = async ({
 };
 
 
-export const insertResearchAwardService = async (researchAwardData : researchAwardDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined) => {
+export const insertResearchAwardService = async (researchAwardData : researchAwardDetails, documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,username:string) => {
     
    let uploadDocuments = await uploadFile(documents);
    researchAwardData.supporting_documents  = uploadDocuments.map(data =>  data);
-   const data = await insertResearchAwardModel(researchAwardData);
+   const data = await insertResearchAwardModel(researchAwardData,username);
  
     return data;
  };
 
-export const updateResearchAwardService = async (updateResearchAwardData : researchAwardDetails,documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,researchAwardId:number) => {
+export const updateResearchAwardService = async (updateResearchAwardData : researchAwardDetails,documents: { [fieldname: string]: Express.Multer.File[]; } | Express.Multer.File[] | undefined,researchAwardId:number,username:string) => {
     
     let uploadDocuments = await uploadFile(documents);
     if(uploadDocuments.length > 0){
@@ -73,17 +73,17 @@ export const updateResearchAwardService = async (updateResearchAwardData : resea
      updateResearchAwardData.supporting_documents  = uploadDocuments.map(data =>  data);
    } 
    updateResearchAwardData.research_award_id = researchAwardId;
-   const data = await updateResearchAwardModel(updateResearchAwardData);
+   const data = await updateResearchAwardModel(updateResearchAwardData,username);
 
     return data;
  };
 
-export const deleteResearchAwardService = async(awardId : number) => {
+export const deleteResearchAwardService = async(awardId : number,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET RESEARCH AWARD  SERVICES');
     console.log('awardId ===>>>>', awardId);
 
-    const data = await deleteResearchAwardModel(awardId);
+    const data = await deleteResearchAwardModel(awardId,username);
     
     return data;
 }

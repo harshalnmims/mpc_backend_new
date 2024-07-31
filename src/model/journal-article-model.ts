@@ -115,10 +115,10 @@ export const getJournalArticlePublished = async ({ page, limit, sort, order, sea
 };
 
 
-export const insertJournalArticleModel = async (journalDetails: journalArticleDetails) => {
+export const insertJournalArticleModel = async (journalDetails: journalArticleDetails, username: string) => {
     console.log('journalDetails ===>>>>>', journalDetails)
     
-    const data = await sql`SELECT * FROM insert_journal_article(${JSON.parse(JSON.stringify(journalDetails))}, '1');`;
+    const data = await sql`SELECT * FROM insert_journal_article(${JSON.parse(JSON.stringify(journalDetails))},${username});`;
     return data;
  }; 
 

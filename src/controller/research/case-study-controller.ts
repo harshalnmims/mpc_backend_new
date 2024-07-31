@@ -65,12 +65,13 @@ export const insertCaseStudyForm = async(req : Request, res : Response, next : N
     const caseStudyData = JSON.parse(req.body.case_study);
     let data;
     let documents = req.files;
+    let username = res.locals.username;
     
      let result = validateWithZod(caseStudy,caseStudyData);
      let fileResult = validateWithZod(filesArraySchema, documents);
 
      if(fileResult.success && result.success){
-      data = await insertCaseStudyService(caseStudyData,documents);
+      data = await insertCaseStudyService(caseStudyData,documents,username);
      }
      return res.status(200).json(data);
 
@@ -81,12 +82,13 @@ export const updateCaseStudyForm = async(req : Request, res : Response, next : N
    const caseStudyId =  JSON.parse(req.body.case_study_id);
     let data;
     let documents = req.files;
+    let username = res.locals.username;
     
      let result = validateWithZod(caseStudy,caseStudyData);
      let fileResult = validateWithZod(filesArraySchema, documents);
 
      if(fileResult.success && result.success){
-      data = await updateCaseStudyService(caseStudyData,documents,Number(caseStudyId));
+      data = await updateCaseStudyService(caseStudyData,documents,Number(caseStudyId),username);
      }
      return res.status(200).json(data);
 
@@ -95,8 +97,9 @@ export const updateCaseStudyForm = async(req : Request, res : Response, next : N
 export const deleteCaseStudyForm = async(req : Request, res : Response, next : NextFunction) => {
     
     const caseStudyId = req.query.id;
+    let username= res.locals.username;
 
-    const data = await deleteCaseStudyService(Number(caseStudyId));
+    const data = await deleteCaseStudyService(Number(caseStudyId),username);
 
     console.log(' data response in case of delete controller ===>>>>', data);
     return res.status(200).json(data)

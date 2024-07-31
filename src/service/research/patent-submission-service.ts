@@ -31,33 +31,33 @@ export const getBookPatentService = async ({
     return data;
  };
 
- export const insertPatentSubmissionService = async (patentData : patentDetails) => {
+ export const insertPatentSubmissionService = async (patentData : patentDetails,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
     console.log('patentData in service ====>>>>>', patentData);
  
-    const data = await insertPatentSubmissionModel(patentData);
+    const data = await insertPatentSubmissionModel(patentData,username);
  
     return data;
  }
 
-export const updatePatentSubmissionService = async (updatePatentData : patentDetails) => {
+export const updatePatentSubmissionService = async (updatePatentData : patentDetails,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET  PATENT SUBMISSION');
     console.log('patentData in service ====>>>>>', updatePatentData);
  
-    const data = await updatePatentSubmissionModel(updatePatentData);
+    const data = await updatePatentSubmissionModel(updatePatentData,username);
  
     return data;
 }
 
 
-export const deletePatentSubmissionService = async(patentId : number) => {
+export const deletePatentSubmissionService = async(patentId : number,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET  PATENT SUBMISSION');
     console.log('patentId in service ====>>>>>', patentId);
  
-    const data = await deletePatentSubmissionModel(patentId);
+    const data = await deletePatentSubmissionModel(patentId,username);
  
     return data;
 

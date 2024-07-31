@@ -35,9 +35,10 @@ export const insertMeetingController = async(req : Request ,res : Response ,next
 
     let result = validateWithZod(meetingItemsSchema,meeting_json);
     let fileResult = validateWithZod(filesArraySchema, files);
+    let username = res.locals.username;
 
     if(fileResult.success && result.success){
-     data = await insertMeetingService(meeting_json,files);
+     data = await insertMeetingService(meeting_json,files,username);
      }
         
     return res.status(200).json(data); 
@@ -72,9 +73,10 @@ export const updateMeetingController = async (req : Request ,res : Response ,nex
 
     let result = validateWithZod(meetingItemsSchema,meeting_json);
     let fileResult = validateWithZod(filesArraySchema, files);
+    let username = res.locals.username;
 
     if(fileResult.success && result.success){
-      data = await updateMeetingService(meeting_json,files,meetingId);
+      data = await updateMeetingService(meeting_json,files,meetingId,username);
      }
         
     return res.status(200).json(data); 

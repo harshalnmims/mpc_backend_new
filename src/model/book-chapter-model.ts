@@ -92,10 +92,10 @@ export const getBookChapterPublication = async({ page, limit, sort, order, searc
     return data;
  }
 
-export const insertBookChapterModel = async(bookChapterData : bookChapterDetails) => {
+export const insertBookChapterModel = async(bookChapterData: bookChapterDetails, username: string) => {
     console.log('bookChapterData ===>>>>>', bookChapterData)
     
-    const data = await sql`SELECT * FROM insert_book_chapter(${JSON.parse(JSON.stringify(bookChapterData))}, '1');`;
+    const data = await sql`SELECT * FROM insert_book_chapter(${JSON.parse(JSON.stringify(bookChapterData))}, ,${username});`;
     return data;
 
 }
@@ -183,17 +183,17 @@ SELECT
      return data;
  }
 
-export const updateBookChapterModel = async(updateBookChapterData : bookChapterDetails) => {
+export const updateBookChapterModel = async(updateBookChapterData: bookChapterDetails, username: string) => {
     console.log('updateBookChapterData ===>>>>>', updateBookChapterData)
     
-    const data = await sql`SELECT * FROM upsert_book_chapter(${JSON.parse(JSON.stringify(updateBookChapterData))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_book_chapter(${JSON.parse(JSON.stringify(updateBookChapterData))}, ${username});`;
     return data;
 }
 
-export const deleteBookChapterModel = async(bookChapterId : number) => {
+export const deleteBookChapterModel = async(bookChapterId: number, username: string) => {
     console.log('bookChapterId in  models  ====>>>>>>', bookChapterId);
     
-    const data = await sql`UPDATE book_chapter_publication SET active = false,modified_date=now(),modified_by='1' WHERE id = ${bookChapterId}`;
+    const data = await sql`UPDATE book_chapter_publication SET active = false,modified_date=now(),modified_by=${username} WHERE id = ${bookChapterId}`;
 
     return data.count > 0 ? {
         status:200,

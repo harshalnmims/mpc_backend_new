@@ -117,26 +117,26 @@ export const getCaseStudyModel = async ({ page, limit, sort, order, search, filt
  };
 
 
-export const insertCaseStudyModel = async(caseStudyData : caseStudyDetails) => {
+export const insertCaseStudyModel = async(caseStudyData: caseStudyDetails, username: string) => {
     console.log('caseStudyData ===>>>>>', caseStudyData)
     
-    const data = await sql`SELECT * FROM insert_case_study(${JSON.parse(JSON.stringify(caseStudyData))}, '1');`;
+    const data = await sql`SELECT * FROM insert_case_study(${JSON.parse(JSON.stringify(caseStudyData))}, ${username});`;
     return data;
 
 };
 
-export const updateCaseStudyModel = async(updateCaseStudyData : caseStudyDetails) => {
+export const updateCaseStudyModel = async(updateCaseStudyData : caseStudyDetails,username: string) => {
     console.log('updateCaseStudyData ===>>>>>', updateCaseStudyData)
     
-    const data = await sql`SELECT * FROM upsert_case_study(${JSON.parse(JSON.stringify(updateCaseStudyData))}, '1');`;
+    const data = await sql`SELECT * FROM upsert_case_study(${JSON.parse(JSON.stringify(updateCaseStudyData))}, ${username});`;
     return data;
 
 };
 
-export const deleteCaseStudyModel = async (caseStudyId : number) => {
+export const deleteCaseStudyModel = async (caseStudyId : number,username:string) => {
     console.log('caseStudyId in  models  ====>>>>>>', caseStudyId);
     
-    const data = await sql`UPDATE case_study SET active = false,modified_date=now(),modified_by='1' WHERE id = ${caseStudyId}`;
+    const data = await sql`UPDATE case_study SET active = false,modified_date=now(),modified_by=${username} WHERE id = ${caseStudyId}`;
 
     return data.count > 0 ? {
         status:200,

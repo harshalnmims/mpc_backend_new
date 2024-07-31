@@ -31,35 +31,35 @@ export const getEditedBookPublicationService = async ({
 };
 
 
-export const insertEditedBookPublicationService = async (editedBookPublicationData: EditedBookPublicationDetails) => {
+export const insertEditedBookPublicationService = async (editedBookPublicationData: EditedBookPublicationDetails, username: string) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
     console.log('editedBookPublicationData ====>>>>>', editedBookPublicationData);
  
-    const data = await insertEditedBookPublicationModel(editedBookPublicationData);
+    const data = await insertEditedBookPublicationModel(editedBookPublicationData,username);
  
     return data;
  }; 
 
- export const updateEditedBookService = async (updateEditedBookPublicationData : EditedBookPublicationDetails) => {
+ export const updateEditedBookService = async (updateEditedBookPublicationData : EditedBookPublicationDetails,username:string) => {
 
    const logger = getLogger();
     logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
     console.log('updateEditedBookPublicationData ====>>>>>', updateEditedBookPublicationData);
  
-    const data = await updateEditedBookModel(updateEditedBookPublicationData);
+    const data = await updateEditedBookModel(updateEditedBookPublicationData,username);
  
     return data;
 
  } 
 
- export const deleteEditedBookService = async(editedbookId : number) => {
+ export const deleteEditedBookService = async(editedbookId : number,username:string) => {
    const logger = getLogger();
    logger.info('INSIDE GET SUBJECT JOURNAL ARTICLE  SERVICES');
 
    console.log('editedbookId in service ===>>>', editedbookId);
 
-   const data = await deleteEditedBookModel(editedbookId);
+   const data = await deleteEditedBookModel(editedbookId,username);
 
    console.log('data ===>>>>>', data);
    return data

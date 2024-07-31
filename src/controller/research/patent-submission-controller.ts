@@ -36,8 +36,8 @@ export const insertPatentSubmissionForm = async(req : Request, res : Response, n
 
     const patentData = {...req.body};
     console.log('patentData ===>>>>>', patentData);
-
-    const data = await insertPatentSubmissionService(patentData);
+    let username=res.locals.username;
+    const data = await insertPatentSubmissionService(patentData,username);
 
     console.log(' data response in case of insert controller ===>>>>', data);
     return res.status(200).json(data)
@@ -49,8 +49,8 @@ export const updatePatentSubmissionForm = async(req : Request, res : Response, n
     logger.info('INSIDE GET PATENT SUBMISSION AND GRANT CONTROLLER');
 
     const updatePatentData = {...req.body};
-
-    const data = await updatePatentSubmissionService(updatePatentData);
+    let username=res.locals.username;
+    const data = await updatePatentSubmissionService(updatePatentData,username);
 
     console.log(' data response in case of update controller ===>>>>', data);
     return res.status(200).json(data)
@@ -59,12 +59,13 @@ export const updatePatentSubmissionForm = async(req : Request, res : Response, n
 
 export const deletePatentSubmissionForm = async(req : Request, res : Response, next : NextFunction) => {
     const logger = getLogger();
+    let username=res.locals.username;
     logger.info('INSIDE GET PATENT SUBMISSION AND GRANT CONTROLLER');
 
     const patentData = {...req.body};
     const patentId = patentData.patent_id;
 
-    const data = await deletePatentSubmissionService(patentId);
+    const data = await deletePatentSubmissionService(patentId,username);
 
     console.log(' data response in case of delete controller ===>>>>', data);
 

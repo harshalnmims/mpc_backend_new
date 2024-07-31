@@ -60,8 +60,9 @@ export const facultyScrollPaginateController = async (req: Request, res: Respons
    const faculty = req.body.faculty_data;
    let result = validateWithZod(facultyObj,faculty);
    let data;
+   let username =res.locals.username;
    if(result.success){
-   data = await insertFacultyService(faculty);
+   data = await insertFacultyService(faculty,username);
    }
    return res.status(200).json(data);  
 }
@@ -88,8 +89,9 @@ export const facultyUpdateController = async (req: Request, res: Response, next:
    const faculty = req.body.faculty_data;
    let result = validateWithZod(facultyUpdObj,faculty);
    let data;
+   let username = res.locals.username;
    if(result.success){
-   data = await updateFacultyService(faculty);
+   data = await updateFacultyService(faculty,username);
    }
    return res.status(200).json(data);  
 }
