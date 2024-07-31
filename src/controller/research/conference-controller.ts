@@ -114,7 +114,6 @@ export const deleteConferenceForm = async (req: Request, res: Response, next: Ne
    const data = await deleteConferenceService(conferenceId);
 
    console.log('data response conference update  controller  ====>>>>>>', data);
-
    return res.status(200).json(data);
 };
 
@@ -126,7 +125,6 @@ export const viewConferenceForm = async (req: Request, res: Response, next: Next
 
    const data = await viewConferenceService(conferenceId);
    console.log('data response conference view  controller  ====>>>>>>', data);
-
    return res.status(200).json(data);
 };
 
