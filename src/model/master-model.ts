@@ -328,3 +328,32 @@ export const getExternalAuthors = async () => {
     const data = await sql`SELECT * FROM modules WHERE active = TRUE`;
     return data;
  }
+
+ export const getresearchModulesModel = async (username : string) => {
+    const data = await sql` SELECT 
+                            cm.id,cm.module_name,cm.url,cm.icon
+                            FROM public.user u
+                            INNER JOIN user_role ur ON ur.user_lid = u.id
+                            INNER JOIN role r ON r.id = ur.role_lid
+                            INNER JOIN modules m ON m.role_lid = r.id
+                            INNER JOIN child_modules cm ON cm.parent_module = m.id  AND cm.role_lid = r.id
+                            WHERE m.abbr='re' AND u.username = ${username} AND parent_lid IS NULL AND u.active = TRUE
+                            AND ur.active = TRUE AND r.active = TRUE AND m.active = TRUE
+                            AND cm.active = TRUE`;
+    return data;
+ }
+
+ export const getPublicationModules = async (username : string) => {
+    const data = await sql`SELECT 
+                            cm.id,cm.module_name,cm.url,cm.icon
+                            FROM public.user u
+                            INNER JOIN user_role ur ON ur.user_lid = u.id
+                            INNER JOIN role r ON r.id = ur.role_lid
+                            INNER JOIN modules m ON m.role_lid = r.id
+                            INNER JOIN child_modules cm ON cm.parent_module = m.id AND cm.role_lid = r.id
+                            WHERE m.abbr='re' AND cm.parent_lid IN (SELECT id FROM child_modules WHERE abbr='bps' AND active = TRUE) 
+                            AND u.username = ${username} AND parent_lid IS NOT NULL AND u.active = TRUE
+                            AND ur.active = TRUE AND r.active = TRUE AND m.active = TRUE
+                            AND cm.active = TRUE`;
+    return data;
+ }

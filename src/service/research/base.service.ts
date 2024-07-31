@@ -1,5 +1,6 @@
 import {
-    inputRenderedData,getDashboardModel
+    inputRenderedData,getDashboardModel,getresearchModulesModel,
+    getPublicationModules
  } from '$model/master-model';
 import { teachingViewData } from '$model/teaching.model';
 import { meetingViewData } from '$model/meeting.model';
@@ -20,5 +21,15 @@ export const inputViewService = async () => {
 
 export const getDashboardService = async  () => {
     const data = await getDashboardModel();
+    return data;
+}
+
+export const getresearchModulesService = async  (username :string) => {
+    const data = await getresearchModulesModel(username);
+    return data;
+}
+
+export const getPublicationModulesService = async  (username :string) => {
+    const data = await getPublicationModules(username);
     return data;
 }
