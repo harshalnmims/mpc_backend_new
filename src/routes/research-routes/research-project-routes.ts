@@ -34,6 +34,6 @@ researchProjectRoutes.post(
 researchProjectRoutes.get('/research-project-view',asyncErrorHandler(validateUserSession), asyncErrorHandler(viewResearchProjectForm));
 researchProjectRoutes.get('/research-project-download-files',asyncErrorHandler(validateUserSession), asyncErrorHandler(downloadResearchProjectFiles));
 
-researchProjectRoutes.post('/research-project-delete',asyncErrorHandler(validateUserSession), asyncErrorHandler(deleteResearchForm));
+researchProjectRoutes.get('/research-project-delete',asyncErrorHandler(validateUserSession), asyncErrorHandler(deleteResearchForm));
 
 export default researchProjectRoutes;

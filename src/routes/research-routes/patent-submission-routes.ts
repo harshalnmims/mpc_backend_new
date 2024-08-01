@@ -33,6 +33,6 @@ patentRoutes.post(
 patentRoutes.get('/patent-submission-and-grant-view',asyncErrorHandler(validateUserSession), asyncErrorHandler(viewPatentForm));
 patentRoutes.get('/patent-submission-and-grant-download-files',asyncErrorHandler(validateUserSession), asyncErrorHandler(downloadPatentFiles));
 
-patentRoutes.post('/patent-submission-and-grant-delete',asyncErrorHandler(validateUserSession), asyncErrorHandler(deletePatentSubmissionForm));
+patentRoutes.get('/patent-submission-and-grant-delete',asyncErrorHandler(validateUserSession), asyncErrorHandler(deletePatentSubmissionForm));
 
 export default patentRoutes;

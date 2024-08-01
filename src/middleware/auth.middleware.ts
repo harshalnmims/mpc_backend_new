@@ -31,6 +31,10 @@ export const validateUserSession = async (req:Request,res:Response,next:NextFunc
           body
       });
 
+      if(status === 500){
+        return res.status(401).json({status:401,message:'Session Timeout, Kindly Login!'})
+      }
+
       if(status !== 200) {
         return res.status(401).json({status:401,message:'Session Timeout, Kindly Login!'})    
       }

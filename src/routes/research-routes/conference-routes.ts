@@ -25,6 +25,6 @@ confereRoutes.get('/conference-edit-view-form',asyncErrorHandler(validateUserSes
 confereRoutes.post('/conference-update',asyncErrorHandler(validateUserSession), upload.any(), asyncErrorHandler(updateConferenceForm));
 confereRoutes.get('/conference-view-form',asyncErrorHandler(validateUserSession), asyncErrorHandler(viewConferenceForm));
 confereRoutes.get('/conference-download-files',asyncErrorHandler(validateUserSession), asyncErrorHandler(downloadConferenceFiles));
-confereRoutes.post('/conference-delete',asyncErrorHandler(validateUserSession), asyncErrorHandler(deleteConferenceForm));
+confereRoutes.get('/conference-delete',asyncErrorHandler(validateUserSession), asyncErrorHandler(deleteConferenceForm));
 
 export default confereRoutes;

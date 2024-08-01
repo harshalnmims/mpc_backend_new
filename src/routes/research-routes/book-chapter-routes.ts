@@ -17,7 +17,7 @@ bookChapterRoutes.get('/book-chapter-publication-edit-view',asyncErrorHandler(va
 bookChapterRoutes.post('/book-chapter-publication-insert',asyncErrorHandler(validateUserSession), upload.array("supporting_documents"), asyncErrorHandler(insertBookChapterForm));
 bookChapterRoutes.post('/book-chapter-publication-update',asyncErrorHandler(validateUserSession), upload.array("supporting_documents"), asyncErrorHandler(updateBookChapterForm));
 bookChapterRoutes.get('/book-chapter-publication-view-form',asyncErrorHandler(validateUserSession), asyncErrorHandler(viewBookChapterformView));
-bookChapterRoutes.post('/book-chapter-publication-delete', asyncErrorHandler(validateUserSession),asyncErrorHandler(deleteBookChapterForm));
+bookChapterRoutes.get('/book-chapter-publication-delete', asyncErrorHandler(validateUserSession),asyncErrorHandler(deleteBookChapterForm));
 bookChapterRoutes.get('/book-chapter-publication-download-file',asyncErrorHandler(validateUserSession), asyncErrorHandler(downloadPublicationFiles));
 
 

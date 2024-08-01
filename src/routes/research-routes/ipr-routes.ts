@@ -34,6 +34,6 @@ iprRoutes.get('/ipr-form-view',asyncErrorHandler(validateUserSession), asyncErro
 
 iprRoutes.get('/ipr-download-files',asyncErrorHandler(validateUserSession), asyncErrorHandler(downloadIprFiles));
 
-iprRoutes.post('/ipr-delete',asyncErrorHandler(validateUserSession), asyncErrorHandler(deleteIPR));
+iprRoutes.get('/ipr-delete',asyncErrorHandler(validateUserSession), asyncErrorHandler(deleteIPR));
 
 export default iprRoutes;

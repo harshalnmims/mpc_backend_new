@@ -8,10 +8,10 @@ import { validateUserSession } from '$middleware/auth.middleware';
 const eContentRouter = Router();
 
 eContentRouter.post('/insert-e-content',asyncErrorHandler(validateUserSession),asyncErrorHandler(insertEContent));
-eContentRouter.post('/update-e-content', asyncErrorHandler(updateEContent));
-eContentRouter.get('/delete-e-content', asyncErrorHandler(deleteEContent));
-eContentRouter.get('/e-content-paginate', asyncErrorHandler(eContentPaginateController))
-eContentRouter.get('/e-content-view-data',asyncErrorHandler(eContentViewData));
+eContentRouter.post('/update-e-content',asyncErrorHandler(validateUserSession), asyncErrorHandler(updateEContent));
+eContentRouter.get('/delete-e-content',asyncErrorHandler(validateUserSession), asyncErrorHandler(deleteEContent));
+eContentRouter.get('/e-content-paginate',asyncErrorHandler(validateUserSession), asyncErrorHandler(eContentPaginateController))
+eContentRouter.get('/e-content-view-data',asyncErrorHandler(validateUserSession),asyncErrorHandler(eContentViewData));
 
 
 
