@@ -76,7 +76,7 @@ export type UpdatedBookPublicationDetails = {
 };
 
 export type EditedBookPublicationDetails = {
-   book_chapter_id?: number;
+   edited_publication_id?: number,
    edition: string;
    title: string;
    publish_year: number;
@@ -93,9 +93,10 @@ export type EditedBookPublicationDetails = {
    all_authors: number[];
    nmims_authors: number[];
    book_editors: number[];
-   supporting_documents: string[];
-};
+   supporting_documents?: SupportingDocument;
+ 
 
+ }
 export type bookChapterDetails = {
    book_chapter_id?: number;
    edition: string;
