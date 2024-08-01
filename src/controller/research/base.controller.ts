@@ -32,3 +32,7 @@ export const logoutController = async (req : Request,res : Response ,next : Next
    const data = await getPublicationModulesService(username);
    return res.status(200).json(data);;
  }
+
+ export const testLogin = async (req : Request,res : Response ,next : NextFunction) => {
+   return res.status(200).json({status:200,message:'Success'})
+ }
