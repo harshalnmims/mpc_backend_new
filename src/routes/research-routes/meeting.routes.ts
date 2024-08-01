@@ -2,7 +2,7 @@ import {
     getMeetingPaginate,insertMeetingController,deleteMeetingController,updateViewController,    
     updateMeetingController,meetingViewController,meetingDownloadFiles
     } from '$controller/research/meeting.controller';
-import { validateUserSession } from '$middleware/auth.middleware';
+    import { validateUserSession } from '$middleware/auth.middleware';
     import { asyncErrorHandler } from '$middleware/error.middleware';
     import { Router } from 'express';
     
