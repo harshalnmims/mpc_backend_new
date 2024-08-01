@@ -4,61 +4,120 @@ import { patentDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
 import { number } from 'zod';
+import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
+
+// export const getPatentSubmissionModel = async ({
+//    page,
+//    limit,
+//    sort,
+//    order,
+//    search,
+//    filters,
+// }: paginationDefaultType) => {
+//    console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+
+//    const data = await paginationQueryBuilder<Session>({
+//       baseQuery: `
+//             WITH patent_details AS (
+//                 SELECT 
+//                     psg.id,
+//                     psg.title,
+//                     psg.appln_no,
+//                     psg.publication_date,
+//                     ivt.invention_type,
+//                     ps.patent_status
+//                 FROM 
+//                     patent_submission_grant psg
+//                     INNER JOIN invention_type ivt ON ivt.id = psg.invention_type AND ivt.active = TRUE
+//                     INNER JOIN patent_status ps ON ps.id = psg.patent_status AND ps.active = TRUE
+//                 WHERE 
+//                     psg.active = TRUE
+//             )
+//             SELECT
+//                 pd.id,
+//                 pd.title,
+//                 pd.appln_no,
+//                 TO_CHAR(pd.publication_date, 'YYYY-MM-DD') AS publication_date,
+//                 pd.invention_type,
+//                 pd.patent_status
+//             FROM patent_details pd
+//         `,
+//       filters: {
+//          // Define any necessary filters here
+//          // 'usi.program_lid': filters.programLid,
+//          // 'usi.session_lid': filters.sessionLid,
+//          // 'usi.subject_lid': filters.subjectLid,
+//       },
+//       page: page,
+//       pageSize: limit || 10,
+//       search: search || '',
+//       searchColumns: ['pd.title', 'pd.appln_no', 'pd.publication_date', 'pd.invention_type', 'pd.patent_status'],
+//       sort: {
+//          column: sort || 'pd.id',
+//          order: order || 'desc',
+//       },
+//    });
+
+//    return data;
+// };
+
 
 export const getPatentSubmissionModel = async ({
-   page,
-   limit,
-   sort,
-   order,
-   search,
-   filters,
-}: paginationDefaultType) => {
-   console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+    page,
+    limit,
+    sort,
+    order,
+    search,
+    filters,
+ }: paginationDefaultType) => {
+    console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+ 
+    const data = await paginationQueryBuilderWithPlaceholder<Session>({
+       baseQuery: `
+             SELECT 
+                     psg.id,
+                     psg.title,
+                     psg.appln_no,
+                     psg.publication_date,
+                     ivt.invention_type,
+                     ps.patent_status
+                 FROM 
+                     patent_submission_grant psg
+                     INNER JOIN invention_type ivt ON ivt.id = psg.invention_type AND ivt.active = TRUE
+                     INNER JOIN patent_status ps ON ps.id = psg.patent_status AND ps.active = TRUE
+                 WHERE 
+                     psg.active = TRUE {{whereClause}}
+         `,
+         placeholders: [
+            {
+                placeholder: '{{whereClause}}',
+                filters: {
+                //     'pp.program_name': filters.programName,
+                //     'ss.subject_name': filters.subjectName,
+                //     'ms.abbr': filters.abbr
+                },
+                searchColumns: ['psg.title', 'psg.appln_no', 'psg.publication_date', 'ivt.invention_type',
+                     'psg.patent_status'],
+                sort: {
+                column: sort || 'pd.id',
+                order: order || 'desc',
+                },
+            }
+        ],
+       page: page,
+       pageSize: limit || 10,
+       search: search || ''
+    //    searchColumns: ['pd.title', 'pd.appln_no', 'pd.publication_date', 'pd.invention_type', 'pd.patent_status'],
+    //    sort: {
+    //       column: sort || 'pd.id',
+    //       order: order || 'desc',
+    //    },
+    });
+ 
+    return data;
+ };
 
-   const data = await paginationQueryBuilder<Session>({
-      baseQuery: `
-            WITH patent_details AS (
-                SELECT 
-                    psg.id,
-                    psg.title,
-                    psg.appln_no,
-                    psg.publication_date,
-                    ivt.invention_type,
-                    ps.patent_status
-                FROM 
-                    patent_submission_grant psg
-                    INNER JOIN invention_type ivt ON ivt.id = psg.invention_type AND ivt.active = TRUE
-                    INNER JOIN patent_status ps ON ps.id = psg.patent_status AND ps.active = TRUE
-                WHERE 
-                    psg.active = TRUE
-            )
-            SELECT
-                pd.id,
-                pd.title,
-                pd.appln_no,
-                TO_CHAR(pd.publication_date, 'YYYY-MM-DD') AS publication_date,
-                pd.invention_type,
-                pd.patent_status
-            FROM patent_details pd
-        `,
-      filters: {
-         // Define any necessary filters here
-         // 'usi.program_lid': filters.programLid,
-         // 'usi.session_lid': filters.sessionLid,
-         // 'usi.subject_lid': filters.subjectLid,
-      },
-      page: page,
-      pageSize: limit || 10,
-      search: search || '',
-      searchColumns: ['pd.title', 'pd.appln_no', 'pd.publication_date', 'pd.invention_type', 'pd.patent_status'],
-      sort: {
-         column: sort || 'pd.id',
-         order: order || 'desc',
-      },
-   });
 
-   return data;
-};
 
 export const insertPatentSubmissionModel = async (patentData: patentDetails,username:string) => {
    console.log('patentData ===>>>>>', patentData);

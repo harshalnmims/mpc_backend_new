@@ -4,72 +4,152 @@ import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
 import { number } from 'zod';
 import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
+import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
+
+// export const ResearchProjectPaginateModel = async ({
+//    page,
+//    limit,
+//    sort,
+//    order,
+//    search,
+//    filters,
+// }: paginationDefaultType) => {
+//    console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+
+//    const data = await paginationQueryBuilder<Session>({
+//       baseQuery: `WITH research_project_details AS (
+//                             SELECT 
+//                                 rp.id,
+//                                 rp.title,
+//                                 rp.funding_amount,
+//                                 rp.funding_agency,
+//                                 rp.thrust_area
+//                             FROM research_project rp
+//                             WHERE rp.active = TRUE
+//                         ),
+//                         school_details AS (
+//                             SELECT
+//                                 rp.id AS research_project_id,
+//                                 JSON_AGG(DISTINCT rps.school_name) AS nmims_school
+//                             FROM research_project rp
+//                             INNER JOIN research_project_school rps ON rps.research_project_lid = rp.id
+//                             WHERE rp.active = TRUE AND rps.active = TRUE
+//                             GROUP BY rp.id
+//                         ),
+//                         campus_details AS (
+//                             SELECT
+//                                 rp.id AS research_project_id,
+//                                 JSON_AGG(DISTINCT rpc.campus_name) AS nmims_campus
+//                             FROM research_project rp
+//                             INNER JOIN research_project_campus rpc ON rpc.research_project_lid = rp.id
+//                             WHERE rp.active = TRUE AND rpc.active = TRUE
+//                             GROUP BY rp.id
+//                         )
+//                         SELECT
+//                             rpd.id,
+//                             rpd.title,
+//                             rpd.funding_amount,
+//                             rpd.funding_agency,
+//                             rpd.thrust_area,
+//                             sd.nmims_school,
+//                             cd.nmims_campus
+//                         FROM research_project_details rpd
+//                         LEFT JOIN school_details sd ON rpd.id = sd.research_project_id
+//                         LEFT JOIN campus_details cd ON rpd.id = cd.research_project_id`,
+//       filters: {
+//          // Define any necessary filters here
+//       },
+//       page: page,
+//       pageSize: limit || 10,
+//       search: search || '',
+//       searchColumns: ['rpd.title', 'sd.nmims_school', 'cd.nmims_campus', 'rpd.funding_agency', 'rpd.thrust_area'],
+//       sort: {
+//          column: sort || 'rpd.id',
+//          order: order || 'desc',
+//       },
+//    });
+
+//    return data;
+// };
 
 export const ResearchProjectPaginateModel = async ({
-   page,
-   limit,
-   sort,
-   order,
-   search,
-   filters,
-}: paginationDefaultType) => {
-   console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
-
-   const data = await paginationQueryBuilder<Session>({
-      baseQuery: `WITH research_project_details AS (
-                            SELECT 
-                                rp.id,
-                                rp.title,
-                                rp.funding_amount,
-                                rp.funding_agency,
-                                rp.thrust_area
-                            FROM research_project rp
-                            WHERE rp.active = TRUE
-                        ),
-                        school_details AS (
-                            SELECT
-                                rp.id AS research_project_id,
-                                JSON_AGG(DISTINCT rps.school_name) AS nmims_school
-                            FROM research_project rp
-                            INNER JOIN research_project_school rps ON rps.research_project_lid = rp.id
-                            WHERE rp.active = TRUE AND rps.active = TRUE
-                            GROUP BY rp.id
-                        ),
-                        campus_details AS (
-                            SELECT
-                                rp.id AS research_project_id,
-                                JSON_AGG(DISTINCT rpc.campus_name) AS nmims_campus
-                            FROM research_project rp
-                            INNER JOIN research_project_campus rpc ON rpc.research_project_lid = rp.id
-                            WHERE rp.active = TRUE AND rpc.active = TRUE
-                            GROUP BY rp.id
-                        )
-                        SELECT
-                            rpd.id,
-                            rpd.title,
-                            rpd.funding_amount,
-                            rpd.funding_agency,
-                            rpd.thrust_area,
-                            sd.nmims_school,
-                            cd.nmims_campus
-                        FROM research_project_details rpd
-                        LEFT JOIN school_details sd ON rpd.id = sd.research_project_id
-                        LEFT JOIN campus_details cd ON rpd.id = cd.research_project_id`,
-      filters: {
-         // Define any necessary filters here
-      },
-      page: page,
-      pageSize: limit || 10,
-      search: search || '',
-      searchColumns: ['rpd.title', 'sd.nmims_school', 'cd.nmims_campus', 'rpd.funding_agency', 'rpd.thrust_area'],
-      sort: {
-         column: sort || 'rpd.id',
-         order: order || 'desc',
-      },
-   });
-
-   return data;
-};
+    page,
+    limit,
+    sort,
+    order,
+    search,
+    filters,
+ }: paginationDefaultType) => {
+    console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+ 
+    const data = await paginationQueryBuilderWithPlaceholder<Session>({
+       baseQuery: `WITH research_project_details AS (
+                             SELECT 
+                                 rp.id,
+                                 rp.title,
+                                 rp.funding_amount,
+                                 rp.funding_agency,
+                                 rp.thrust_area
+                             FROM research_project rp
+                             WHERE rp.active = TRUE
+                         ),
+                         school_details AS (
+                             SELECT
+                                 rp.id AS research_project_id,
+                                 JSON_AGG(DISTINCT rps.school_name) AS nmims_school
+                             FROM research_project rp
+                             INNER JOIN research_project_school rps ON rps.research_project_lid = rp.id
+                             WHERE rp.active = TRUE AND rps.active = TRUE
+                             GROUP BY rp.id
+                         ),
+                         campus_details AS (
+                             SELECT
+                                 rp.id AS research_project_id,
+                                 JSON_AGG(DISTINCT rpc.campus_name) AS nmims_campus
+                             FROM research_project rp
+                             INNER JOIN research_project_campus rpc ON rpc.research_project_lid = rp.id
+                             WHERE rp.active = TRUE AND rpc.active = TRUE
+                             GROUP BY rp.id
+                         )
+                         SELECT
+                             rpd.id,
+                             rpd.title,
+                             rpd.funding_amount,
+                             rpd.funding_agency,
+                             rpd.thrust_area,
+                             sd.nmims_school,
+                             cd.nmims_campus
+                         FROM research_project_details rpd
+                         INNER JOIN school_details sd ON rpd.id = sd.research_project_id
+                         INNER JOIN campus_details cd ON rpd.id = cd.research_project_id
+                         {{whereClause}}`,
+                         placeholders: [
+                            {
+                                placeholder: '{{whereClause}}',
+                                filters: {
+                                //     'pp.program_name': filters.programName,
+                                //     'ss.subject_name': filters.subjectName,
+                                //     'ms.abbr': filters.abbr
+                                },
+                                searchColumns: ['rpd.title', 'sd.nmims_school', 'cd.nmims_campus', 'rpd.funding_agency', 'rpd.thrust_area'],
+                                sort: {
+                                   column: sort || 'rpd.id',
+                                   order: order || 'desc',
+                                },
+                            }
+                        ],
+       page: page,
+       pageSize: limit || 10,
+       search: search || '',
+    //    searchColumns: ['rpd.title', 'sd.nmims_school', 'cd.nmims_campus', 'rpd.funding_agency', 'rpd.thrust_area'],
+    //    sort: {
+    //       column: sort || 'rpd.id',
+    //       order: order || 'desc',
+    //    },
+    });
+ 
+    return data;
+ };
 
 export const insertResearchProjectModel = async (researchData: researchProjectDetails,username:string) => {
    console.log('researchData ===>>>>>', researchData);                                               

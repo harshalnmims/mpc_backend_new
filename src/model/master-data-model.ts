@@ -4,52 +4,91 @@ import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/qu
 import { Session } from 'types/base.types';
 import { facultyDetails, facultyUpdateDetails, masterDataDetails, updMasterDetails } from 'types/research.types';
 import { number } from 'zod';
+import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
 
+
+// export const masterPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+//    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+
+//    const data = await paginationQueryBuilder<Session>({
+//        baseQuery: `WITH master_details AS (
+//                SELECT 
+//                    mid.id AS id,
+//                    mid.name AS master_input_name,
+//                    mi.input_name AS input_data_type
+//                FROM 
+//                    public.master_input_data mid
+//                INNER JOIN 
+//                    public.master_inputs mi
+//                ON 
+//                    mid.input_type = mi.id
+//                WHERE 
+//                    mi.active = true AND mid.active = true
+//            )
+
+//            SELECT
+//                md.id,
+//                md.input_data_type AS input_data_type,
+//                md.master_input_name AS master_input_name
+//            FROM 
+//                master_details md`,
+       
+//        filters: {
+//            // 'usi.program_lid': filters.programLid,
+//            // 'usi.session_lid': filters.sessionLid,
+//            // 'usi.subject_lid': filters.subjectLid,
+//        },
+//        page: page,
+//        pageSize: 10,
+//        search: search || '',
+//        searchColumns: ['md.master_input_name', 'md.input_data_type'],  // search in the CTE columns
+//        sort: {
+//            column: sort || 'md.id',  // sort based on the CTE columns
+//            order: order || 'desc',
+//        },
+//    });
+
+//    return data;
+// };
 
 export const masterPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
-   console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
-
-   const data = await paginationQueryBuilder<Session>({
-       baseQuery: `WITH master_details AS (
-               SELECT 
-                   mid.id AS id,
-                   mid.name AS master_input_name,
-                   mi.input_name AS input_data_type
-               FROM 
-                   public.master_input_data mid
-               INNER JOIN 
-                   public.master_inputs mi
-               ON 
-                   mid.input_type = mi.id
-               WHERE 
-                   mi.active = true AND mid.active = true
-           )
-
-           SELECT
-               md.id,
-               md.input_data_type AS input_data_type,
-               md.master_input_name AS master_input_name
-           FROM 
-               master_details md`,
-       
-       filters: {
-           // 'usi.program_lid': filters.programLid,
-           // 'usi.session_lid': filters.sessionLid,
-           // 'usi.subject_lid': filters.subjectLid,
-       },
-       page: page,
-       pageSize: 10,
-       search: search || '',
-       searchColumns: ['md.master_input_name', 'md.input_data_type'],  // search in the CTE columns
-       sort: {
-           column: sort || 'md.id',  // sort based on the CTE columns
-           order: order || 'desc',
-       },
-   });
-
-   return data;
-};
-
+    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+ 
+    const data = await paginationQueryBuilderWithPlaceholder<Session>({
+        baseQuery: `SELECT 
+				md.id AS id,
+                md.name AS master_input_name,
+                mi.input_name AS input_data_type
+				FROM master_input_data md
+				INNER JOIN master_inputs mi ON mi.id = md.input_type
+				WHERE mi.active = TRUE AND md.active {{whereClause}}`,
+        
+                placeholders: [
+                    {
+                        placeholder: '{{whereClause}}',
+                        filters: {
+                        //     'pp.program_name': filters.programName,
+                        //     'ss.subject_name': filters.subjectName,
+                        //     'ms.abbr': filters.abbr
+                        },
+                        searchColumns: ['md.name', 'mi.input_name'],
+                        sort: {
+                        column: sort || 'md.id',
+                        order: order || 'desc',
+                        },
+                    }
+                ],
+        page: page,
+        pageSize: 10,
+        search: search || '',
+        // sort: {
+        //     column: sort || 'md.id',  // sort based on the CTE columns
+        //     order: order || 'desc',
+        // },
+    });
+ 
+    return data;
+ };
 
  
  export const masterDataScrollPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {

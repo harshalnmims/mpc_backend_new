@@ -4,6 +4,7 @@ import { seminarDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db'; 
 import { number } from 'zod'; 
+import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
 
 export const getResearchSeminarModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
     const data = await infiniteScrollQueryBuilder<Session>({
@@ -35,8 +36,45 @@ export const getResearchSeminarModel = async ({ page, limit, sort, order, search
     return data;
  };
 
- export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
-    const data = await paginationQueryBuilder<Session>({
+//  export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+//     const data = await paginationQueryBuilder<Session>({
+//        baseQuery: `SELECT 
+//                     r.id,
+//                     r.publisher,
+//                     TO_CHAR(r.research_date, 'YYYY-MM-DD') AS research_date,
+//                     r.journal_name,
+// 					COALESCE(JSON_AGG(DISTINCT rs.school_name), '[]') AS nmims_school,
+// 					COALESCE(JSON_AGG(DISTINCT rc.campus_name), '[]') AS nmims_campus,
+//                     COALESCE(JSON_AGG(DISTINCT md.name), '[]') AS nmims_authors
+//                 FROM research_seminar r
+// 				INNER JOIN research_seminar_school rs ON rs.research_seminar_lid = r.id
+// 				INNER JOIN research_seminar_campus rc ON rc.research_seminar_lid = r.id
+//                 INNER JOIN research_seminar_authors ra ON ra.research_seminar_lid = r.id
+//                 INNER JOIN master_input_data md ON md.id = ra.author_lid 
+//                 WHERE r.active = TRUE AND ra.active = TRUE AND md.active = TRUE AND rs.active = TRUE AND rc.active = TRUE
+//                 GROUP BY r.id `,
+ 
+//        filters: {
+//         //   'usi.program_lid': filters.programLid,
+//         //   'usi.session_lid': filters.sessionLid,
+//         //   'usi.subject_lid': filters.subjectLid,
+//        },
+//         page : page,
+//         pageSize: 10 ,
+//         search: search || '',
+//         searchColumns: ['r.publisher', 'research_date', 'r.journal_name','r.nmims_school','r.nmims_campus','r.nmims_authors'],
+//         sort: {
+//           column: sort || 'r.id',
+//           order: order || 'desc',
+//        },
+//     });
+ 
+//     return data;
+//  };
+
+
+export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+    const data = await paginationQueryBuilderWithPlaceholder<Session>({
        baseQuery: `SELECT 
                     r.id,
                     r.publisher,
@@ -51,21 +89,32 @@ export const getResearchSeminarModel = async ({ page, limit, sort, order, search
                 INNER JOIN research_seminar_authors ra ON ra.research_seminar_lid = r.id
                 INNER JOIN master_input_data md ON md.id = ra.author_lid 
                 WHERE r.active = TRUE AND ra.active = TRUE AND md.active = TRUE AND rs.active = TRUE AND rc.active = TRUE
+               {{whereClause}}
                 GROUP BY r.id `,
  
-       filters: {
-        //   'usi.program_lid': filters.programLid,
-        //   'usi.session_lid': filters.sessionLid,
-        //   'usi.subject_lid': filters.subjectLid,
-       },
+                placeholders: [
+                    {
+                        placeholder: '{{whereClause}}',
+                        filters: {
+                        //     'pp.program_name': filters.programName,
+                        //     'ss.subject_name': filters.subjectName,
+                        //     'ms.abbr': filters.abbr
+                        },
+                        searchColumns: ['r.publisher', 'r.research_date', 'r.journal_name','rs.school_name','rc.campus_name','md.name'],
+                        sort: {
+                          column: sort || 'r.id',
+                          order: order || 'desc',
+                       },
+                    }
+                ],
         page : page,
         pageSize: 10 ,
         search: search || '',
-        searchColumns: ['r.publisher', 'research_date', 'r.journal_name','r.nmims_school','r.nmims_campus','r.nmims_authors'],
-        sort: {
-          column: sort || 'r.id',
-          order: order || 'desc',
-       },
+    //     searchColumns: ['r.publisher', 'research_date', 'r.journal_name','r.nmims_school','r.nmims_campus','r.nmims_authors'],
+    //     sort: {
+    //       column: sort || 'r.id',
+    //       order: order || 'desc',
+    //    },
     });
  
     return data;

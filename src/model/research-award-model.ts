@@ -4,6 +4,7 @@ import { researchAwardDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db'; 
 import { number } from 'zod'; 
+import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
 
 export const getResearchAwardModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
     const data = await infiniteScrollQueryBuilder<Session>({
@@ -35,10 +36,47 @@ export const getResearchAwardModel = async ({ page, limit, sort, order, search, 
     return data;
  };
 
- export const researchAwardPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+//  export const researchAwardPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+//     console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
+ 
+//     const data = await paginationQueryBuilder<Session>({
+//        baseQuery: `SELECT 
+//                 r.id,
+//                 COALESCE(JSON_AGG(DISTINCT ras.school_name), '[]') AS nmims_school,
+// 				COALESCE(JSON_AGG(DISTINCT rac.campus_name), '[]') AS nmims_campus, 
+//                 COALESCE(r.faculty_name, 'No Data Filled!') AS faculty_name,
+//                 COALESCE(r.award_name, 'No Data Filled!') AS award_name,
+//                 COALESCE(r.award_details, 'No Data Filled!') AS award_details,
+//                 COALESCE(r.award_organization, 'No Data Filled!') AS award_organization
+//                 FROM research_award r
+//                 INNER JOIN research_award_school ras ON ras.research_award_lid = r.id
+//                 INNER JOIN research_award_campus rac ON ras.research_award_lid = r.id
+//                 WHERE r.active = TRUE AND rac.active = TRUE AND ras.active = TRUE
+//                 GROUP BY r.id
+//  `,
+ 
+//        filters: {
+//           // 'usi.program_lid': filters.programLid,
+//           // 'usi.session_lid': filters.sessionLid,
+//           // 'usi.subject_lid': filters.subjectLid,
+//        },
+//        page : page,
+//        pageSize: 10 ,
+//        search: search || '',
+//        searchColumns: ['faculty_name','award_name','award_details','award_organization','nmims_school','nmims_campus'],
+//        sort: {
+//           column: sort || 'r.id',
+//           order: order || 'desc',
+//        },
+//     });
+ 
+//     return data;
+//  };
+ 
+export const researchAwardPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
     console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
  
-    const data = await paginationQueryBuilder<Session>({
+    const data = await paginationQueryBuilderWithPlaceholder<Session>({
        baseQuery: `SELECT 
                 r.id,
                 COALESCE(JSON_AGG(DISTINCT ras.school_name), '[]') AS nmims_school,
@@ -51,27 +89,37 @@ export const getResearchAwardModel = async ({ page, limit, sort, order, search, 
                 INNER JOIN research_award_school ras ON ras.research_award_lid = r.id
                 INNER JOIN research_award_campus rac ON ras.research_award_lid = r.id
                 WHERE r.active = TRUE AND rac.active = TRUE AND ras.active = TRUE
+                {{whereClause}}
                 GROUP BY r.id
  `,
  
-       filters: {
-          // 'usi.program_lid': filters.programLid,
-          // 'usi.session_lid': filters.sessionLid,
-          // 'usi.subject_lid': filters.subjectLid,
-       },
+ placeholders: [
+    {
+        placeholder: '{{whereClause}}',
+        filters: {
+        //     'pp.program_name': filters.programName,
+        //     'ss.subject_name': filters.subjectName,
+        //     'ms.abbr': filters.abbr
+        },
+        searchColumns: ['r.faculty_name','r.award_name','r.award_details','r.award_organization','ras.school_name','rac.campus_name'],
+        sort: {
+        column: sort || 'r.id',
+        order: order || 'desc',
+        },
+    }
+],
        page : page,
        pageSize: 10 ,
        search: search || '',
-       searchColumns: ['faculty_name','award_name','award_details','award_organization','nmims_school','nmims_campus'],
-       sort: {
-          column: sort || 'r.id',
-          order: order || 'desc',
-       },
+    //    searchColumns: ['faculty_name','award_name','award_details','award_organization','nmims_school','nmims_campus'],
+    //    sort: {
+    //       column: sort || 'r.id',
+    //       order: order || 'desc',
+    //    },
     });
  
     return data;
  };
- 
 
 export const insertResearchAwardModel = async(researchAwardData : researchAwardDetails,username:string) => {
     console.log('researchAwardData ===>>>>>', researchAwardData)
