@@ -21,6 +21,7 @@ export const getBookChapter = async (req: Request, res: Response, next: NextFunc
        search = '',
        ...filters
     } = { ...req.body, ...req.params, ...req.query };
+
  
     const data = await getBookChapterService({
        page,

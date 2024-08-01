@@ -35,3 +35,13 @@ export type InfiniteScrollQueryBuilderType = {
    search: string;
    searchColumns: string[];
 };
+
+type Placeholder = any;
+
+export type PaginationQueryBuilderTypeWithPlaceholder = {
+   baseQuery: string;
+   placeholders: Placeholder[]
+   page: number;
+   pageSize: number;
+   search: string;
+}

@@ -6,106 +6,208 @@ import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
 import { number } from 'zod';
 
+// export const getBookChapterPublication = async ({
+//    page,
+//    limit,
+//    sort,
+//    order,
+//    search,
+//    filters,
+// }: paginationDefaultType) => {
+//    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+
+//    const data = await paginationQueryBuilder<Session>({
+//       baseQuery: `WITH book_chapter_details AS (
+//                     SELECT 
+//                         bcp.id,
+//                         bcp.publish_year,
+//                         bcp.book_title,
+//                         bcp.isbn_no,
+//                         bcp.publisher,
+//                         bcp.created_by
+//                     FROM book_chapter_publication bcp
+//                     WHERE bcp.active = true
+//                 ),
+//                 school_details AS (
+//                     SELECT
+//                         bcp.id AS book_chapter_id,
+//                         JSON_AGG(DISTINCT bcs.school_name) AS nmims_school
+//                     FROM book_chapter_publication bcp
+//                     INNER JOIN book_chapter_publication_school bcs ON bcs.publication_lid = bcp.id
+//                     WHERE bcs.active = true AND bcp.active = true
+//                     GROUP BY bcp.id
+//                 ),
+//                 campus_details AS (
+//                     SELECT
+//                         bcp.id AS book_chapter_id,
+//                         JSON_AGG(DISTINCT bcc.campus_name) AS nmims_campus
+//                     FROM book_chapter_publication bcp
+//                     INNER JOIN book_chapter_publication_campus bcc ON bcc.publication_lid = bcp.id
+//                     WHERE bcc.active = true AND bcp.active = true
+//                     GROUP BY bcp.id
+//                 ),
+//                 all_authors AS (
+//                     SELECT
+//                         bcp.id AS book_chapter_id,
+//                         JSON_AGG(DISTINCT mi.name) AS all_authors
+//                     FROM book_chapter_publication bcp
+//                     INNER JOIN book_chapter_publication_all_authors bcaa ON bcaa.publication_lid = bcp.id
+//                     INNER JOIN master_input_data mi ON mi.id = bcaa.author_lid
+//                     WHERE mi.active = true AND bcaa.active = true AND bcp.active = true
+//                     GROUP BY bcp.id
+//                 ),
+//                 editors AS (
+//                     SELECT
+//                         bcp.id AS book_chapter_id,
+//                         JSON_AGG(DISTINCT mid.name) AS all_editors
+//                     FROM book_chapter_publication bcp
+//                     INNER JOIN book_chapter_editors e ON e.publication_lid = bcp.id
+//                     INNER JOIN master_input_data mid ON mid.id = e.editor_lid
+//                     WHERE e.active = true AND mid.active = true AND bcp.active = true
+//                     GROUP BY bcp.id
+//                 )
+//                 SELECT 
+//                     bcd.id,
+//                     bcd.publish_year,
+//                     bcd.book_title,
+//                     bcd.isbn_no,
+//                     bcd.publisher,
+//                     sd.nmims_school,
+//                     cd.nmims_campus,
+//                     aa.all_authors,
+//                     e.all_editors
+//                 FROM book_chapter_details bcd
+//                 LEFT JOIN school_details sd ON sd.book_chapter_id = bcd.id
+//                 LEFT JOIN campus_details cd ON cd.book_chapter_id = bcd.id
+//                 LEFT JOIN all_authors aa ON aa.book_chapter_id = bcd.id
+//                 LEFT JOIN editors e ON e.book_chapter_id = bcd.id
+//                    `,
+//       filters: {
+//          // Add your filters here
+//          // Example: 'bp.publisher_category': filters.publisherCategory,
+//       },
+//       page: page || 1,
+//       pageSize: limit || 10,
+//       search: search || '',
+//       searchColumns: [
+//          'bcd.publisher',
+//          'sd.nmims_school',
+//          'cd.nmims_campus',
+//          'bcd.book_title',
+//          'bcd.publish_year',
+//          'bcd.isbn_no',
+//          'aa.faculty_names',
+//       ],
+//       sort: {
+//          column: sort || 'bcd.id',
+//          order: order || 'desc',
+//       },
+//    });
+
+//    return data;
+// };
+
 export const getBookChapterPublication = async ({
-   page,
-   limit,
-   sort,
-   order,
-   search,
-   filters,
-}: paginationDefaultType) => {
-   console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+    page,
+    limit,
+    sort,
+    order,
+    search,
+    filters,
+ }: paginationDefaultType) => {
+    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
+ 
+    const data = await paginationQueryBuilder<Session>({
+       baseQuery: `WITH book_chapter_details AS (
+                     SELECT 
+                         bcp.id,
+                         bcp.publish_year,
+                         bcp.book_title,
+                         bcp.isbn_no,
+                         bcp.publisher,
+                         bcp.created_by
+                     FROM book_chapter_publication bcp
+                     WHERE bcp.active = true
+                 ),
+                 school_details AS (
+                     SELECT
+                         bcp.id AS book_chapter_id,
+                         JSON_AGG(DISTINCT bcs.school_name) AS nmims_school
+                     FROM book_chapter_publication bcp
+                     INNER JOIN book_chapter_publication_school bcs ON bcs.publication_lid = bcp.id
+                     WHERE bcs.active = true AND bcp.active = true
+                     GROUP BY bcp.id
+                 ),
+                 campus_details AS (
+                     SELECT
+                         bcp.id AS book_chapter_id,
+                         JSON_AGG(DISTINCT bcc.campus_name) AS nmims_campus
+                     FROM book_chapter_publication bcp
+                     INNER JOIN book_chapter_publication_campus bcc ON bcc.publication_lid = bcp.id
+                     WHERE bcc.active = true AND bcp.active = true
+                     GROUP BY bcp.id
+                 ),
+                 all_authors AS (
+                     SELECT
+                         bcp.id AS book_chapter_id,
+                         JSON_AGG(DISTINCT mi.name) AS all_authors
+                     FROM book_chapter_publication bcp
+                     INNER JOIN book_chapter_publication_all_authors bcaa ON bcaa.publication_lid = bcp.id
+                     INNER JOIN master_input_data mi ON mi.id = bcaa.author_lid
+                     WHERE mi.active = true AND bcaa.active = true AND bcp.active = true
+                     GROUP BY bcp.id
+                 ),
+                 editors AS (
+                     SELECT
+                         bcp.id AS book_chapter_id,
+                         JSON_AGG(DISTINCT mid.name) AS all_editors
+                     FROM book_chapter_publication bcp
+                     INNER JOIN book_chapter_editors e ON e.publication_lid = bcp.id
+                     INNER JOIN master_input_data mid ON mid.id = e.editor_lid
+                     WHERE e.active = true AND mid.active = true AND bcp.active = true
+                     GROUP BY bcp.id
+                 )
+                 SELECT 
+                     bcd.id,
+                     bcd.publish_year,
+                     bcd.book_title,
+                     bcd.isbn_no,
+                     bcd.publisher,
+                     sd.nmims_school,
+                     cd.nmims_campus,
+                     aa.all_authors,
+                     e.all_editors
+                 FROM book_chapter_details bcd
+                 LEFT JOIN school_details sd ON sd.book_chapter_id = bcd.id
+                 LEFT JOIN campus_details cd ON cd.book_chapter_id = bcd.id
+                 LEFT JOIN all_authors aa ON aa.book_chapter_id = bcd.id
+                 LEFT JOIN editors e ON e.book_chapter_id = bcd.id
+                    `,
+       filters: {
+          // Add your filters here
+          // Example: 'bp.publisher_category': filters.publisherCategory,
+       },
+       page: page || 1,
+       pageSize: limit || 10,
+       search: search || '',
+       searchColumns: [
+          'bcd.publisher',
+          'sd.nmims_school',
+          'cd.nmims_campus',
+          'bcd.book_title',
+          'bcd.publish_year',
+          'bcd.isbn_no',
+          'aa.faculty_names',
+       ],
+       sort: {
+          column: sort || 'bcd.id',
+          order: order || 'desc',
+       },
+    });
+ 
+    return data;
+ };
 
-   const data = await paginationQueryBuilder<Session>({
-      baseQuery: `WITH book_chapter_details AS (
-                    SELECT 
-                        bcp.id,
-                        bcp.publish_year,
-                        bcp.book_title,
-                        bcp.isbn_no,
-                        bcp.publisher,
-                        bcp.created_by
-                    FROM book_chapter_publication bcp
-                    WHERE bcp.active = true
-                ),
-                school_details AS (
-                    SELECT
-                        bcp.id AS book_chapter_id,
-                        JSON_AGG(DISTINCT bcs.school_name) AS nmims_school
-                    FROM book_chapter_publication bcp
-                    INNER JOIN book_chapter_publication_school bcs ON bcs.publication_lid = bcp.id
-                    WHERE bcs.active = true AND bcp.active = true
-                    GROUP BY bcp.id
-                ),
-                campus_details AS (
-                    SELECT
-                        bcp.id AS book_chapter_id,
-                        JSON_AGG(DISTINCT bcc.campus_name) AS nmims_campus
-                    FROM book_chapter_publication bcp
-                    INNER JOIN book_chapter_publication_campus bcc ON bcc.publication_lid = bcp.id
-                    WHERE bcc.active = true AND bcp.active = true
-                    GROUP BY bcp.id
-                ),
-                all_authors AS (
-                    SELECT
-                        bcp.id AS book_chapter_id,
-                        JSON_AGG(DISTINCT mi.name) AS all_authors
-                    FROM book_chapter_publication bcp
-                    INNER JOIN book_chapter_publication_all_authors bcaa ON bcaa.publication_lid = bcp.id
-                    INNER JOIN master_input_data mi ON mi.id = bcaa.author_lid
-                    WHERE mi.active = true AND bcaa.active = true AND bcp.active = true
-                    GROUP BY bcp.id
-                ),
-                editors AS (
-                    SELECT
-                        bcp.id AS book_chapter_id,
-                        JSON_AGG(DISTINCT mid.name) AS all_editors
-                    FROM book_chapter_publication bcp
-                    INNER JOIN book_chapter_editors e ON e.publication_lid = bcp.id
-                    INNER JOIN master_input_data mid ON mid.id = e.editor_lid
-                    WHERE e.active = true AND mid.active = true AND bcp.active = true
-                    GROUP BY bcp.id
-                )
-                SELECT 
-                    bcd.id,
-                    bcd.publish_year,
-                    bcd.book_title,
-                    bcd.isbn_no,
-                    bcd.publisher,
-                    sd.nmims_school,
-                    cd.nmims_campus,
-                    aa.all_authors,
-                    e.all_editors
-                FROM book_chapter_details bcd
-                LEFT JOIN school_details sd ON sd.book_chapter_id = bcd.id
-                LEFT JOIN campus_details cd ON cd.book_chapter_id = bcd.id
-                LEFT JOIN all_authors aa ON aa.book_chapter_id = bcd.id
-                LEFT JOIN editors e ON e.book_chapter_id = bcd.id
-                   `,
-      filters: {
-         // Add your filters here
-         // Example: 'bp.publisher_category': filters.publisherCategory,
-      },
-      page: page || 1,
-      pageSize: limit || 10,
-      search: search || '',
-      searchColumns: [
-         'bcd.publisher',
-         'sd.nmims_school',
-         'cd.nmims_campus',
-         'bcd.book_title',
-         'bcd.publish_year',
-         'bcd.isbn_no',
-         'aa.faculty_names',
-      ],
-      sort: {
-         column: sort || 'bcd.id',
-         order: order || 'desc',
-      },
-   });
-
-   return data;
-};
 
 export const insertBookChapterModel = async(bookChapterData: bookChapterDetails, username: string) => {
     console.log('bookChapterData ===>>>>>', bookChapterData)
