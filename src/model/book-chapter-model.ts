@@ -5,6 +5,7 @@ import { paginationDefaultType } from 'types/db.default';
 
 import sql from '$config/db';
 import { number } from 'zod';
+import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
 
 // export const getBookChapterPublication = async ({
 //    page,
@@ -117,7 +118,7 @@ export const getBookChapterPublication = async ({
  }: paginationDefaultType) => {
     console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
-    const data = await paginationQueryBuilder<Session>({
+    const data = await paginationQueryBuilderWithPlaceholder<Session>({
        baseQuery: `WITH book_chapter_details AS (
                      SELECT 
                          bcp.id,
@@ -182,27 +183,41 @@ export const getBookChapterPublication = async ({
                  LEFT JOIN campus_details cd ON cd.book_chapter_id = bcd.id
                  LEFT JOIN all_authors aa ON aa.book_chapter_id = bcd.id
                  LEFT JOIN editors e ON e.book_chapter_id = bcd.id
+                 {{whereClause}}
                     `,
-       filters: {
-          // Add your filters here
-          // Example: 'bp.publisher_category': filters.publisherCategory,
-       },
+                    placeholders: [
+                        {
+                            placeholder: '{{whereClause}}',
+                            filters: {
+                            //     'pp.program_name': filters.programName,
+                            //     'ss.subject_name': filters.subjectName,
+                            //     'ms.abbr': filters.abbr
+                            },
+                            searchColumns: ['bcd.publisher',
+                                            'sd.nmims_school',
+                                            'cd.nmims_campus',
+                                            'bcd.book_title',
+                                            'bcd.publish_year',
+                                            'bcd.isbn_no',
+                                            'aa.all_authors'],
+                        }
+                    ],
        page: page || 1,
        pageSize: limit || 10,
        search: search || '',
-       searchColumns: [
-          'bcd.publisher',
-          'sd.nmims_school',
-          'cd.nmims_campus',
-          'bcd.book_title',
-          'bcd.publish_year',
-          'bcd.isbn_no',
-          'aa.faculty_names',
-       ],
-       sort: {
-          column: sort || 'bcd.id',
-          order: order || 'desc',
-       },
+    //    searchColumns: [
+    //       'bcd.publisher',
+    //       'sd.nmims_school',
+    //       'cd.nmims_campus',
+    //       'bcd.book_title',
+    //       'bcd.publish_year',
+    //       'bcd.isbn_no',
+    //       'aa.faculty_names',
+    //    ],
+    //    sort: {
+    //       column: sort || 'bcd.id',
+    //       order: order || 'desc',
+    //    },
     });
  
     return data;
