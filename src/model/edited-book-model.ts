@@ -4,6 +4,7 @@ import { EditedBookPublicationDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
 import editedbookRoutes from '$routes/research-routes/edited-book-routes';
+import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
 
 export const getEditedBookPublicationModels = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
     const data = await infiniteScrollQueryBuilder<Session>({
@@ -65,10 +66,87 @@ export const deleteEditedBookModel = async (editedbookId : number,username:strin
     }
 }
 
+// export const editedBookPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+//    console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
+
+//    const data = await paginationQueryBuilder<Session>({
+//       baseQuery: `WITH publication_details AS (
+//                     SELECT 
+//                         ebp.id,
+//                         ebp.publish_year,
+//                         ebp.title,
+//                         ebp.isbn_no,
+//                         ebp.publisher
+//                     FROM edited_book_publication ebp
+//                     WHERE ebp.active = TRUE
+//                 ),
+//                 campus_details AS (
+//                     SELECT
+//                         ebp.id AS publication_id,
+//                         JSON_AGG(DISTINCT bpc.campus_name) AS campuses
+//                     FROM edited_book_publication ebp
+//                     INNER JOIN edited_book_publication_campus bpc ON ebp.id = bpc.publication_lid
+//                     WHERE ebp.active = TRUE AND bpc.active = TRUE
+//                     GROUP BY ebp.id
+//                 ),
+//                 school_details AS (
+//                     SELECT
+//                         ebp.id AS publication_id,
+//                         JSON_AGG(DISTINCT bps.school_name) AS schools
+//                     FROM edited_book_publication ebp
+//                     INNER JOIN edited_book_publication_school bps ON ebp.id = bps.publication_lid
+//                     WHERE ebp.active = TRUE AND bps.active = TRUE
+//                     GROUP BY ebp.id
+//                 ),
+//                 author_details AS (
+//                     SELECT
+//                         ebp.id AS publication_id,
+//                         JSON_AGG(DISTINCT mid.name) AS authors
+//                     FROM edited_book_publication ebp
+//                     INNER JOIN edited_book_publication_all_authors bpa ON ebp.id = bpa.publication_lid
+//                     INNER JOIN master_input_data mid ON bpa.author_lid = mid.id
+//                     WHERE ebp.active = TRUE AND bpa.active = TRUE AND mid.active = TRUE
+//                     GROUP BY ebp.id
+//                 )
+//                 SELECT
+//                     pd.id,
+//                     pd.publish_year,
+//                     pd.title,
+//                     pd.isbn_no,
+//                     pd.publisher,
+//                     cd.campuses,
+//                     sd.schools,
+//                     ad.authors
+//                 FROM publication_details pd
+//                 LEFT JOIN campus_details cd ON pd.id = cd.publication_id
+//                 LEFT JOIN school_details sd ON pd.id = sd.publication_id
+//                 LEFT JOIN author_details ad ON pd.id = ad.publication_id`,
+
+
+//                 filters: {
+//                     // 'usi.program_lid': filters.programLid,
+//                     // 'usi.session_lid': filters.sessionLid,
+//                     // 'usi.subject_lid': filters.subjectLid,
+//                  },
+//                 page : page,
+//                 pageSize: 10 ,
+//                 search: search || '',
+//                 searchColumns: ['ad.authors', 'cd.campuses', 'sd.schools','pd.publish_year','pd.title','pd.publish_year','pd.title', 'pd.isbn_no', 'pd.publisher'],
+//                 sort: {
+//                    column: sort || 'pd.id',
+//                    order: order || 'desc',
+//                 },
+
+//    })
+
+//    return data;
+
+// }
+
 export const editedBookPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
    console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
 
-   const data = await paginationQueryBuilder<Session>({
+   const data = await paginationQueryBuilderWithPlaceholder<Session>({
       baseQuery: `WITH publication_details AS (
                     SELECT 
                         ebp.id,
@@ -117,30 +195,43 @@ export const editedBookPaginateModel = async ({ page , limit, sort, order, searc
                     sd.schools,
                     ad.authors
                 FROM publication_details pd
-                LEFT JOIN campus_details cd ON pd.id = cd.publication_id
-                LEFT JOIN school_details sd ON pd.id = sd.publication_id
-                LEFT JOIN author_details ad ON pd.id = ad.publication_id`,
+                INNER JOIN campus_details cd ON pd.id = cd.publication_id
+                INNER JOIN school_details sd ON pd.id = sd.publication_id
+                INNER JOIN author_details ad ON pd.id = ad.publication_id
+                {{whereClause}}`,
 
 
-                filters: {
-                    // 'usi.program_lid': filters.programLid,
-                    // 'usi.session_lid': filters.sessionLid,
-                    // 'usi.subject_lid': filters.subjectLid,
-                 },
+                placeholders: [
+                  {
+                      placeholder: '{{whereClause}}',
+                      filters: {
+                      //     'pp.program_name': filters.programName,
+                      //     'ss.subject_name': filters.subjectName,
+                      //     'ms.abbr': filters.abbr
+                      },
+                      searchColumns: ['ad.authors', 'cd.campuses', 'sd.schools','pd.publish_year','pd.title','pd.publish_year','pd.title', 'pd.isbn_no', 'pd.publisher'],
+                      sort: {
+                      column: sort || 'pd.id',
+                      order: order || 'desc',
+                      },
+                  }
+              ],
                 page : page,
                 pageSize: 10 ,
                 search: search || '',
-                searchColumns: ['ad.authors', 'cd.campuses', 'sd.schools','pd.publish_year','pd.title','pd.publish_year','pd.title', 'pd.isbn_no', 'pd.publisher'],
-                sort: {
-                   column: sort || 'pd.id',
-                   order: order || 'desc',
-                },
+               //  searchColumns: ['ad.authors', 'cd.campuses', 'sd.schools','pd.publish_year','pd.title','pd.publish_year','pd.title', 'pd.isbn_no', 'pd.publisher'],
+               //  sort: {
+               //     column: sort || 'pd.id',
+               //     order: order || 'desc',
+               //  },
 
    })
 
    return data;
 
 }
+
+
 
 export const editedBookPublicationEditView = async(editedBookId: number) => {
     const data = await sql`

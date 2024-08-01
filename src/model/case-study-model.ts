@@ -4,6 +4,7 @@ import { caseStudyDetails } from 'types/research.types';
 import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db'; 
 import { number } from 'zod'; 
+import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
 
 export const getCaseStudyModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
     const data = await paginationQueryBuilder<Session>({
@@ -81,8 +82,43 @@ export const getCaseStudyModel = async ({ page, limit, sort, order, search, filt
    return data;
  };
 
- export const CaseStudyPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
-    const data = await paginationQueryBuilder<Session>({
+//  export const CaseStudyPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+//     const data = await paginationQueryBuilder<Session>({
+//       baseQuery: `SELECT 
+//                     c.id,
+//                     COALESCE(c.title, 'No Data Filled!') AS title,
+//                     COALESCE(NULLIF(c.edition, ''), 'No Data Filled!') AS edition,
+//                     COALESCE(c.publisher, 'No Data Filled!') AS publisher,
+//                     COALESCE(c.publish_year, 0) AS publish_year,
+//                     COALESCE(c.volume_no, 'No Data Filled!') AS volume_no,
+//                     COALESCE(JSON_AGG(DISTINCT md.name), '[]') AS all_authors
+//                 FROM case_study c
+//                 INNER JOIN case_study_authors ca ON ca.case_study_lid = c.id
+//                 INNER JOIN master_input_data md ON md.id = ca.author_lid 
+//                 WHERE c.active = TRUE AND ca.active = TRUE AND md.active = TRUE
+//                 GROUP BY c.id
+// `,
+
+//       filters: {
+//          // 'usi.program_lid': filters.programLid,
+//          // 'usi.session_lid': filters.sessionLid,
+//          // 'usi.subject_lid': filters.subjectLid,
+//       },
+//       page : page,
+//       pageSize: 10 ,
+//       search: search || '',
+//       searchColumns: ['title','edition','publisher','publish_year','volume_no','all_authors'],
+//       sort: {
+//          column: sort || 'c.id',
+//          order: order || 'desc',
+//       },
+//    });
+
+//    return data;
+//  };
+
+export const CaseStudyPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+    const data = await paginationQueryBuilderWithPlaceholder<Session>({
       baseQuery: `SELECT 
                     c.id,
                     COALESCE(c.title, 'No Data Filled!') AS title,
@@ -94,23 +130,34 @@ export const getCaseStudyModel = async ({ page, limit, sort, order, search, filt
                 FROM case_study c
                 INNER JOIN case_study_authors ca ON ca.case_study_lid = c.id
                 INNER JOIN master_input_data md ON md.id = ca.author_lid 
-                WHERE c.active = TRUE AND ca.active = TRUE AND md.active = TRUE
+                WHERE c.active = TRUE AND ca.active = TRUE AND md.active = TRUE 
+                {{whereClause}}
                 GROUP BY c.id
 `,
 
-      filters: {
-         // 'usi.program_lid': filters.programLid,
-         // 'usi.session_lid': filters.sessionLid,
-         // 'usi.subject_lid': filters.subjectLid,
-      },
+placeholders: [
+    {
+        placeholder: '{{whereClause}}',
+        filters: {
+        //     'pp.program_name': filters.programName,
+        //     'ss.subject_name': filters.subjectName,
+        //     'ms.abbr': filters.abbr
+        },
+        searchColumns: ['c.title','c.edition','c.publisher','c.publish_year','c.volume_no','md.name'],
+        sort: {
+        column: sort || 'bcd.id',
+        order: order || 'desc',
+        },
+    }
+],
       page : page,
       pageSize: 10 ,
       search: search || '',
-      searchColumns: ['title','edition','publisher','publish_year','volume_no','all_authors'],
-      sort: {
-         column: sort || 'c.id',
-         order: order || 'desc',
-      },
+    //   searchColumns: ['title','edition','publisher','publish_year','volume_no','all_authors'],
+    //   sort: {
+    //      column: sort || 'c.id',
+    //      order: order || 'desc',
+    //   },
    });
 
    return data;

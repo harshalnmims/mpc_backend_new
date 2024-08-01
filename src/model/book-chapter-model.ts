@@ -119,7 +119,7 @@ export const getBookChapterPublication = async ({
     console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
-       baseQuery: `WITH book_chapter_details AS (
+       baseQuery: ` WITH book_chapter_details AS (
                      SELECT 
                          bcp.id,
                          bcp.publish_year,
@@ -179,10 +179,10 @@ export const getBookChapterPublication = async ({
                      aa.all_authors,
                      e.all_editors
                  FROM book_chapter_details bcd
-                 LEFT JOIN school_details sd ON sd.book_chapter_id = bcd.id
-                 LEFT JOIN campus_details cd ON cd.book_chapter_id = bcd.id
-                 LEFT JOIN all_authors aa ON aa.book_chapter_id = bcd.id
-                 LEFT JOIN editors e ON e.book_chapter_id = bcd.id
+                 INNER JOIN school_details sd ON sd.book_chapter_id = bcd.id
+                 INNER JOIN campus_details cd ON cd.book_chapter_id = bcd.id
+                 INNER JOIN all_authors aa ON aa.book_chapter_id = bcd.id
+                 INNER JOIN editors e ON e.book_chapter_id = bcd.id	
                  {{whereClause}}
                     `,
                     placeholders: [
@@ -200,6 +200,10 @@ export const getBookChapterPublication = async ({
                                             'bcd.publish_year',
                                             'bcd.isbn_no',
                                             'aa.all_authors'],
+                            sort: {
+                            column: sort || 'bcd.id',
+                            order: order || 'desc',
+                            },
                         }
                     ],
        page: page || 1,
@@ -227,7 +231,7 @@ export const getBookChapterPublication = async ({
 export const insertBookChapterModel = async(bookChapterData: bookChapterDetails, username: string) => {
     console.log('bookChapterData ===>>>>>', bookChapterData)
     
-    const data = await sql`SELECT * FROM insert_book_chapter(${JSON.parse(JSON.stringify(bookChapterData))}, ,${username});`;
+    const data = await sql`SELECT * FROM insert_book_chapter(${JSON.parse(JSON.stringify(bookChapterData))} ,${username});`;
     return data;
 
 }
