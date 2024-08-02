@@ -31,7 +31,7 @@ import { downloadFile } from '$middleware/fileupload.middleware';
 
 import { string } from 'zod';
 
-export const getBookPatentService = async ({ page, limit, sort, order, search, ...filters }: paginationDefaultType) => {
+export const getBookPatentService = async ({ page, limit, sort, order, search, ...filters }: paginationDefaultType,username :string) => {
    const logger = getLogger();
 
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
@@ -44,7 +44,7 @@ export const getBookPatentService = async ({ page, limit, sort, order, search, .
       search,
 
       ...filters,
-   });
+   },username);
 
    return data;
 };

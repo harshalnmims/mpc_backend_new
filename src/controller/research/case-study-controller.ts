@@ -20,6 +20,7 @@ export const getCaseStudy = async (req: Request, res: Response, next: NextFuncti
        search = '',
        ...filters
     } = { ...req.body, ...req.params, ...req.query };
+
  
     const data = await getCaseStudyService({
        page,
@@ -46,6 +47,9 @@ export const CaseStudyPaginateController = async (req: Request, res: Response, n
        search = '',
        ...filters
     } = { ...req.body, ...req.params, ...req.query };
+
+    let username = res.locals.username
+
  
     const data = await CaseStudyPaginateService({
        page,
@@ -54,7 +58,7 @@ export const CaseStudyPaginateController = async (req: Request, res: Response, n
        sort,
        order,
        filters,
-    });
+    },username);
  
     return res.status(200).json(data);
 };

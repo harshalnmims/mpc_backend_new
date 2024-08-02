@@ -79,7 +79,7 @@ export const ResearchProjectPaginateModel = async ({
     order,
     search,
     filters,
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username:string) => {
     console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
@@ -89,7 +89,8 @@ export const ResearchProjectPaginateModel = async ({
                                  rp.title,
                                  rp.funding_amount,
                                  rp.funding_agency,
-                                 rp.thrust_area
+                                 rp.thrust_area,
+                                 rp.created_by
                              FROM research_project rp
                              WHERE rp.active = TRUE
                          ),
@@ -122,6 +123,7 @@ export const ResearchProjectPaginateModel = async ({
                          FROM research_project_details rpd
                          INNER JOIN school_details sd ON rpd.id = sd.research_project_id
                          INNER JOIN campus_details cd ON rpd.id = cd.research_project_id
+                         WHERE rpd.created_by='${username}'
                          {{whereClause}}`,
                          placeholders: [
                             {

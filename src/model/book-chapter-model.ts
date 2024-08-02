@@ -115,7 +115,7 @@ export const getBookChapterPublication = async ({
     order,
     search,
     filters,
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username : string) => {
     console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
@@ -183,6 +183,7 @@ export const getBookChapterPublication = async ({
                  INNER JOIN campus_details cd ON cd.book_chapter_id = bcd.id
                  INNER JOIN all_authors aa ON aa.book_chapter_id = bcd.id
                  INNER JOIN editors e ON e.book_chapter_id = bcd.id	
+                 WHERE bcd.created_by = '${username}'
                  {{whereClause}}
                     `,
                     placeholders: [

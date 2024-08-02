@@ -46,6 +46,8 @@ export const eContentPaginateController = async (req: Request, res: Response, ne
         ...filters
      } = { ...req.body, ...req.params, ...req.query };
 
+     let username = res.locals.username
+
  const data = await eContentPaginateService({
      page ,
      limit,
@@ -53,7 +55,7 @@ export const eContentPaginateController = async (req: Request, res: Response, ne
      sort,
      order,
      filters,
-  });
+  },username);
 
   return res.status(200).json(data); 
 }

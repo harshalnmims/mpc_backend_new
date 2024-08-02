@@ -100,6 +100,8 @@ export const getEditedBookPublication = async (req: Request, res: Response, next
       ...filters
    } = { ...req.body, ...req.params, ...req.query };
 
+   let username = res.locals.username
+
    const data = await editedBookPaginateService({
       page ,
       limit,
@@ -107,7 +109,7 @@ export const getEditedBookPublication = async (req: Request, res: Response, next
       sort,
       order,
       filters,
-   });
+   },username);
 
    return res.status(200).json(data); 
  }

@@ -143,7 +143,7 @@ export const deleteEditedBookModel = async (editedbookId : number,username:strin
 
 // }
 
-export const editedBookPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+export const editedBookPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
    console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
 
    const data = await paginationQueryBuilderWithPlaceholder<Session>({
@@ -153,7 +153,8 @@ export const editedBookPaginateModel = async ({ page , limit, sort, order, searc
                         ebp.publish_year,
                         ebp.title,
                         ebp.isbn_no,
-                        ebp.publisher
+                        ebp.publisher,
+                        ebp.created_by
                     FROM edited_book_publication ebp
                     WHERE ebp.active = TRUE
                 ),
@@ -198,6 +199,7 @@ export const editedBookPaginateModel = async ({ page , limit, sort, order, searc
                 INNER JOIN campus_details cd ON pd.id = cd.publication_id
                 INNER JOIN school_details sd ON pd.id = sd.publication_id
                 INNER JOIN author_details ad ON pd.id = ad.publication_id
+                WHERE pd.created_by='${username}'
                 {{whereClause}}`,
 
 

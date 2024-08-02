@@ -51,6 +51,8 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
        search = '',
        ...filters
     } = { ...req.body, ...req.params, ...req.query };
+
+    let username = res.locals.username;
  
     const data = await getBookPublicationService({
        page,
@@ -59,7 +61,7 @@ export const getBookPublication = async (req: Request, res: Response, next: Next
        sort,
        order,
        filters,
-    });
+    },username);
 
     console.log('data in controller after render ===>>>>>>', data);
  

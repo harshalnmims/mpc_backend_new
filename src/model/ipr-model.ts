@@ -134,7 +134,7 @@ import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-p
 //    return data;
 // };
 
-export const iprPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+export const iprPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
@@ -150,7 +150,8 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
  
                              ipr.filed_date,
  
-                             ipr.institute_affiliation
+                             ipr.institute_affiliation,
+                             ipr.created_by
  
                          FROM ipr ipr
  
@@ -215,6 +216,7 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
                      INNER JOIN school_details sd ON ipd.id = sd.ipr_id
  
                      INNER JOIN campus_details cd ON ipd.id = cd.ipr_id
+                     WHERE ipd.created_by='${username}'
                      {{whereClause}}
  
          `,

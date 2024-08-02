@@ -72,7 +72,7 @@ import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-p
 //    return data;
 // };
 
-export const getConferenceModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+export const getConferenceModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username :string) => {
     console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
@@ -82,7 +82,8 @@ export const getConferenceModel = async ({ page, limit, sort, order, search, fil
                                  c.paper_title,
                                  c.conference_name,
                                  c.proceeding_published,
-                                 c.issn_no
+                                 c.issn_no,
+                                 c.created_by
                              FROM conference c
                              WHERE c.active = true
                          ),
@@ -115,6 +116,7 @@ export const getConferenceModel = async ({ page, limit, sort, order, search, fil
                          FROM conference_details cnd
                          INNER JOIN school_details sd ON sd.conference_id = cnd.id
                          INNER JOIN campus_details cd ON cd.conference_id = cnd.id
+                         WHERE cnd.created_by = '${username}'
                          {{whereClause}}
                                          `,
                                          placeholders: [

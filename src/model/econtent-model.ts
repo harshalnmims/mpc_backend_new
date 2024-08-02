@@ -63,14 +63,14 @@ export const deleteEContent = async (eContentId: number,username:string) => {
     };            }
 
 
-export const eContentPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+export const eContentPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilder<Session>({
        baseQuery: `SELECT 
                     id,
                     faculty_name,module,module_platform,document_link,media_link,facility_list
-                    FROM e_content_development WHERE active = true
+                    FROM e_content_development WHERE active = true AND created_by='${username}'
  `,
  
        filters: {

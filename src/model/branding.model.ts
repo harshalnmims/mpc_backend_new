@@ -5,7 +5,7 @@ import { paginationQueryBuilder } from '$utils/db/query-builder';
 import { Session } from 'types/base.types';
 import { BrandingAdvertisement } from 'types/research.types';
 
-export const getPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+export const getPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username :string) => {
     const data = await paginationQueryBuilder<Session>({
         baseQuery: `SELECT 
                      id,
@@ -18,9 +18,10 @@ export const getPaginateModel = async ({ page , limit, sort, order, search, filt
                      COALESCE(conference_participation, 'No Data Filled!') AS conference_participation,
                      COALESCE(organizing_conference, 'No Data Filled!') AS organizing_conference,
                      COALESCE(newspaper_article, 'No Data Filled!') AS newspaper_article,
-                     COALESCE(student_event, 'No Data Filled!') AS student_event
+                     COALESCE(student_event, 'No Data Filled!') AS student_event,
+                     created_by
                      FROM branding_advertisement
-                     WHERE active = true`,
+                     WHERE active = true AND created_by = '${username}'`,
   
         filters: {
            // 'usi.program_lid': filters.programLid,

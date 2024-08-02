@@ -37,6 +37,8 @@ export const iprPaginate = async (req: Request, res: Response, next: NextFunctio
       ...filters
    } = { ...req.body, ...req.params, ...req.query };
 
+   let username = res.locals.username;
+
    const data = await iprPaginateService({
       page,
 
@@ -49,7 +51,7 @@ export const iprPaginate = async (req: Request, res: Response, next: NextFunctio
       order,
 
       filters,
-   });
+   },username);
 
    console.log('data responce in controller ====>>>>>', data);
 

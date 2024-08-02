@@ -31,6 +31,8 @@ export const getpatentSubmissionData = async (req: Request, res: Response, next:
       ...filters
    } = { ...req.body, ...req.params, ...req.query };
 
+   let username = res.locals.username;
+
    const data = await getBookPatentService({
       page,
       limit,
@@ -38,7 +40,7 @@ export const getpatentSubmissionData = async (req: Request, res: Response, next:
       sort,
       order,
       filters,
-   });
+   },username);
 
    console.log('data responce in controller ====>>>>>', data);
    return res.status(200).json(data);

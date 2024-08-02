@@ -81,7 +81,7 @@ export const editedBookPaginateService = async ({
    order,
    search,
    ...filters
-}: paginationDefaultType) => {
+}: paginationDefaultType,username:string) => {
 
    const data = await editedBookPaginateModel({
       page,
@@ -90,7 +90,7 @@ export const editedBookPaginateService = async ({
       order,
       search,
       ...filters,
-   });
+   },username);
 
    return data;
 }

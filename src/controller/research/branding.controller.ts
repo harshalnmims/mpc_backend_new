@@ -15,6 +15,9 @@ export const getBrandingPaginate = async (req:Request,res:Response,next:NextFunc
         ...filters
      } = { ...req.body, ...req.params, ...req.query };
 
+     let username = res.locals.username;
+
+
      const data = await getPaginateService({
      page ,
      limit,
@@ -22,7 +25,7 @@ export const getBrandingPaginate = async (req:Request,res:Response,next:NextFunc
      sort,
      order,
      filters,
-  });
+  },username);
     return res.status(200).json(data);
 }
 

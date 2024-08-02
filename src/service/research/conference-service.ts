@@ -31,7 +31,7 @@ import { any, number, string } from 'zod';
 import { getMultiUploadedFile, uploadFile } from '$middleware/fileupload.middleware';
 
 
-export const getConferenceService = async ({ page, limit, sort, order, search, ...filters }: paginationDefaultType) => {
+export const getConferenceService = async ({ page, limit, sort, order, search, ...filters }: paginationDefaultType,username : string) => {
    const logger = getLogger();
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
 
@@ -42,7 +42,7 @@ export const getConferenceService = async ({ page, limit, sort, order, search, .
       order,
       search,
       ...filters,
-   });
+   },username);
 
    return data;
 };

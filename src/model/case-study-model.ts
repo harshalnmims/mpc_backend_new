@@ -117,7 +117,7 @@ export const getCaseStudyModel = async ({ page, limit, sort, order, search, filt
 //    return data;
 //  };
 
-export const CaseStudyPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+export const CaseStudyPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
       baseQuery: `SELECT 
                     c.id,
@@ -130,10 +130,8 @@ export const CaseStudyPaginateModel = async ({ page, limit, sort, order, search,
                 FROM case_study c
                 INNER JOIN case_study_authors ca ON ca.case_study_lid = c.id
                 INNER JOIN master_input_data md ON md.id = ca.author_lid 
-                WHERE c.active = TRUE AND ca.active = TRUE AND md.active = TRUE 
-                {{whereClause}}
-                GROUP BY c.id
-`,
+                WHERE c.created_by='${username}' AND c.active = TRUE AND ca.active = TRUE AND md.active = TRUE  
+                {{whereClause}} GROUP BY c.id ORDER BY c.id desc`,
 
 placeholders: [
     {
@@ -144,10 +142,6 @@ placeholders: [
         //     'ms.abbr': filters.abbr
         },
         searchColumns: ['c.title','c.edition','c.publisher','c.publish_year','c.volume_no','md.name'],
-        orderBy: {
-        column: sort || 'c.id',
-        order: order || 'desc',
-        },
     }
 ],
       page : page,

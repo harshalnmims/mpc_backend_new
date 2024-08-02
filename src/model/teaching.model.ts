@@ -4,7 +4,7 @@ import { paginationQueryBuilder } from '$utils/db/query-builder';
 import { Session } from 'types/base.types';
 import { TeachingExcellance } from 'types/research.types';
 
-export const getPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+export const getPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     const data = await paginationQueryBuilder<Session>({
         baseQuery: `SELECT 
                      id,
@@ -12,9 +12,10 @@ export const getPaginateModel = async ({ page , limit, sort, order, search, filt
                      COALESCE(fdp_program, 'No Data Filled!') AS fdp_program,
                      COALESCE(student_workshops, 'No Data Filled!') AS student_workshops,
                      COALESCE(niche, 'No Data Filled!') AS niche,
-                     COALESCE(program_orientation, 'No Data Filled!') AS program_orientation
+                     COALESCE(program_orientation, 'No Data Filled!') AS program_orientation,
+                     created_by
                   FROM teaching_excellance
-                  WHERE active = true`,
+                  WHERE created_by = '${username}' AND active = true`,
   
         filters: {
            // 'usi.program_lid': filters.programLid,

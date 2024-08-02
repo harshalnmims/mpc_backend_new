@@ -5,7 +5,7 @@ import { Session } from 'types/base.types';
 import { facultyDetails, facultyUpdateDetails } from 'types/research.types';
 
 
-export const facultyPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+export const facultyPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilder<Session>({
@@ -15,10 +15,11 @@ export const facultyPaginateModel = async ({ page , limit, sort, order, search, 
                     f.institute_name,
                     f.address,
                     f.designation,
-                    ft.faculty_type
+                    ft.faculty_type,
+                    f.created_by
                     FROM faculties f 
                     INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id
-                    WHERE f.active = TRUE AND ft.active = TRUE
+                    WHERE f.active = TRUE AND ft.active = TRUE AND f.created_by=${username}
  `,
  
        filters: {

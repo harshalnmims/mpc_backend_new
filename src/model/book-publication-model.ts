@@ -99,7 +99,7 @@ export const getBookDetailsPaginateModel = async ({
    order,
    search,
    filters,
-}: paginationDefaultType) => {
+}: paginationDefaultType,username : string) => {
    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
 
    const data = await paginationQueryBuilderWithPlaceholder<Session>({
@@ -109,7 +109,8 @@ export const getBookDetailsPaginateModel = async ({
                         bp.publish_year,
                         bp.title,
                         bp.isbn_no,
-                        bp.publisher
+                        bp.publisher,
+                        bp.created_by
                      FROM book_publication bp
                       WHERE bp.active = true
                   ),
@@ -153,7 +154,8 @@ export const getBookDetailsPaginateModel = async ({
                   FROM book_publication_details bpd
                   INNER JOIN school_details sd ON sd.book_id = bpd.id
                   INNER JOIN campus_details cd ON cd.book_id = bpd.id
-                  INNER JOIN all_authors aa ON aa.book_id = bpd.id 	 
+                  INNER JOIN all_authors aa ON aa.book_id = bpd.id 
+                  WHERE bpd.created_by = '${username}'	 
                   {{whereClause}}
                   `,
       

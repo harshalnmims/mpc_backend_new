@@ -41,7 +41,7 @@ export const getResearchSeminarService = async ({
     order,
     search,
     ...filters
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username:string) => {
    
  
     const data = await ResearchSeminarPaginateModel({
@@ -51,7 +51,7 @@ export const getResearchSeminarService = async ({
        order,
        search,
        ...filters,
-    });
+    },username);
  
     return data;
  };

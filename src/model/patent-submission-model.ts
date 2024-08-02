@@ -69,7 +69,7 @@ export const getPatentSubmissionModel = async ({
     order,
     search,
     filters,
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username:string) => {
     console.log('filter', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
@@ -80,13 +80,14 @@ export const getPatentSubmissionModel = async ({
                      psg.appln_no,
                      psg.publication_date,
                      ivt.invention_type,
-                     ps.patent_status
+                     ps.patent_status,
+                     psg.created_by
                  FROM 
                      patent_submission_grant psg
                      INNER JOIN invention_type ivt ON ivt.id = psg.invention_type AND ivt.active = TRUE
                      INNER JOIN patent_status ps ON ps.id = psg.patent_status AND ps.active = TRUE
                  WHERE 
-                     psg.active = TRUE {{whereClause}}
+                     psg.active = TRUE AND psg.created_by='${username}' {{whereClause}}
          `,
          placeholders: [
             {

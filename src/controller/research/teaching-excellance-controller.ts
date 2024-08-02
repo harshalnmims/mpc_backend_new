@@ -18,6 +18,8 @@ export const getTeachingPaginate = async(req : Request ,res : Response ,next : N
         ...filters
      } = { ...req.body, ...req.params, ...req.query };
 
+     let username = res.locals.username
+
  const data = await getTeachingPaginateService({
      page ,
      limit,
@@ -25,7 +27,7 @@ export const getTeachingPaginate = async(req : Request ,res : Response ,next : N
      sort,
      order,
      filters,
-  });
+  },username);
 
   return res.status(200).json(data); 
 }

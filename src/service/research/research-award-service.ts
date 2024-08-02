@@ -40,7 +40,7 @@ export const getResearchAwardService = async ({
    order,
    search,
    ...filters
-}: paginationDefaultType) => {
+}: paginationDefaultType,username:string) => {
    
    const data = await researchAwardPaginateModel({
       page,
@@ -49,7 +49,7 @@ export const getResearchAwardService = async ({
       order,
       search,
       ...filters,
-   });
+   },username);
 
    return data;
 };

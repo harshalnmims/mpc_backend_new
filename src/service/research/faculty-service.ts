@@ -11,7 +11,7 @@ export const facultyPaginateService = async ({
     order,
     search,
     ...filters
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username:string) => {
  
     const data = await facultyPaginateModel({
        page,
@@ -20,7 +20,7 @@ export const facultyPaginateService = async ({
        order,
        search,
        ...filters,
-    });
+    },username);
  
     return data;
  };

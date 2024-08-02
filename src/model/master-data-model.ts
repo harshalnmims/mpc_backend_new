@@ -51,7 +51,7 @@ import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-p
 //    return data;
 // };
 
-export const masterPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+export const masterPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
@@ -61,7 +61,8 @@ export const masterPaginateModel = async ({ page, limit, sort, order, search, fi
                 mi.input_name AS input_data_type
 				FROM master_input_data md
 				INNER JOIN master_inputs mi ON mi.id = md.input_type
-				WHERE mi.active = TRUE AND md.active {{whereClause}}`,
+				WHERE mi.active = TRUE AND md.active AND md.created_by='${username}'
+                {{whereClause}}`,
         
                 placeholders: [
                     {

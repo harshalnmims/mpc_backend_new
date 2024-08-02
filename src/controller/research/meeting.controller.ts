@@ -16,6 +16,8 @@ export const getMeetingPaginate = async (req:Request,res:Response,next:NextFunct
         ...filters
      } = { ...req.body, ...req.params, ...req.query };
 
+     let username = res.locals.username;
+
      const data = await getPaginateService({
      page ,
      limit,
@@ -23,7 +25,7 @@ export const getMeetingPaginate = async (req:Request,res:Response,next:NextFunct
      sort,
      order,
      filters,
-  });
+  },username);
     return res.status(200).json(data);
 }
 

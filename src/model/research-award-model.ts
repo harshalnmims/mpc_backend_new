@@ -73,7 +73,7 @@ export const getResearchAwardModel = async ({ page, limit, sort, order, search, 
 //     return data;
 //  };
  
-export const researchAwardPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+export const researchAwardPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     console.log('filter ',JSON.stringify(filters) , { page , limit, sort, order, search, filters });
  
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
@@ -84,13 +84,15 @@ export const researchAwardPaginateModel = async ({ page , limit, sort, order, se
                 COALESCE(r.faculty_name, 'No Data Filled!') AS faculty_name,
                 COALESCE(r.award_name, 'No Data Filled!') AS award_name,
                 COALESCE(r.award_details, 'No Data Filled!') AS award_details,
-                COALESCE(r.award_organization, 'No Data Filled!') AS award_organization
+                COALESCE(r.award_organization, 'No Data Filled!') AS award_organization,
+                r.created_by
                 FROM research_award r
                 INNER JOIN research_award_school ras ON ras.research_award_lid = r.id
                 INNER JOIN research_award_campus rac ON ras.research_award_lid = r.id
                 WHERE r.active = TRUE AND rac.active = TRUE AND ras.active = TRUE
+                AND r.created_by = '${username}'
                 {{whereClause}}
-                GROUP BY r.id
+                GROUP BY r.id ORDER BY r.id desc
  `,
  
  placeholders: [
@@ -102,10 +104,10 @@ export const researchAwardPaginateModel = async ({ page , limit, sort, order, se
         //     'ms.abbr': filters.abbr
         },
         searchColumns: ['r.faculty_name','r.award_name','r.award_details','r.award_organization','ras.school_name','rac.campus_name'],
-        orderBy: {
-        column: sort || 'r.id',
-        order: order || 'desc',
-        },
+        // orderBy: {
+        // column: sort || 'r.id',
+        // order: order || 'desc',
+        // },
     }
 ],
        page : page,

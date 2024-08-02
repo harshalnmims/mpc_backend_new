@@ -32,6 +32,8 @@ import {
  
        ...filters
     } = { ...req.body, ...req.params, ...req.query };
+
+    let username = res.locals.username;
  
     const data = await getMasterPaginateService({
        page,
@@ -45,7 +47,7 @@ import {
        order,
  
        filters,
-    });
+    },username);
  
     console.log('data responce in controller ====>>>>>', data);
  

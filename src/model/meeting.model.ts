@@ -5,7 +5,7 @@ import { paginationQueryBuilder } from '$utils/db/query-builder';
 import { Session } from 'types/base.types';
 import { MeetingStakeholders } from 'types/research.types';
 
-export const getPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType) => {
+export const getPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     const data = await paginationQueryBuilder<Session>({
         baseQuery: `SELECT 
                      id,
@@ -14,9 +14,10 @@ export const getPaginateModel = async ({ page , limit, sort, order, search, filt
                      COALESCE(achievements, 'No Data Filled!') AS achievements,
                      COALESCE(convocation, 'No Data Filled!') AS convocation,
                      COALESCE(inaugral_program, 'No Data Filled!') AS inaugral_program,
-                     COALESCE(events, 'No Data Filled!') AS events
+                     COALESCE(events, 'No Data Filled!') AS events,
+                     created_by
                   FROM meeting_stackholders
-                  WHERE active = true`,
+                  WHERE active = true AND created_by = '${username}'`,
   
         filters: {
            // 'usi.program_lid': filters.programLid,

@@ -22,6 +22,8 @@ export const getBookChapter = async (req: Request, res: Response, next: NextFunc
        ...filters
     } = { ...req.body, ...req.params, ...req.query };
 
+    let username = res.locals.username;
+
  
     const data = await getBookChapterService({
        page,
@@ -30,7 +32,7 @@ export const getBookChapter = async (req: Request, res: Response, next: NextFunc
        sort,
        order,
        filters,
-    });
+    },username);
 
     console.log('data responce in controller ===>>>>>>', data)
  

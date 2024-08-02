@@ -43,7 +43,7 @@ export const getCaseStudyService = async ({
     order,
     search,
     ...filters
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username:string) => {
     const logger = getLogger();
     logger.info('INSIDE GET SUBJECT CASE STUDY SERVICES');
  
@@ -54,7 +54,7 @@ export const getCaseStudyService = async ({
        order,
        search,
        ...filters,
-    });
+    },username);
  
     return data;
  };

@@ -73,7 +73,7 @@ export const getResearchSeminarModel = async ({ page, limit, sort, order, search
 //  };
 
 
-export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
        baseQuery: `SELECT 
                     r.id,
@@ -82,15 +82,16 @@ export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, s
                     r.journal_name,
 					COALESCE(JSON_AGG(DISTINCT rs.school_name), '[]') AS nmims_school,
 					COALESCE(JSON_AGG(DISTINCT rc.campus_name), '[]') AS nmims_campus,
-                    COALESCE(JSON_AGG(DISTINCT md.name), '[]') AS nmims_authors
+                    COALESCE(JSON_AGG(DISTINCT md.name), '[]') AS nmims_authors,
+                    r.created_by
                 FROM research_seminar r
 				INNER JOIN research_seminar_school rs ON rs.research_seminar_lid = r.id
 				INNER JOIN research_seminar_campus rc ON rc.research_seminar_lid = r.id
                 INNER JOIN research_seminar_authors ra ON ra.research_seminar_lid = r.id
                 INNER JOIN master_input_data md ON md.id = ra.author_lid 
-                WHERE r.active = TRUE AND ra.active = TRUE AND md.active = TRUE AND rs.active = TRUE AND rc.active = TRUE
+                WHERE r.created_by='${username}' AND r.active = TRUE AND ra.active = TRUE AND md.active = TRUE AND rs.active = TRUE AND rc.active = TRUE
                {{whereClause}}
-                GROUP BY r.id `,
+                GROUP BY r.id ORDER BY r.id desc`,
  
                 placeholders: [
                     {
@@ -101,10 +102,10 @@ export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, s
                         //     'ms.abbr': filters.abbr
                         },
                         searchColumns: ['r.publisher', 'r.research_date', 'r.journal_name','rs.school_name','rc.campus_name','md.name'],
-                        orderBy: {
-                          column: sort || 'r.id',
-                          order: order || 'desc',
-                       },
+                    //     orderBy: {
+                    //       column: sort || 'r.id',
+                    //       order: order || 'desc',
+                    //    },
                     }
                 ],
         page : page,

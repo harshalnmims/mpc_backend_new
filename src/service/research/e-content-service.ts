@@ -33,7 +33,7 @@ export const eContentPaginateService = async ({
     order,
     search,
     ...filters
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username:string) => {
    
  
     const data = await eContentPaginateModel({
@@ -43,7 +43,7 @@ export const eContentPaginateService = async ({
        order,
        search,
        ...filters,
-    });
+    },username);
  
     return data;
  };

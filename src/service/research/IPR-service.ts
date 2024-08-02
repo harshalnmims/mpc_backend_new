@@ -46,7 +46,7 @@ export const iprPaginateService = async ({
    search,
 
    ...filters
-}: paginationDefaultType) => {
+}: paginationDefaultType,username:string) => {
    const logger = getLogger();
 
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES ');
@@ -63,7 +63,7 @@ export const iprPaginateService = async ({
       search,
 
       ...filters,
-   });
+   },username);
 
    return data;
 };

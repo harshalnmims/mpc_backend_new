@@ -29,6 +29,8 @@ export const getConference = async (req: Request, res: Response, next: NextFunct
       ...filters
    } = { ...req.body, ...req.params, ...req.query };
 
+   let username = res.locals.username;
+
    const data = await getConferenceService({
       page,
       limit,
@@ -36,7 +38,7 @@ export const getConference = async (req: Request, res: Response, next: NextFunct
       sort,
       order,
       filters,
-   });
+   },username);
 
    console.log('data in controller after render ===>>>>>>', data);
 
