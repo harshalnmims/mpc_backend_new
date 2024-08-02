@@ -101,7 +101,7 @@ export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, s
                         //     'ms.abbr': filters.abbr
                         },
                         searchColumns: ['r.publisher', 'r.research_date', 'r.journal_name','rs.school_name','rc.campus_name','md.name'],
-                        sort: {
+                        orderBy: {
                           column: sort || 'r.id',
                           order: order || 'desc',
                        },

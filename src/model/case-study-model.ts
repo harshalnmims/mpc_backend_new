@@ -144,8 +144,8 @@ placeholders: [
         //     'ms.abbr': filters.abbr
         },
         searchColumns: ['c.title','c.edition','c.publisher','c.publish_year','c.volume_no','md.name'],
-        sort: {
-        column: sort || 'bcd.id',
+        orderBy: {
+        column: sort || 'c.id',
         order: order || 'desc',
         },
     }

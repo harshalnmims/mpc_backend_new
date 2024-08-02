@@ -132,7 +132,7 @@ export const ResearchProjectPaginateModel = async ({
                                 //     'ms.abbr': filters.abbr
                                 },
                                 searchColumns: ['rpd.title', 'sd.nmims_school', 'cd.nmims_campus', 'rpd.funding_agency', 'rpd.thrust_area'],
-                                sort: {
+                                orderBy: {
                                    column: sort || 'rpd.id',
                                    order: order || 'desc',
                                 },

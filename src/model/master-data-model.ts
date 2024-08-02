@@ -72,7 +72,7 @@ export const masterPaginateModel = async ({ page, limit, sort, order, search, fi
                         //     'ms.abbr': filters.abbr
                         },
                         searchColumns: ['md.name', 'mi.input_name'],
-                        sort: {
+                        orderBy: {
                         column: sort || 'md.id',
                         order: order || 'desc',
                         },

@@ -210,7 +210,7 @@ export const editedBookPaginateModel = async ({ page , limit, sort, order, searc
                       //     'ms.abbr': filters.abbr
                       },
                       searchColumns: ['ad.authors', 'cd.campuses', 'sd.schools','pd.publish_year','pd.title','pd.publish_year','pd.title', 'pd.isbn_no', 'pd.publisher'],
-                      sort: {
+                      orderBy: {
                       column: sort || 'pd.id',
                       order: order || 'desc',
                       },

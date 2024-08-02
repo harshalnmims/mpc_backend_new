@@ -211,7 +211,7 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
         //     'ms.abbr': filters.abbr
         },
         searchColumns: ['pd.publisher', 'sd.nmims_school', 'cd.nmims_campus','pcd.policy_cadre','pd.total_authors','pd.publish_year','pd.journal_name'],
-        sort: {
+        orderBy: {
         column: sort || 'pd.id',
         order: order || 'desc',
         },

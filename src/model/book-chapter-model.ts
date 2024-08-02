@@ -200,7 +200,7 @@ export const getBookChapterPublication = async ({
                                             'bcd.publish_year',
                                             'bcd.isbn_no',
                                             'aa.all_authors'],
-                            sort: {
+                            orderBy: {
                             column: sort || 'bcd.id',
                             order: order || 'desc',
                             },

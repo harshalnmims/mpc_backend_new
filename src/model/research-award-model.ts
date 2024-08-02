@@ -102,7 +102,7 @@ export const researchAwardPaginateModel = async ({ page , limit, sort, order, se
         //     'ms.abbr': filters.abbr
         },
         searchColumns: ['r.faculty_name','r.award_name','r.award_details','r.award_organization','ras.school_name','rac.campus_name'],
-        sort: {
+        orderBy: {
         column: sort || 'r.id',
         order: order || 'desc',
         },

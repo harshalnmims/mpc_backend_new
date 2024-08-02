@@ -173,8 +173,8 @@ export const getBookDetailsPaginateModel = async ({
                                          'bpd.publish_year',
                                          'aa.all_authors',
                                          'bpd.isbn_no'],
-                         sort: {
-                         column: sort || 'bcd.id',
+                         orderBy: {
+                         column: sort || 'bpd.id',
                          order: order || 'desc',
                          },
                      }

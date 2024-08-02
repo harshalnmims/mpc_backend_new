@@ -131,7 +131,7 @@ export const getConferenceModel = async ({ page, limit, sort, order, search, fil
                                                     'cnd.issn_no',
                                                     'cnd.conference_name',
                                                     'cnd.proceeding_published',],
-                                                sort: {
+                                                orderBy: {
                                                 column: sort || 'cnd.id',
                                                 order: order || 'desc',
                                                 },

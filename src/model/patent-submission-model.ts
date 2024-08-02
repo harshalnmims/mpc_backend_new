@@ -98,8 +98,8 @@ export const getPatentSubmissionModel = async ({
                 },
                 searchColumns: ['psg.title', 'psg.appln_no', 'psg.publication_date', 'ivt.invention_type',
                      'psg.patent_status'],
-                sort: {
-                column: sort || 'pd.id',
+               orderBy: {
+                column: sort || 'psg.id',
                 order: order || 'desc',
                 },
             }
