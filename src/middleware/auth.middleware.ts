@@ -5,7 +5,12 @@ import {NextFunction, Request,Response} from 'express'
 export const validateUserSession = async (req:Request,res:Response,next:NextFunction) => {
     
     console.log('user cookies ',req.cookies.user_id)
-    const userId = req.cookies.user_id;
+    // const userId = req.cookies.user_id;
+      const { user_id: cookieUserId } = req.cookies;
+      const { user_id: headerUserId } = req.headers;
+      const userId = cookieUserId || headerUserId;
+
+      console.log('userId ',userId)
     // const userId = undefined;
 
     if(!userId || userId === undefined){

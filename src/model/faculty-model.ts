@@ -19,7 +19,7 @@ export const facultyPaginateModel = async ({ page , limit, sort, order, search, 
                     f.created_by
                     FROM faculties f 
                     INNER JOIN faculty_type ft ON f.faculty_type_lid = ft.id
-                    WHERE f.active = TRUE AND ft.active = TRUE AND f.created_by=${username}
+                    WHERE f.active = TRUE AND ft.active = TRUE AND f.created_by='${username}'
  `,
  
        filters: {

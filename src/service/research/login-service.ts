@@ -45,7 +45,8 @@ export const loginService = async (username:string,password:string,req : Request
       res.cookie('user_id',randomId, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000, 
-        path:'/'
+        path:'/',
+        domain : process.env.COOKIE_DOMAIN
       });
          
     return {status:200,message:'LoggedIn Successfully !'}
