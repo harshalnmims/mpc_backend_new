@@ -184,7 +184,7 @@ export const getBookChapterPublication = async ({
                  INNER JOIN all_authors aa ON aa.book_chapter_id = bcd.id
                  INNER JOIN editors e ON e.book_chapter_id = bcd.id	
                  WHERE bcd.created_by = '${username}'
-                 {{whereClause}}
+                 {{whereClause}} ORDER BY bcd.id desc
                     `,
                     placeholders: [
                         {
@@ -201,10 +201,10 @@ export const getBookChapterPublication = async ({
                                             'bcd.publish_year',
                                             'bcd.isbn_no',
                                             'aa.all_authors'],
-                            orderBy: {
-                            column: sort || 'bcd.id',
-                            order: order || 'desc',
-                            },
+                            // orderBy: {
+                            // column: sort || 'bcd.id',
+                            // order: order || 'desc',
+                            // },
                         }
                     ],
        page: page || 1,

@@ -117,7 +117,7 @@ export const getConferenceModel = async ({ page, limit, sort, order, search, fil
                          INNER JOIN school_details sd ON sd.conference_id = cnd.id
                          INNER JOIN campus_details cd ON cd.conference_id = cnd.id
                          WHERE cnd.created_by = '${username}'
-                         {{whereClause}}
+                         {{whereClause}} ORDER BY cnd.id desc
                                          `,
                                          placeholders: [
                                             {
@@ -132,11 +132,11 @@ export const getConferenceModel = async ({ page, limit, sort, order, search, fil
                                                     'cd.nmims_campus',
                                                     'cnd.issn_no',
                                                     'cnd.conference_name',
-                                                    'cnd.proceeding_published',],
-                                                orderBy: {
-                                                column: sort || 'cnd.id',
-                                                order: order || 'desc',
-                                                },
+                                                    'cnd.proceeding_published'],
+                                                // orderBy: {
+                                                // column: sort || 'cnd.id',
+                                                // order: order || 'desc',
+                                                // },
                                             }
                                         ],
        page: page || 1,

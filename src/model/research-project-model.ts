@@ -124,7 +124,7 @@ export const ResearchProjectPaginateModel = async ({
                          INNER JOIN school_details sd ON rpd.id = sd.research_project_id
                          INNER JOIN campus_details cd ON rpd.id = cd.research_project_id
                          WHERE rpd.created_by='${username}'
-                         {{whereClause}}`,
+                         {{whereClause}} ORDER BY rpd.id desc`,
                          placeholders: [
                             {
                                 placeholder: '{{whereClause}}',
@@ -134,10 +134,10 @@ export const ResearchProjectPaginateModel = async ({
                                 //     'ms.abbr': filters.abbr
                                 },
                                 searchColumns: ['rpd.title', 'sd.nmims_school', 'cd.nmims_campus', 'rpd.funding_agency', 'rpd.thrust_area'],
-                                orderBy: {
-                                   column: sort || 'rpd.id',
-                                   order: order || 'desc',
-                                },
+                                // orderBy: {
+                                //    column: sort || 'rpd.id',
+                                //    order: order || 'desc',
+                                // },
                             }
                         ],
        page: page,

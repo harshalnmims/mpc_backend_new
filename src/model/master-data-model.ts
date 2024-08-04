@@ -7,50 +7,6 @@ import { number } from 'zod';
 import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
 
 
-// export const masterPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
-//    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
-
-//    const data = await paginationQueryBuilder<Session>({
-//        baseQuery: `WITH master_details AS (
-//                SELECT 
-//                    mid.id AS id,
-//                    mid.name AS master_input_name,
-//                    mi.input_name AS input_data_type
-//                FROM 
-//                    public.master_input_data mid
-//                INNER JOIN 
-//                    public.master_inputs mi
-//                ON 
-//                    mid.input_type = mi.id
-//                WHERE 
-//                    mi.active = true AND mid.active = true
-//            )
-
-//            SELECT
-//                md.id,
-//                md.input_data_type AS input_data_type,
-//                md.master_input_name AS master_input_name
-//            FROM 
-//                master_details md`,
-       
-//        filters: {
-//            // 'usi.program_lid': filters.programLid,
-//            // 'usi.session_lid': filters.sessionLid,
-//            // 'usi.subject_lid': filters.subjectLid,
-//        },
-//        page: page,
-//        pageSize: 10,
-//        search: search || '',
-//        searchColumns: ['md.master_input_name', 'md.input_data_type'],  // search in the CTE columns
-//        sort: {
-//            column: sort || 'md.id',  // sort based on the CTE columns
-//            order: order || 'desc',
-//        },
-//    });
-
-//    return data;
-// };
-
 export const masterPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
  
@@ -62,7 +18,7 @@ export const masterPaginateModel = async ({ page, limit, sort, order, search, fi
 				FROM master_input_data md
 				INNER JOIN master_inputs mi ON mi.id = md.input_type
 				WHERE mi.active = TRUE AND md.active AND md.created_by='${username}'
-                {{whereClause}}`,
+                {{whereClause}} ORDER BY md.id desc`,
         
                 placeholders: [
                     {
@@ -73,30 +29,37 @@ export const masterPaginateModel = async ({ page, limit, sort, order, search, fi
                         //     'ms.abbr': filters.abbr
                         },
                         searchColumns: ['md.name', 'mi.input_name'],
-                        orderBy: {
-                        column: sort || 'md.id',
-                        order: order || 'desc',
-                        },
+                        // orderBy: {
+                        // column: sort || 'md.id',
+                        // order: order || 'desc',
+                        // },
                     }
                 ],
         page: page,
         pageSize: 10,
         search: search || '',
-        // sort: {
-        //     column: sort || 'md.id',  // sort based on the CTE columns
-        //     order: order || 'desc',
-        // },
     });
  
     return data;
  };
 
  
- export const masterDataScrollPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+ export const masterDataScrollPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
    const data = await infiniteScrollQueryBuilder<Session>({
-      baseQuery: `SELECT DISTINCT u.id,u.first_name,u.last_name,u.username FROM public.user u INNER JOIN user_role ur ON u.id = ur.user_lid 
-      WHERE ur.role_lid = 2 AND u.active = TRUE AND ur.active = TRUE 
-      AND u.id NOT IN (SELECT DISTINCT faculty_lid FROM faculties WHERE active = TRUE AND faculty_lid IS NOT NULL)`,
+      baseQuery: `SELECT DISTINCT u.id,u.first_name,u.last_name,u.username FROM public.user u 
+                    INNER JOIN user_role ur ON u.id = ur.user_lid 
+                    INNER JOIN user_campus uc ON uc.user_lid = u.id
+                    INNER JOIN campus c ON c.id = uc.campus_lid 
+                    WHERE ur.role_lid = 2 
+                    AND uc.campus_lid IN (
+                    SELECT 
+                    DISTINCT uc.campus_lid
+                    FROM public.user u 
+                    INNER JOIN user_campus uc ON uc.user_lid = u.id
+                    WHERE u.username = '${username}' AND u.active = TRUE AND uc.active = TRUE
+                    )
+                    AND u.id NOT IN (SELECT id FROM public.user WHERE username = '${username}' AND active = TRUE)
+                    AND u.active = TRUE AND ur.active = TRUE AND uc.active = TRUE AND c.active = TRUE`,
 
       filters: {
          // 'usi.program_lid': filters.programLid,
@@ -120,8 +83,8 @@ export const masterPaginateModel = async ({ page, limit, sort, order, search, fi
 };
 
 
-export const insertMasterDataModel = async (masterData : masterDataDetails) => {
-   const data = await sql`SELECT * FROM insert_master_data(${JSON.parse(JSON.stringify(masterData))}, '1');`;
+export const insertMasterDataModel = async (masterData : masterDataDetails,username:string) => {
+   const data = await sql`SELECT * FROM insert_master_data(${JSON.parse(JSON.stringify(masterData))}, ${username});`;
 
    return data;
 };
@@ -149,12 +112,12 @@ export const masterDataEditViewModel = async(masterId : number) => {
 
 
 
-export const upsertMasterDataModel = async (masterData : updMasterDetails, masterId: number) => {
+export const upsertMasterDataModel = async (masterData : updMasterDetails, masterId: number,username:string) => {
    console.log('masterData in model ===>>>>', masterData);
    const masterDataArray = masterData.master_data;
    console.log('masterDataArray ===>>>', masterDataArray);
 
-   const data = await sql`SELECT * FROM upsert_master_data(${JSON.parse(JSON.stringify(masterData))}, '1');`;
+   const data = await sql`SELECT * FROM upsert_master_data(${JSON.parse(JSON.stringify(masterData))}, ${username});`;
 
    return data;
 };
@@ -190,5 +153,7 @@ export const masterDataDelete = async(masterId : number) => {
    message:'Failed To Delete !'
 }; 
 }
+
+
 
 

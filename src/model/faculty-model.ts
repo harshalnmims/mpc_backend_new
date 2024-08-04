@@ -40,11 +40,23 @@ export const facultyPaginateModel = async ({ page , limit, sort, order, search, 
     return data;
  };
 
- export const facultyScrollPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+ export const facultyScrollPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
    const data = await infiniteScrollQueryBuilder<Session>({
-      baseQuery: `SELECT DISTINCT u.id,u.first_name,u.last_name,u.username FROM public.user u INNER JOIN user_role ur ON u.id = ur.user_lid 
-      WHERE ur.role_lid = 2 AND u.active = TRUE AND ur.active = TRUE 
-      AND u.id NOT IN (SELECT DISTINCT faculty_lid FROM faculties WHERE active = TRUE AND faculty_lid IS NOT NULL)`,
+      baseQuery: `SELECT DISTINCT u.id,u.first_name,u.last_name,u.username FROM public.user u 
+      INNER JOIN user_role ur ON u.id = ur.user_lid 
+      INNER JOIN user_campus uc ON uc.user_lid = u.id
+      INNER JOIN campus c ON c.id = uc.campus_lid 
+      WHERE ur.role_lid = 2 
+      AND uc.campus_lid IN (
+      SELECT 
+      DISTINCT uc.campus_lid
+      FROM public.user u 
+      INNER JOIN user_campus uc ON uc.user_lid = u.id
+      WHERE u.username = '${username}' AND u.active = TRUE AND uc.active = TRUE
+      )
+      AND u.id NOT IN (SELECT DISTINCT faculty_lid FROM faculties WHERE active = TRUE AND faculty_lid IS NOT NULL)
+      AND u.id NOT IN (SELECT id FROM public.user WHERE username = '50583955' AND active = TRUE)
+      AND u.active = TRUE AND ur.active = TRUE AND uc.active = TRUE AND c.active = TRUE`,
 
       filters: {
          // 'usi.program_lid': filters.programLid,

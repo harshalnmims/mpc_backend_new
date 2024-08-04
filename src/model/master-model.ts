@@ -338,8 +338,8 @@ export const getExternalAuthors = async () => {
                             FROM public.user u 
                             INNER JOIN user_role ur ON ur.user_lid = u.id
                             INNER JOIN modules m ON m.role_lid = ur.role_lid
-                            WHERE u.username = ${username} AND ur.role_lid = (SELECT id FROM role WHERE role='role_faculty' AND active = TRUE)
-                            AND u.active = TRUE AND ur.active = TRUE AND m.active = TRUE;`;
+                            WHERE u.username = ${username} AND m.role_lid = ur.role_lid
+                            AND u.active = TRUE AND ur.active = TRUE AND m.active = TRUE`;
     return data;
  }
 

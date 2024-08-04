@@ -38,7 +38,8 @@ process.env.NODE_ENV === 'production' &&
 app.use(requestLogger);
 app.use(addChildLogger);
 
-app.use(`${process.env.BASE_URL}research`, addSessionUserToRequest, router);
+// app.use(`${process.env.BASE_URL}research`, addSessionUserToRequest, router);
+app.use(`/research`, addSessionUserToRequest, router);
 
 app.use(customErrorHandler);
 

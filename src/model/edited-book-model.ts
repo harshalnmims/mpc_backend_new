@@ -200,7 +200,7 @@ export const editedBookPaginateModel = async ({ page , limit, sort, order, searc
                 INNER JOIN school_details sd ON pd.id = sd.publication_id
                 INNER JOIN author_details ad ON pd.id = ad.publication_id
                 WHERE pd.created_by='${username}'
-                {{whereClause}}`,
+                {{whereClause}} ORDER BY pd.id desc`,
 
 
                 placeholders: [
@@ -212,10 +212,10 @@ export const editedBookPaginateModel = async ({ page , limit, sort, order, searc
                       //     'ms.abbr': filters.abbr
                       },
                       searchColumns: ['ad.authors', 'cd.campuses', 'sd.schools','pd.publish_year','pd.title','pd.publish_year','pd.title', 'pd.isbn_no', 'pd.publisher'],
-                      orderBy: {
-                      column: sort || 'pd.id',
-                      order: order || 'desc',
-                      },
+                    //   orderBy: {
+                    //   column: sort || 'pd.id',
+                    //   order: order || 'desc',
+                    //   },
                   }
               ],
                 page : page,

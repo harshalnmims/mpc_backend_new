@@ -200,6 +200,7 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                    INNER JOIN policy_details pcd ON pd.id = pcd.paper_id
                    INNER JOIN form_status fst ON pd.id = fst.paper_id
                    WHERE pd.created_by = '${username}' {{whereClause}}
+                   ORDER BY pd.id desc
  `,
  
  placeholders: [
@@ -211,10 +212,10 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
         //     'ms.abbr': filters.abbr
         },
         searchColumns: ['pd.publisher', 'sd.nmims_school', 'cd.nmims_campus','pcd.policy_cadre','pd.total_authors','pd.publish_year','pd.journal_name'],
-        orderBy: {
-        column: sort || 'pd.id',
-        order: order || 'desc',
-        },
+        // orderBy: {
+        // column: sort || 'pd.id',
+        // order: order || 'desc',
+        // },
     }
 ],
        page : page,

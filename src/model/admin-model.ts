@@ -103,6 +103,6 @@ export const getAdminLevel = async (username : string) => {
 }
 
 export const adminDashboardModulesModel = async () => {
-  const data = await sql`SELECT * FROM admin_modules WHERE active = TRUE`;
+  const data = await sql`SELECT * FROM admin_modules WHERE active = TRUE ORDER BY id`;
   return data;
 }

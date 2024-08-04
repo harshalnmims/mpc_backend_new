@@ -3,20 +3,13 @@ import {
     masterDataEditViewService,
     upsertMasterInputService, viewMasterDataService, deleteMasterDataService
  } from '$service/research/master-data-service';
- 
  import { getLogger } from '$config/logger-context';
- 
  import { Request, Response, NextFunction } from 'express';
- 
  import { validateWithZod } from '$middleware/validation.middleware';
- 
  import { filesArraySchema, updMasterDetails } from '$validations/research.valid';
  import { masterDataObj } from '$validations/research.valid';
  
- import AWS from 'aws-sdk';
  
- import { AwsData } from 'types/base.types'; 
-
 
  export const masterDataPaginate = async (req: Request, res: Response, next: NextFunction) => {
     const {
@@ -71,6 +64,8 @@ export const masterDataScrollPaginate = async (req: Request, res: Response, next
       ...filters
    } = { ...req.body, ...req.params, ...req.query };
 
+   let username = res.locals.username;
+
    const data = await masterDataScrollPaginateService({
       page,
 
@@ -83,7 +78,7 @@ export const masterDataScrollPaginate = async (req: Request, res: Response, next
       order,
 
       filters,
-   });
+   },username);
 
    console.log('data responce in controller ====>>>>>', data);
 
@@ -91,7 +86,8 @@ export const masterDataScrollPaginate = async (req: Request, res: Response, next
 };
  
 export const renderMasterData = async (req: Request, res: Response, next: NextFunction) => {
-    const data = await masterInputTypeService();
+    let username = res.locals.username;
+    const data = await masterInputTypeService(username);
  
     console.log('master data response', data);
 
@@ -107,9 +103,10 @@ export const insertMasterInput = async(req: Request, res: Response, next: NextFu
    let data;
    
    let result = validateWithZod(masterDataObj, masterData.master_data[0]);
+   let username = res.locals.username;
    console.log('result ===>>>>>>', result);
    if (result.success) {
-      data = await insertMasterInputService(masterData);
+      data = await insertMasterInputService(masterData,username);
    }
    return res.status(200).json(data);
    
@@ -131,10 +128,11 @@ export const updateMasterInput = async (req: Request, res: Response, next: NextF
    const masterData : any = req.body;
    let data;
    let result = validateWithZod(updMasterDetails, masterData.master_data);
+   let username = res.locals.username;
    console.log('result ===>>>>>>', result);
    
    if (result.success) {
-     data = await upsertMasterInputService(masterData);
+     data = await upsertMasterInputService(masterData,username);
    }
    return res.status(200).json(data);
 } 

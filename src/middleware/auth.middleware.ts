@@ -10,8 +10,8 @@ export const validateUserSession = async (req:Request,res:Response,next:NextFunc
       const { user_id: headerUserId } = req.headers;
       const userId = cookieUserId || headerUserId;
 
+      // const userId = undefined;
       console.log('userId ',userId)
-    // const userId = undefined;
 
     if(!userId || userId === undefined){
       return res.status(401).json({status:401,message:'Invalid Request'})

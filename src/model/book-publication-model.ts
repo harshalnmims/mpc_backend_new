@@ -156,7 +156,7 @@ export const getBookDetailsPaginateModel = async ({
                   INNER JOIN campus_details cd ON cd.book_id = bpd.id
                   INNER JOIN all_authors aa ON aa.book_id = bpd.id 
                   WHERE bpd.created_by = '${username}'	 
-                  {{whereClause}}
+                  {{whereClause}} ORDER BY bpd.id desc
                   `,
       
    
@@ -175,10 +175,10 @@ export const getBookDetailsPaginateModel = async ({
                                          'bpd.publish_year',
                                          'aa.all_authors',
                                          'bpd.isbn_no'],
-                         orderBy: {
-                         column: sort || 'bpd.id',
-                         order: order || 'desc',
-                         },
+                        //  orderBy: {
+                        //  column: sort || 'bpd.id',
+                        //  order: order || 'desc',
+                        //  },
                      }
                  ],
       page: page || 1,

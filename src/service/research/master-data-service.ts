@@ -1,7 +1,8 @@
 import { getLogger } from '$config/logger-context';
 import { 
     masterPaginateModel, masterDataScrollPaginateModel, insertMasterDataModel, masterDataEditViewModel,
-    upsertMasterDataModel, viewMasterDataModel, masterDataDelete
+    upsertMasterDataModel, viewMasterDataModel, masterDataDelete,
+
  } from '$model/master-data-model';
 import { paginationDefaultType } from 'types/db.default';
 import {getMasterDatatype, getPatentStatus
@@ -44,7 +45,7 @@ export const masterDataScrollPaginateService = async ({
    order,
    search,
    ...filters
-}: paginationDefaultType) => {
+}: paginationDefaultType,username:string) => {
    const logger = getLogger();
    logger.info('INSIDE GET SUBJECT RESEARCH SERVICES');
 
@@ -55,23 +56,23 @@ export const masterDataScrollPaginateService = async ({
       order,
       search,
       ...filters,
-   });
+   },username);
 
    return data;
  }
  
 
 
-export const masterInputTypeService = async () => {
+export const masterInputTypeService = async (username : string) => {
    const masterInputData = await getMasterDatatype();
    const patentStatus = await getPatentStatus();
    console.log('masterData ====>>>>>', masterInputData)
    return {masterInputData, patentStatus}
 }
 
-export const insertMasterInputService = async(masterData : masterDataDetails ) => {
+export const insertMasterInputService = async(masterData : masterDataDetails,username:string) => {
    console.log('masterData data value inside servive ===>>>', masterData);
-   const data = await insertMasterDataModel(masterData);
+   const data = await insertMasterDataModel(masterData,username);
    return data
 
 } 
@@ -87,7 +88,7 @@ export const masterDataEditViewService = async(masterId : number ) => {
 }
 
 
-export const upsertMasterInputService = async(masterData : updMasterDetails) => {
+export const upsertMasterInputService = async(masterData : updMasterDetails,username:string) => {
    const masterDataArray : any = {
       master_data: {
         ...masterData.master_data,
@@ -99,7 +100,7 @@ export const upsertMasterInputService = async(masterData : updMasterDetails) => 
    let masterId = Number(masterDataArray.master_data.master_id);
    console.log('masterId ==>>>>', masterId);
 
-   const data = await upsertMasterDataModel(masterDataArray, masterId);
+   const data = await upsertMasterDataModel(masterDataArray, masterId,username);
    return data
 
 } 

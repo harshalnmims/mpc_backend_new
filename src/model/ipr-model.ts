@@ -217,7 +217,7 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
  
                      INNER JOIN campus_details cd ON ipd.id = cd.ipr_id
                      WHERE ipd.created_by='${username}'
-                     {{whereClause}}
+                     {{whereClause}} ORDER BY ipd.id desc
  
          `,
  
@@ -240,10 +240,10 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
           'ipd.filed_date',
  
           'ipd.institute_affiliation'],
-                sort: {
-                column: sort || 'ipd.id',
-                order: order || 'desc',
-                },
+                // sort: {
+                // column: sort || 'ipd.id',
+                // order: order || 'desc',
+                // },
             }
         ],
  

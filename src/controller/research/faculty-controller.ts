@@ -40,6 +40,8 @@ export const facultyScrollPaginateController = async (req: Request, res: Respons
        search = '',
        ...filters
     } = { ...req.body, ...req.params, ...req.query };
+
+    let username = res.locals.username
  
     const data = await facultyScrollPaginateService({
        page,
@@ -48,7 +50,7 @@ export const facultyScrollPaginateController = async (req: Request, res: Respons
        sort,
        order,
        filters,
-    });
+    },username);
  
     return res.status(200).json(data);
  };

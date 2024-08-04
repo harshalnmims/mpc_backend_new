@@ -87,7 +87,7 @@ export const getPatentSubmissionModel = async ({
                      INNER JOIN invention_type ivt ON ivt.id = psg.invention_type AND ivt.active = TRUE
                      INNER JOIN patent_status ps ON ps.id = psg.patent_status AND ps.active = TRUE
                  WHERE 
-                     psg.active = TRUE AND psg.created_by='${username}' {{whereClause}}
+                     psg.active = TRUE AND psg.created_by='${username}' {{whereClause}} ORDER BY psg.id desc
          `,
          placeholders: [
             {
@@ -99,10 +99,10 @@ export const getPatentSubmissionModel = async ({
                 },
                 searchColumns: ['psg.title', 'psg.appln_no', 'psg.publication_date', 'ivt.invention_type',
                      'psg.patent_status'],
-               orderBy: {
-                column: sort || 'psg.id',
-                order: order || 'desc',
-                },
+            //    orderBy: {
+            //     column: sort || 'psg.id',
+            //     order: order || 'desc',
+            //     },
             }
         ],
        page: page,

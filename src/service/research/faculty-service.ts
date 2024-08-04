@@ -32,7 +32,7 @@ export const facultyPaginateService = async ({
    order,
    search,
    ...filters
-}: paginationDefaultType) => {
+}: paginationDefaultType,username:string) => {
   
    const data = await facultyScrollPaginateModel({
       page,
@@ -41,7 +41,7 @@ export const facultyPaginateService = async ({
       order,
       search,
       ...filters,
-   });
+   },username);
 
    return data;
 };
