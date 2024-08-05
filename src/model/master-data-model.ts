@@ -142,8 +142,8 @@ export const viewMasterDataModel = async(masterId : number) => {
 }
 
 
-export const masterDataDelete = async(masterId : number) => {
-   const data = await sql`UPDATE master_input_data SET active = false,modified_date=now(),modified_by='1' WHERE id = ${masterId}`;
+export const masterDataDelete = async(masterId : number,username:string) => {
+   const data = await sql`UPDATE master_input_data SET active = false,modified_date=now(),modified_by=${username} WHERE id = ${masterId}`;
 
    return data.count > 0 ? {
    status:200,

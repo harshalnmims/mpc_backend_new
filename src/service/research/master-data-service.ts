@@ -110,8 +110,8 @@ export const viewMasterDataService = async(masterId : number) => {
    return data;
 }
 
-export const deleteMasterDataService = async(masterId : number) => {
-   const data = await masterDataDelete(masterId);
+export const deleteMasterDataService = async(masterId : number,username:string) => {
+   const data = await masterDataDelete(masterId,username);
    return data;
 }
 

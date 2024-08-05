@@ -153,8 +153,10 @@ export const deleteMasterDataForm = async(req: Request, res: Response, next: Nex
    const id = req.query.id;
    const masterId = Number(id);
    console.log('masterId ===>>>>', masterId);
+
+   let username = res.locals.username;
    
-   const data = await deleteMasterDataService(masterId);
+   const data = await deleteMasterDataService(masterId,username);
    console.log('data respoinse in controller ===>>>>>', data);
 
    return res.status(200).json(data);
