@@ -44,6 +44,7 @@ export const insertSapDataFunctions = {
     permanent_faculty: insertPermanentFacultyMaster,
     visiting_faculty: insertVisitingFacultyMaster,
     sap_student_event: insertStudentEventMaster,
+    sap_event_master: insertStudentEventMaster,
 //     admin_program: insertAdminProgram,
    //  special_user: insertSpecialUser,
 }
