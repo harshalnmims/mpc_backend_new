@@ -26,7 +26,7 @@ export const getAdminSchool = async (username : string) => {
   return data;
 }
 
-export const adminPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+export const adminPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
   console.log('admin filters ',filters)
     
     if(filters.campus === 'All'){

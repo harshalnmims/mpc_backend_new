@@ -2,7 +2,7 @@ import logger from '$config/logger';
 import { insertSapDataFunctions, tables } from '$constants/topics.constants';
 import { ConsumerSubscribeTopics, Kafka } from 'kafkajs';
 
-const clientId = 'mpc';
+const clientId = 'research';
 const brokers = [process.env.KAFKA_BROKER as string];
 
 const kafka = new Kafka({

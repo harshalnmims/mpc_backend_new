@@ -18,7 +18,7 @@ export const adminPaginateService = async ({
     order,
     search,
     ...filters
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username:string) => {
    
     const data = await adminPaginateModel({
        page,
@@ -27,7 +27,7 @@ export const adminPaginateService = async ({
        order,
        search,
        ...filters,
-    });
+    },username);
  
     return data;
  };
