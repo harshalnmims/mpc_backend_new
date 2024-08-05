@@ -217,6 +217,7 @@ export const journalApprovalInsertController = async (req: Request, res: Respons
   const approvalData = req.body.approval_data;
   let userId = res.locals.username;
   let result = validateWithZod(approvalObj,approvalData);
+  console.log('approval data ',JSON.stringify(approvalData))
   let data;
   if(result.success){
    data = await journalApprovalInsertService(approvalData,userId);
