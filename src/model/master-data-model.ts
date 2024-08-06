@@ -196,7 +196,7 @@ export const approvalUserListForAdmin = async ({ page, limit, sort, order, searc
       let adminQuery;
       let role = userRole.length > 0 ? userRole[0].role  : '';
 
-      if(role === 'role_faculty') {
+      if(role === 'role_admin') {
        adminQuery = `SELECT 
                     pu.first_name, 
                     pu.last_name, 
@@ -230,7 +230,7 @@ export const approvalUserListForAdmin = async ({ page, limit, sort, order, searc
                     pu.username,fs.id`
       }else{
 
-        adminQuery = `SELECT 
+    adminQuery = `SELECT 
 	pu.first_name, 
 	pu.last_name, 
 	pu.username,
@@ -251,49 +251,17 @@ export const approvalUserListForAdmin = async ({ page, limit, sort, order, searc
 	INNER JOIN form_status fs ON jpa.form_status_lid = fs.id
 	WHERE (fs.status_lid = 2 AND fs.level_lid = 1) 
 	OR (fs.status_lid = 3 AND fs.level_lid = 2) OR (fs.status_lid = 2 AND fs.level_lid = 2) AND uc.campus_lid IN 
-	(SELECT DISTINCT uc.campus_lid FROM public.user u INNER JOIN user_campus uc ON u.id = uc.user_lid WHERE u.username=${username}
-	 AND u.active = TRUE 
+	(SELECT DISTINCT uc.campus_lid FROM public.user u INNER JOIN user_campus uc ON u.id = uc.user_lid WHERE u.username='${username}' AND u.active = TRUE 
 	 AND uc.active = TRUE) 
 	 AND pu.active = TRUE AND ur.active = TRUE AND uc.active = TRUE AND c.active = TRUE AND o.active = TRUE 
 	 AND jpa.active = TRUE
 	 GROUP BY jpa.id,pu.first_name, 
 	pu.last_name, 
-	pu.username,fs.id`;
+	pu.username,fs.id`
       }
   
     const data = await infiniteScrollQueryBuilder({
-       baseQuery: ` SELECT 
-                    pu.first_name, 
-                    pu.last_name, 
-                    pu.username,
-                    jpa.id as research_form_id,
-                    fs.id AS form_status_id,
-                    CASE
-                    WHEN fs.id IS NOT NULL THEN
-                    CASE 
-                    WHEN (fs.status_lid = 3 AND fs.level_lid = 1) THEN (SELECT abbr FROM status WHERE abbr = 're' AND active = true)
-                    ELSE (SELECT abbr FROM status WHERE abbr = 'cp' AND active = true)
-                    END
-                    ELSE
-                    (SELECT abbr FROM status WHERE abbr = 'pd' AND active = true)
-                    END AS status
-                    FROM 
-                    ${tableObj[tableId]} jpa
-                    INNER JOIN public.user pu ON pu.username = jpa.created_by
-                    INNER JOIN user_role ur ON ur.user_lid = pu.id 
-                    INNER JOIN user_campus uc ON uc.user_lid = pu.id
-                    INNER JOIN campus c ON c.id = uc.campus_lid
-                    INNER JOIN organization o ON o.id = c.organization_lid
-                    LEFT JOIN form_status fs ON jpa.form_status_lid = fs.id
-                    WHERE ur.role_lid = 2 AND uc.campus_lid IN 
-                    (SELECT DISTINCT uc.campus_lid FROM public.user u INNER JOIN user_campus uc ON u.id = uc.user_lid WHERE u.username='${username}' AND u.active = TRUE 
-                    AND uc.active = TRUE) 
-                    AND pu.active = TRUE AND ur.active = TRUE AND uc.active = TRUE AND c.active = TRUE AND o.active = TRUE 
-                    AND jpa.active = TRUE
-                    GROUP BY jpa.id,pu.first_name, 
-                    pu.last_name, 
-                    pu.username,fs.id
-  `,
+       baseQuery: `${adminQuery}`,
   
        filters: {
           'c.id': filters.campus ,
