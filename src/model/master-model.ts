@@ -315,7 +315,7 @@ export const getExternalAuthors = async () => {
  } 
   
  export const getFormLevels = async () => {
-    const data = await sql`SELECT * FROM form_status WHERE active = TRUE`;
+    const data = await sql`SELECT * FROM status WHERE active = TRUE`;
     return data;
  }
 

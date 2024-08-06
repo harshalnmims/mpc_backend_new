@@ -141,7 +141,8 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                          jpa.impact_factor,
                          jpa.publish_year,
                          jpa.total_authors,
-                         jpa.created_by
+                         jpa.created_by,
+	                     jpa.form_status_lid
                       FROM journal_paper_article jpa
                       WHERE jpa.active=TRUE
                    ),
@@ -174,14 +175,18 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                       GROUP BY jpa.id
                    ),
                    form_status AS (
-                     SELECT 
-                     jpa.id AS paper_id,  
-                     fs.abbr  
-                     FROM journal_paper_article jpa
-                     INNER JOIN journal_form_status jfs ON jpa.id = jfs.journal_lid
-                     INNER JOIN form_status fs ON fs.id = jfs.status_lid 
-                     WHERE jfs.journal_lid = jpa.id AND jfs.active = TRUE 
-                     AND fs.active = TRUE
+                      SELECT 
+						jpa.id AS paper_id,
+						COALESCE(
+							(SELECT fs.abbr 
+							 FROM form_status jfs 
+							 INNER JOIN status fs ON fs.id = jfs.status_lid 
+							 WHERE jfs.id = jpa.form_status_lid 
+							 AND jfs.active = TRUE 
+							 AND fs.active = TRUE),
+							(SELECT abbr FROM status WHERE abbr = 'pd' AND active = TRUE)
+						) AS abbr
+					FROM journal_paper_article jpa
                    )
                    SELECT
                       pd.id,
