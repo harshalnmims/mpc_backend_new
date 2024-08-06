@@ -10,6 +10,8 @@ import { approvalObj, filesArraySchema } from '$validations/research.valid';
 import { journalPaper } from '$validations/research.valid';
 import AWS from 'aws-sdk';
 import { AwsData } from 'types/base.types';
+import { approvalUserListForAdmin } from '$model/master-data-model';
+import { getAdminLevel } from '$model/admin-model';
 
 
 
@@ -193,6 +195,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 export const journalFormInfiniteController  = async (req: Request, res: Response, next: NextFunction) => {
  
    const {
+      tableId = 0,
       page = 1,
       limit = 10,
       sort = '',
@@ -201,14 +204,16 @@ export const journalFormInfiniteController  = async (req: Request, res: Response
       ...filters
    } = { ...req.body, ...req.params, ...req.query };
 
-   const data = await journalFormInfiniteService({
+   let username = res.locals.username;
+
+   const data = await approvalUserListForAdmin({
       page,
       limit,
       search,
       sort,
       order,
       filters,
-   });
+   },username, tableId);
 
    return res.status(200).json(data);
 };

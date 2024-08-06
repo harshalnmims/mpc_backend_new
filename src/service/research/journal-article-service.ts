@@ -172,7 +172,7 @@ export const journalFormInfiniteService = async ({
     order,
     search,
     ...filters
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username:string, tableId: number) => {
    
     const data = await journalFormInfiniteModel({
        page,
@@ -181,7 +181,7 @@ export const journalFormInfiniteService = async ({
        order,
        search,
        ...filters,
-    });
+    },username, tableId);
  
     return data;
  };

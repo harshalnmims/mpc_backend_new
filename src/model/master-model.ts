@@ -8,10 +8,10 @@ export const renderModal = async (abbr : string) => {
     return data.count > 0 ? {
        status:200,
        message:data
-   } : {
+    } : {
        status:400,
        message:'Failed To Fetch!'
-   }
+    }
  }
  
  export const getPolicyCadre = async () => {
@@ -20,10 +20,10 @@ export const renderModal = async (abbr : string) => {
     return data.count > 0 ? {
        status:200,
        message:data
-   } : {
+    } : {
        status:400,
        message:'Failed To Fetch!'
-   }
+    }
  }
 
  export const getNmimsAuthors = async () => {
@@ -33,10 +33,10 @@ export const renderModal = async (abbr : string) => {
     return data.count > 0 ? {
        status:200,
        message:data
-   } : {
+    } : {
        status:400,
        message:'Failed To Fetch!'
-   }
+    }
  }
 
 export const getExternalAuthors = async () => {
@@ -46,10 +46,10 @@ export const getExternalAuthors = async () => {
     return data.count > 0 ? {
        status:200,
        message:data
-   } : {
+    } : {
        status:400,
        message:'Failed To Fetch!'
-   }
+    }
  } 
 
 

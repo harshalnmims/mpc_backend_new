@@ -1,6 +1,7 @@
 import {
   masterDataPaginate, renderMasterData, masterDataScrollPaginate, insertMasterInput,
-  masterDataEditViewForm, updateMasterInput, viewMasterDataForm, deleteMasterDataForm
+  masterDataEditViewForm, updateMasterInput, viewMasterDataForm, deleteMasterDataForm,
+  adminApproval
  } from '$controller/research/master-data-controller';
 import { validateUserSession } from '$middleware/auth.middleware';
  
@@ -24,5 +25,6 @@ import { validateUserSession } from '$middleware/auth.middleware';
  masterDataRoutes.post('/master-input-data-update',asyncErrorHandler(validateUserSession), asyncErrorHandler(updateMasterInput));
  masterDataRoutes.get('/master-input-data-form-view',asyncErrorHandler(validateUserSession), asyncErrorHandler(viewMasterDataForm));
  masterDataRoutes.get('/master-input-data-delete',asyncErrorHandler(validateUserSession), asyncErrorHandler(deleteMasterDataForm));
+ masterDataRoutes.post('/approve-reject',asyncErrorHandler(validateUserSession), asyncErrorHandler(adminApproval));
 
  export default masterDataRoutes;

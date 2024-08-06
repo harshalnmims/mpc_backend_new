@@ -8,4 +8,5 @@ adminRouter.get('/admin-render-data',asyncErrorHandler(validateUserSession),asyn
 adminRouter.get('/admin-paginate',asyncErrorHandler(validateUserSession),asyncErrorHandler(adminPaginateController));
 adminRouter.get('/admin-dashboard-modules',asyncErrorHandler(validateUserSession),asyncErrorHandler(adminDashboardModulesController))
 
+
 export default adminRouter
