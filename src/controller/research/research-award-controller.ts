@@ -108,8 +108,10 @@ export const deleteResearchAwardForm = async (req : Request, res : Response, nex
 }
 
 export const researchAwardRenderController = async (req : Request, res : Response, next : NextFunction) => {
+    let username = res.locals.username
+
    
-    const data = await researchAwardRenderService();
+    const data = await researchAwardRenderService(username);
     return res.status(200).json(data)
 
 }
@@ -125,7 +127,9 @@ export const researchAwardViewController = async (req : Request, res : Response,
 export const researchAwardUpdViewController = async (req : Request, res : Response, next : NextFunction) => {
    
     let id = req.query.id;
-    const data = await researchAwardUpdViewService(Number(id));
+    let username = res.locals.username
+
+    const data = await researchAwardUpdViewService(Number(id), username);
     return res.status(200).json(data)
 
 }

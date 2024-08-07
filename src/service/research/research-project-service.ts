@@ -56,16 +56,16 @@ export const getResearchProjectService = async ({
    return data;
 };
 
-export const researchProjectRenderService = async () => {
+export const researchProjectRenderService = async (username : string) => {
    const logger = getLogger();
 
    const externalAuthors = await getExternalFaculty();
 
    const internalAuthors = await getEnternalFaculty();
 
-   const school = await getSchool();
+   const school = await getSchool(username);
 
-   const campus = await getCampus();
+   const campus = await getCampus(username);
 
    const status = await getResearchProjectStatus();
 
@@ -105,9 +105,9 @@ export const researchProjectEditViewService = async (researchProjectId: number,u
 
    const internalAuthors = await getEnternalFaculty();
 
-   const school = await getSchool();
+   const school = await getSchool(username);
 
-   const campus = await getCampus();
+   const campus = await getCampus(username);
 
    const status = await getResearchProjectStatus();
 

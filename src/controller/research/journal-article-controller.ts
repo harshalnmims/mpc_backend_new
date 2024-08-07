@@ -158,9 +158,12 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  }
 
  export const journalRenderData = async (req : Request , res : Response , next  : NextFunction) => {
+   
+   let username = res.locals.username;
 
-   const data = await journalRenderService();
-   console.log('journal data ',JSON.stringify(data));
+   console.log('userlid ===>>>', res.locals)
+   const data = await journalRenderService(username);
+   console.log('journal data in controller',data);
    return res.status(200).json(data);
  }
 
@@ -180,7 +183,8 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
  export const journalUpdateViewController = async (req : Request , res : Response , next  : NextFunction) => {
     const id  = req.query.id ;
-    const data = await journalUpdateViewService(Number(id));
+    let username = res.locals.username;
+    const data = await journalUpdateViewService(Number(id), username);
     return res.status(200).json(data);
  
  }

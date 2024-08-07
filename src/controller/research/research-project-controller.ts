@@ -51,7 +51,9 @@ export const getResearchProjectForm = async (req: Request, res: Response, next: 
 };
 
 export const researchProjectRenderData = async (req: Request, res: Response, next: NextFunction) => {
-   const data = await researchProjectRenderService();
+   let username = res.locals.username
+
+   const data = await researchProjectRenderService(username);
 
    console.log('journal data ', JSON.stringify(data));
 

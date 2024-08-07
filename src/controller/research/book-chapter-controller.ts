@@ -41,7 +41,9 @@ export const getBookChapter = async (req: Request, res: Response, next: NextFunc
 
 export const renderBookChapterList = async(req: Request, res: Response, next: NextFunction) => {
     const logger = getLogger();
-    const data = await renderBookChapterLists();
+    let username = res.locals.username;
+
+    const data = await renderBookChapterLists(username);
     return res.status(200).json(data);
 
 }
@@ -73,9 +75,11 @@ export const bookChapterPublicationEditviewForm = async (req: Request, res: Resp
     const logger = getLogger();
     const booChapterId =  req.query.id;
     const id = Number(booChapterId);
+    let username = res.locals.username;
+
  
     console.log('id in controoler comming from frontend ====>>>>>', id);
-    const data = await bookChapterPublicationEditViewService(id);
+    const data = await bookChapterPublicationEditViewService(id, username);
     console.log('data data responce in controller ===>>>>', data)
     return res.status(200).json(data);
  

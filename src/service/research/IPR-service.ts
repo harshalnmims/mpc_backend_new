@@ -68,23 +68,23 @@ export const iprPaginateService = async ({
    return data;
 };
 
-export const iprRenderService = async () => {
+export const iprRenderService = async (username: string) => {
    const logger = getLogger();
 
    const externalAuthors = await getExternalFaculty();
 
    const internalAuthors = await getEnternalFaculty();
 
-   const school = await getSchool();
+   const school = await getSchool(username);
 
-   const campus = await getCampus();
+   const campus = await getCampus(username);
 
    const status = await getPatentStatus();
 
    const inventionType = await getInventionType();
 
    const sdgGoals = await getSdgGoals();
-   const applicantNames = await getApplicantNames();
+   const applicantNames = await getApplicantNames(username);
 
    return {
       school,
@@ -117,7 +117,7 @@ export const insertIPRService = async (
    return data;
 };
 
-export const iprEditViewService = async (iprId: number) => {
+export const iprEditViewService = async (iprId: number, username: string) => {
    const logger = getLogger();
 
    const iprDataList = await iprEditViewModel(iprId);
@@ -125,16 +125,16 @@ export const iprEditViewService = async (iprId: number) => {
 
    const internalAuthors = await getEnternalFaculty();
 
-   const school = await getSchool();
+   const school = await getSchool(username);
 
-   const campus = await getCampus();
+   const campus = await getCampus(username);
 
    const status = await getPatentStatus();
 
    const inventionType = await getInventionType();
 
    const sdgGoals = await getSdgGoals();
-   const applicantNames = await getApplicantNames();
+   const applicantNames = await getApplicantNames(username);
 
    return {
       iprDataList,
