@@ -8,7 +8,7 @@ import { BrandingAdvertisement } from 'types/research.types';
 export const getPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username :string) => {
     const data = await paginationQueryBuilder<Session>({
         baseQuery: `SELECT 
-                     id,
+                     b.id,
                      COALESCE(faculty_recognition, 'No Data Filled!') AS faculty_recognition,
                      COALESCE(faculty_awards, 'No Data Filled!') AS faculty_awards,
                      COALESCE(staff_awards, 'No Data Filled!') AS staff_awards,
@@ -19,9 +19,19 @@ export const getPaginateModel = async ({ page , limit, sort, order, search, filt
                      COALESCE(organizing_conference, 'No Data Filled!') AS organizing_conference,
                      COALESCE(newspaper_article, 'No Data Filled!') AS newspaper_article,
                      COALESCE(student_event, 'No Data Filled!') AS student_event,
-                     created_by
-                     FROM branding_advertisement
-                     WHERE active = true AND created_by = '${username}'`,
+                     b.created_by,
+                     b.form_status_lid,
+                     CASE 
+                        WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                        ELSE CASE 
+                           WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                           ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                        END
+                     END AS status,
+                     fs.id AS form_status_lid
+                     FROM branding_advertisement b
+					      LEFT JOIN form_status fs ON fs.id = b.form_status_lid
+                     WHERE b.active = true AND b.created_by = '${username}'`,
   
         filters: {
            // 'usi.program_lid': filters.programLid,

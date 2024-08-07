@@ -85,14 +85,22 @@ export const researchAwardPaginateModel = async ({ page , limit, sort, order, se
                 COALESCE(r.award_name, 'No Data Filled!') AS award_name,
                 COALESCE(r.award_details, 'No Data Filled!') AS award_details,
                 COALESCE(r.award_organization, 'No Data Filled!') AS award_organization,
-                r.created_by
+                r.created_by,
+                CASE WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                    ELSE CASE 
+                        WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                        ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                    END
+                END AS status,
+                fs.id AS form_status_lid
                 FROM research_award r
                 INNER JOIN research_award_school ras ON ras.research_award_lid = r.id
                 INNER JOIN research_award_campus rac ON ras.research_award_lid = r.id
+                LEFT JOIN form_status fs ON fs.id = r.form_status_lid
                 WHERE r.active = TRUE AND rac.active = TRUE AND ras.active = TRUE
                 AND r.created_by = '${username}'
                 {{whereClause}}
-                GROUP BY r.id ORDER BY r.id desc
+                GROUP BY r.id, fs.id ORDER BY r.id desc
  `,
  
  placeholders: [

@@ -83,7 +83,8 @@ export const getConferenceModel = async ({ page, limit, sort, order, search, fil
                                  c.conference_name,
                                  c.proceeding_published,
                                  c.issn_no,
-                                 c.created_by
+                                 c.created_by,
+                                 c.form_status_lid
                              FROM conference c
                              WHERE c.active = true
                          ),
@@ -112,10 +113,19 @@ export const getConferenceModel = async ({ page, limit, sort, order, search, fil
                              cnd.proceeding_published,
                              cnd.issn_no,
                              sd.nmims_school,
-                             cd.nmims_campus
+                             cd.nmims_campus,
+                              CASE 
+                                WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                                ELSE CASE 
+                                    WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                                    ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                                END
+                            END AS status,
+                            fs.id AS form_status_lid
                          FROM conference_details cnd
                          INNER JOIN school_details sd ON sd.conference_id = cnd.id
                          INNER JOIN campus_details cd ON cd.conference_id = cnd.id
+                         LEFT JOIN form_status fs ON fs.id = cnd.form_status_lid
                          WHERE cnd.created_by = '${username}'
                          {{whereClause}} ORDER BY cnd.id desc
                                          `,

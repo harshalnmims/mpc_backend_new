@@ -173,20 +173,6 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                       INNER JOIN policy_cadre pc ON pc.id = jpc.policy_cadre_lid
                       WHERE jpa.active=TRUE AND jpc.active=TRUE AND pc.active=TRUE
                       GROUP BY jpa.id
-                   ),
-                   form_status AS (
-                      SELECT 
-						jpa.id AS paper_id,
-						COALESCE(
-							(SELECT fs.abbr 
-							 FROM form_status jfs 
-							 INNER JOIN status fs ON fs.id = jfs.status_lid 
-							 WHERE jfs.id = jpa.form_status_lid 
-							 AND jfs.active = TRUE 
-							 AND fs.active = TRUE),
-							(SELECT abbr FROM status WHERE abbr = 'pd' AND active = TRUE)
-						) AS abbr
-					FROM journal_paper_article jpa
                    )
                    SELECT
                       pd.id,
@@ -198,12 +184,19 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                       sd.nmims_school,
                       cd.nmims_campus,
                       pcd.policy_cadre,
-                      fst.abbr AS status
+                       CASE 
+                        WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                        ELSE CASE 
+                            WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                            ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                        END
+                    END AS status,
+                    fs.id AS form_status_lid
                    FROM paper_details pd
                    INNER JOIN school_details sd ON pd.id = sd.paper_id
                    INNER JOIN campus_details cd ON pd.id = cd.paper_id
                    INNER JOIN policy_details pcd ON pd.id = pcd.paper_id
-                   INNER JOIN form_status fst ON pd.id = fst.paper_id
+                   LEFT JOIN form_status fs ON fs.id = pd.form_status_lid
                    WHERE pd.created_by = '${username}' {{whereClause}}
                    ORDER BY pd.id desc
  `,

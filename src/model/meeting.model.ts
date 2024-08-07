@@ -8,16 +8,25 @@ import { MeetingStakeholders } from 'types/research.types';
 export const getPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     const data = await paginationQueryBuilder<Session>({
         baseQuery: `SELECT 
-                     id,
+                     m.id,
                      COALESCE(ranking, 'No Data Filled!') AS ranking,
                      COALESCE(accreditation, 'No Data Filled!') AS accreditation,
                      COALESCE(achievements, 'No Data Filled!') AS achievements,
                      COALESCE(convocation, 'No Data Filled!') AS convocation,
                      COALESCE(inaugral_program, 'No Data Filled!') AS inaugral_program,
                      COALESCE(events, 'No Data Filled!') AS events,
-                     created_by
-                  FROM meeting_stackholders
-                  WHERE active = true AND created_by = '${username}'`,
+                     m.created_by,
+                     CASE 
+                     WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                     ELSE CASE 
+                           WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                           ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                     END
+                  END AS status,
+                  fs.id AS form_status_lid
+                  FROM meeting_stackholders m
+                  LEFT JOIN form_status fs ON fs.id = m.form_status_lid
+                  WHERE m.active = true AND m.created_by = '${username}'`,
   
         filters: {
            // 'usi.program_lid': filters.programLid,

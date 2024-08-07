@@ -7,15 +7,24 @@ import { TeachingExcellance } from 'types/research.types';
 export const getPaginateModel = async ({ page , limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
     const data = await paginationQueryBuilder<Session>({
         baseQuery: `SELECT 
-                     id,
+                     t.id,
                      COALESCE(pedagogy_innovation, 'No Data Filled!') AS pedagogy_innovation,
                      COALESCE(fdp_program, 'No Data Filled!') AS fdp_program,
                      COALESCE(student_workshops, 'No Data Filled!') AS student_workshops,
                      COALESCE(niche, 'No Data Filled!') AS niche,
                      COALESCE(program_orientation, 'No Data Filled!') AS program_orientation,
-                     created_by
-                  FROM teaching_excellance
-                  WHERE created_by = '${username}' AND active = true`,
+                     t.created_by,
+                     CASE 
+                     WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                     ELSE CASE 
+                           WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                           ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                     END
+                  END AS status,
+                  fs.id AS form_status_lid
+                  FROM teaching_excellance t
+                  LEFT JOIN form_status fs ON fs.id = t.form_status_lid
+                  WHERE t.created_by = '${username}' AND t.active = true`,
   
         filters: {
            // 'usi.program_lid': filters.programLid,

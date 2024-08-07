@@ -357,3 +357,9 @@ export const getExternalAuthors = async () => {
                             (SELECT id FROM modules where abbr = 'bps' AND active = TRUE)`;
     return data;
  }
+
+ export const getUserRoleModel = async (username :string) => {
+    const data = await sql`SELECT r.id,r.role FROM public.user u INNER JOIN user_role ur ON ur.user_lid = u.id 
+    INNER JOIN role r ON r.id = ur.role_lid WHERE u.username = ${username} AND u.active = TRUE AND ur.active = TRUE AND r.active = TRUE`;
+    return data;
+ }

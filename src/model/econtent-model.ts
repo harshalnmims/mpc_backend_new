@@ -68,9 +68,19 @@ export const eContentPaginateModel = async ({ page , limit, sort, order, search,
  
     const data = await paginationQueryBuilder<Session>({
        baseQuery: `SELECT 
-                    id,
-                    faculty_name,module,module_platform,document_link,media_link,facility_list
-                    FROM e_content_development WHERE active = true AND created_by='${username}'
+                    e.id,
+                    faculty_name,module,module_platform,document_link,media_link,facility_list,
+                    CASE 
+                        WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                        ELSE CASE 
+                            WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                            ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                        END
+                    END AS status,
+                    fs.id AS form_status_lid
+                    FROM e_content_development e
+                    LEFT JOIN form_status fs ON fs.id = e.form_status_lid
+                    WHERE e.active = true AND e.created_by='${username}'
  `,
  
        filters: {

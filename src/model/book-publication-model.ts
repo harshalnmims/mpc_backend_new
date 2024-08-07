@@ -103,14 +103,15 @@ export const getBookDetailsPaginateModel = async ({
    console.log('filter ', JSON.stringify(filters), { page, limit, sort, order, search, filters });
 
    const data = await paginationQueryBuilderWithPlaceholder<Session>({
-      baseQuery: `WITH book_publication_details AS (
+      baseQuery: ` WITH book_publication_details AS (
                      SELECT 
                         bp.id,
                         bp.publish_year,
                         bp.title,
                         bp.isbn_no,
                         bp.publisher,
-                        bp.created_by
+                        bp.created_by,
+	                    bp.form_status_lid
                      FROM book_publication bp
                       WHERE bp.active = true
                   ),
@@ -150,13 +151,23 @@ export const getBookDetailsPaginateModel = async ({
                      bpd.publisher,
                      sd.nmims_school,
                      cd.nmims_campus,
-                     aa.all_authors
+                     aa.all_authors,
+					  CASE 
+						WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+						ELSE CASE 
+							WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+							ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+						END
+					END AS status,
+					fs.id AS form_status_lid
                   FROM book_publication_details bpd
                   INNER JOIN school_details sd ON sd.book_id = bpd.id
                   INNER JOIN campus_details cd ON cd.book_id = bpd.id
                   INNER JOIN all_authors aa ON aa.book_id = bpd.id 
-                  WHERE bpd.created_by = '${username}'	 
-                  {{whereClause}} ORDER BY bpd.id desc
+				  LEFT JOIN form_status fs ON fs.id = bpd.form_status_lid
+                  WHERE bpd.created_by = '${username}'
+                  {{whereClause}}
+                  ORDER BY bpd.id desc
                   `,
       
    

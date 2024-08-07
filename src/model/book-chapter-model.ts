@@ -126,7 +126,8 @@ export const getBookChapterPublication = async ({
                          bcp.book_title,
                          bcp.isbn_no,
                          bcp.publisher,
-                         bcp.created_by
+                         bcp.created_by,
+                         bcp.form_status_lid
                      FROM book_chapter_publication bcp
                      WHERE bcp.active = true
                  ),
@@ -177,12 +178,21 @@ export const getBookChapterPublication = async ({
                      sd.nmims_school,
                      cd.nmims_campus,
                      aa.all_authors,
-                     e.all_editors
+                     e.all_editors,
+                      CASE 
+						WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+						ELSE CASE 
+							WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+							ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+						END
+					END AS status,
+					fs.id AS form_status_lid
                  FROM book_chapter_details bcd
                  INNER JOIN school_details sd ON sd.book_chapter_id = bcd.id
                  INNER JOIN campus_details cd ON cd.book_chapter_id = bcd.id
                  INNER JOIN all_authors aa ON aa.book_chapter_id = bcd.id
                  INNER JOIN editors e ON e.book_chapter_id = bcd.id	
+                 LEFT JOIN form_status fs ON fs.id = bcd.form_status_lid
                  WHERE bcd.created_by = '${username}'
                  {{whereClause}} ORDER BY bcd.id desc
                     `,
