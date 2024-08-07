@@ -88,9 +88,9 @@ export const deleteResearchAwardService = async(awardId : number,username:string
     return data;
 }
 
-export const researchAwardRenderService = async () => {
-   const nmims_school = await getSchool();
-   const nmims_campus = await getCampus();
+export const researchAwardRenderService = async (username : string) => {
+   const nmims_school = await getSchool(username);
+   const nmims_campus = await getCampus(username);
    return {nmims_school,nmims_campus}
 }
 
@@ -101,11 +101,11 @@ export const researchAwardViewService = async (awardId : number) => {
    return {files : filesUrls ,researchAwardData : data};
 }
 
-export const researchAwardUpdViewService = async (awardId : number) => {
+export const researchAwardUpdViewService = async (awardId : number, username: string) => {
     
    const researchAwardData = await researchAwardUpdateViewModel(awardId)
-   const nmims_school = await getSchool();
-   const nmims_campus = await getCampus();
+   const nmims_school = await getSchool(username);
+   const nmims_campus = await getCampus(username);
    return {researchAwardData,nmims_school,nmims_campus};
 }
 

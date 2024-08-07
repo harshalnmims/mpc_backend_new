@@ -59,7 +59,9 @@ export const iprPaginate = async (req: Request, res: Response, next: NextFunctio
 };
 
 export const iprRenderData = async (req: Request, res: Response, next: NextFunction) => {
-   const data = await iprRenderService();
+   let username = res.locals.username;
+
+   const data = await iprRenderService(username);
 
    console.log('journal data ', JSON.stringify(data));
 
@@ -89,8 +91,10 @@ export const iprEditViewForm = async (req: Request, res: Response, next: NextFun
    const logger = getLogger();
    const id = req.query.id;
    const iprId = Number(id);
+   let username = res.locals.username;
 
-   const data = await iprEditViewService(iprId);
+
+   const data = await iprEditViewService(iprId, username);
 
    console.log('data response in controller ====>>>>', data);
    return res.status(200).json(data);

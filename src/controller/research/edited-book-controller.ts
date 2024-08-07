@@ -115,7 +115,10 @@ export const getEditedBookPublication = async (req: Request, res: Response, next
  }
 
  export const editedBookRenderData = async (req: Request, res: Response, next: NextFunction) => {
-   const data = await editedBookRenderService();
+   let username = res.locals.username;
+
+   const data = await editedBookRenderService(username);
+
    console.log('edited book data ',JSON.stringify(data));
    return res.status(200).json(data);
  }
@@ -123,8 +126,9 @@ export const getEditedBookPublication = async (req: Request, res: Response, next
 export const editedBookPublicationEditView = async (req: Request, res: Response, next: NextFunction) => {
    const id = req.query.id
    const editedBookId = Number(id)
+   let username = res.locals.username;
 
-   const data = await editedBookPublicationEditViewService(editedBookId);
+   const data = await editedBookPublicationEditViewService(editedBookId,username);
    console.log('edited book data ', JSON.stringify(data));
    return res.status(200).json(data);
  

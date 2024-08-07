@@ -102,8 +102,10 @@ export const deleteResearchSeminarForm = async(req : Request, res : Response, ne
 }
 
 export const researchSeminarRenderController  = async(req : Request, res : Response, next : NextFunction) => {
+    let username = res.locals.username;
+
    
-    const data = await researchSeminarRenderService();
+    const data = await researchSeminarRenderService(username);
     return res.status(200).json(data)
 }
 
@@ -115,7 +117,9 @@ export const researchSeminarViewController = async(req : Request, res : Response
 
 export const researchSeminarUpdateViewCtrl  = async(req : Request, res : Response, next : NextFunction) => {
     let id = req.query.id;
-    const data = await researchSeminarUpdateViewService(Number(id));
+    let username= res.locals.username;
+
+    const data = await researchSeminarUpdateViewService(Number(id), username);
     return res.status(200).json(data)
 }
 
