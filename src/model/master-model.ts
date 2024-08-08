@@ -348,7 +348,7 @@ console.log('campuss>>>>>>',data);
  } 
   
  export const getFormLevels = async () => {
-    const data = await sql`SELECT * FROM status WHERE active = TRUE`;
+    const data = await sql`SELECT * FROM status WHERE active = TRUE AND abbr != 'pd'`;
     return data;
  }
 
