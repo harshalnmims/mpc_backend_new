@@ -204,7 +204,8 @@ export const approvalUserListForAdmin = async ({ page, limit, sort, order, searc
                     END
                     ELSE
                     (SELECT abbr FROM status WHERE abbr = 'pd' AND active = true)
-                    END AS status
+                    END AS status,
+                    fs.remarks
                     FROM 
                     ${tableObj[tableId]} jpa
                     INNER JOIN public.user pu ON pu.username = jpa.created_by
