@@ -87,7 +87,7 @@ export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, s
                     CASE 
                         WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
                         ELSE CASE 
-                            WHEN fs.status_lid = 2 AND fs.level_lid = 2 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                            WHEN fs.status_lid = 2 AND fs.level_lid = 1 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
                             ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
                         END
                     END AS status,
