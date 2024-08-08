@@ -311,6 +311,7 @@ export const approvalUserListForAdmin = async ({ page, limit, sort, order, searc
                     WHEN fs.id IS NOT NULL THEN
                     CASE 
                     WHEN (fs.status_lid = 3 AND fs.level_lid = 1) THEN (SELECT abbr FROM status WHERE abbr = 're' AND active = true)
+                    WHEN (fs.status_lid = 1 AND fs.level_lid = 1) THEN (SELECT abbr FROM status WHERE abbr = 'pd' AND active = true)
                     ELSE (SELECT abbr FROM status WHERE abbr = 'cp' AND active = true)
                     END
                     ELSE
