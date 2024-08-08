@@ -205,7 +205,7 @@ export const approvalUserListForAdmin = async ({ page, limit, sort, order, searc
                     ELSE
                     (SELECT abbr FROM status WHERE abbr = 'pd' AND active = true)
                     END AS status,
-                    fs.remarks
+                    jpa.remarks
                     FROM 
                     ${tableObj[tableId]} jpa
                     INNER JOIN public.user pu ON pu.username = jpa.created_by
@@ -265,8 +265,9 @@ export const approvalUserListForAdmin = async ({ page, limit, sort, order, searc
 
                 await sql`
                     UPDATE ${sql(tableObj[tableId])}
-                    SET form_status_lid = ${newFormStatus.id}
+                    SET form_status_lid = ${newFormStatus.id},remarks=${item.remarks}
                     WHERE id = ${item.form_lid}`;
+    
             });
             console.log(`Updated form_lid ${item.form_lid} successfully`);
         } catch (error) {

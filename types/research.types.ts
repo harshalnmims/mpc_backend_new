@@ -453,4 +453,5 @@ export type ApprovalDetails = {
    form_status: number,
    level: number,
    form_status_id: number,
+   remarks : string
 }

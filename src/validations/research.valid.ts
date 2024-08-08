@@ -383,6 +383,7 @@ export const loginCredentials = z.object({
   const Approval = z.object({
 	form_lid : z.number(),
 	form_status : z.number().min(1,{message:'Form status is required'}),
+   remarks : z.string()
 	// level : z.number()
   })
 
