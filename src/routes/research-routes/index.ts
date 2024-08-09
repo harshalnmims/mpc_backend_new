@@ -8,7 +8,7 @@ import { Router } from 'express';
 
 // import { validate } from '$middleware/validation.middleware';
 // import { filterSchema } from '$validations/base.valid';
-import { filterSchema } from '$validations/base.valid';
+// import { filterSchema } from '$validations/base.valid';
 import { handleLogout, validateUserSession } from "$middleware/auth.middleware";
 
 const router = Router();
