@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import facultyRouter from './faculty';
-import SpecialUserRouter from './special-user';
+// import facultyRouter from './faculty';
+// import SpecialUserRouter from './special-user';
 
 import journalDetailsRouter from './research-routes/journal-article-routes';
 import iprRoutes from './research-routes/ipr-routes';
@@ -25,8 +25,8 @@ import adminRouter from './research-routes/admin-routes';
 
 const router = Router();
 
-router.use('/faculty', facultyRouter);
-router.use('/special-user', SpecialUserRouter);
+// router.use('/faculty', facultyRouter);
+// router.use('/special-user', SpecialUserRouter);
 router.use('/research-project', journalDetailsRouter);
 
 router.use('/', iprRoutes);
