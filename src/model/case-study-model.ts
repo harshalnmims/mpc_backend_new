@@ -134,7 +134,8 @@ export const CaseStudyPaginateModel = async ({ page, limit, sort, order, search,
                             ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
                         END
                     END AS status,
-                    fs.id AS form_status_lid
+                    fs.id AS form_status_lid,
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                 FROM case_study c
                 INNER JOIN case_study_authors ca ON ca.case_study_lid = c.id
                 INNER JOIN master_input_data md ON md.id = ca.author_lid 

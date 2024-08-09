@@ -205,7 +205,7 @@ export const approvalUserListForAdmin = async ({ page, limit, sort, order, searc
                     ELSE
                     (SELECT abbr FROM status WHERE abbr = 'pd' AND active = true)
                     END AS status,
-                    jpa.remarks
+                    fs.remarks
                     FROM 
                     ${tableObj[tableId]} jpa
                     INNER JOIN public.user pu ON pu.username = jpa.created_by
@@ -256,22 +256,30 @@ export const approvalUserListForAdmin = async ({ page, limit, sort, order, searc
     }
 
     for (const item of approvalJson) {
-        try {
-            const data = await sql.begin(async sql => {
-                const [newFormStatus] = await sql`
-                    INSERT INTO form_status (status_lid, level_lid, created_by)
-                    VALUES (${item.form_status}, ${level}, ${username})
-                    RETURNING id`;
-
-                await sql`
-                    UPDATE ${sql(tableObj[tableId])}
-                    SET form_status_lid = ${newFormStatus.id},remarks=${item.remarks}
-                    WHERE id = ${item.form_lid}`;
+        if (item.form_status_id !== 0) {
+            const data = await sql`
+                        UPDATE form_status set status_lid = ${item.form_status}, level_lid = ${level},
+                        remarks = ${item.remarks},
+                        modified_by =  ${username} WHERE id = ${item.form_status_id}
+                      `;
+        } else {
+            try {
+                const data = await sql.begin(async sql => {
+                    const [newFormStatus] = await sql`
+                        INSERT INTO form_status (status_lid, level_lid, created_by,remarks)
+                        VALUES (${item.form_status}, ${level}, ${username},${item.remarks})
+                        RETURNING id`;
     
-            });
-            console.log(`Updated form_lid ${item.form_lid} successfully`);
-        } catch (error) {
-            console.error(`Error updating form_lid ${item.form_lid}:`, error);
+                    await sql`
+                        UPDATE ${sql(tableObj[tableId])}
+                        SET form_status_lid = ${newFormStatus.id}
+                        WHERE id = ${item.form_lid}`;
+        
+                });
+                console.log(`Updated form_lid ${item.form_lid} successfully`);
+            } catch (error) {
+                console.error(`Error updating form_lid ${item.form_lid}:`, error);
+            }
         }
     }
 

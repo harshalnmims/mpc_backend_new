@@ -202,7 +202,8 @@ export const editedBookPaginateModel = async ({ page , limit, sort, order, searc
 						WHEN fs.status_lid = 2 AND fs.level_lid = 1 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
 						ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
 					END
-				END AS status
+				END AS status,
+                COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                 FROM publication_details pd
                 INNER JOIN campus_details cd ON pd.id = cd.publication_id
                 INNER JOIN school_details sd ON pd.id = sd.publication_id

@@ -128,7 +128,8 @@ export const ResearchProjectPaginateModel = async ({
                                     ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
                                 END
                             END AS status,
-                            fs.id AS form_status_lid
+                            fs.id AS form_status_lid,
+                            COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                          FROM research_project_details rpd
                          INNER JOIN school_details sd ON rpd.id = sd.research_project_id
                          INNER JOIN campus_details cd ON rpd.id = cd.research_project_id

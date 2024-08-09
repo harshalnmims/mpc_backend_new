@@ -91,7 +91,8 @@ export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, s
                             ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
                         END
                     END AS status,
-                    fs.id AS form_status_lid
+                    fs.id AS form_status_lid,
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                 FROM research_seminar r
 				INNER JOIN research_seminar_school rs ON rs.research_seminar_lid = r.id
 				INNER JOIN research_seminar_campus rc ON rc.research_seminar_lid = r.id

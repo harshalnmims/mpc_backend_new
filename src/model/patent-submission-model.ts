@@ -89,7 +89,8 @@ export const getPatentSubmissionModel = async ({
                             ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
                         END
                     END AS status,
-                    fs.id AS form_status_lid
+                    fs.id AS form_status_lid,
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                     FROM 
                      patent_submission_grant psg
                      INNER JOIN invention_type ivt ON ivt.id = psg.invention_type AND ivt.active = TRUE

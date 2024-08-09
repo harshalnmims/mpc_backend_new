@@ -21,7 +21,8 @@ export const getPaginateModel = async ({ page , limit, sort, order, search, filt
                            ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
                      END
                   END AS status,
-                  fs.id AS form_status_lid
+                  fs.id AS form_status_lid,
+                  COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                   FROM teaching_excellance t
                   LEFT JOIN form_status fs ON fs.id = t.form_status_lid
                   WHERE t.created_by = '${username}' AND t.active = true`,

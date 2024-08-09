@@ -77,7 +77,8 @@ export const eContentPaginateModel = async ({ page , limit, sort, order, search,
                             ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
                         END
                     END AS status,
-                    fs.id AS form_status_lid
+                    fs.id AS form_status_lid,
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                     FROM e_content_development e
                     LEFT JOIN form_status fs ON fs.id = e.form_status_lid
                     WHERE e.active = true AND e.created_by='${username}'

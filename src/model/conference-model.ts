@@ -121,7 +121,8 @@ export const getConferenceModel = async ({ page, limit, sort, order, search, fil
                                     ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
                                 END
                             END AS status,
-                            fs.id AS form_status_lid
+                            fs.id AS form_status_lid,
+                            COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                          FROM conference_details cnd
                          INNER JOIN school_details sd ON sd.conference_id = cnd.id
                          INNER JOIN campus_details cd ON cd.conference_id = cnd.id

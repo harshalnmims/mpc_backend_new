@@ -111,8 +111,8 @@ export const getBookDetailsPaginateModel = async ({
                         bp.isbn_no,
                         bp.publisher,
                         bp.created_by,
-	                    bp.form_status_lid
-                     FROM book_publication bp
+	                     bp.form_status_lid
+                        FROM book_publication bp
                       WHERE bp.active = true
                   ),
                   school_details AS (
@@ -152,6 +152,7 @@ export const getBookDetailsPaginateModel = async ({
                      sd.nmims_school,
                      cd.nmims_campus,
                      aa.all_authors,
+                     COALESCE(fs.remarks,'No Remarks Found !') AS remarks,
 					  CASE 
 						WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
 						ELSE CASE 

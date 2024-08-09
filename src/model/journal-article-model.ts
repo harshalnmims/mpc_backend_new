@@ -142,9 +142,8 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                          jpa.publish_year,
                          jpa.total_authors,
                          jpa.created_by,
-	                     jpa.form_status_lid,
-                         jpa.remarks
-                      FROM journal_paper_article jpa
+	                     jpa.form_status_lid
+                        FROM journal_paper_article jpa
                       WHERE jpa.active=TRUE
                    ),
                    school_details AS (
@@ -193,7 +192,7 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                         END
                     END AS status,
                     fs.id AS form_status_lid,
-                    COALESCE(pd.remarks,'No Remarks Found !') AS remarks
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                    FROM paper_details pd
                    INNER JOIN school_details sd ON pd.id = sd.paper_id
                    INNER JOIN campus_details cd ON pd.id = cd.paper_id

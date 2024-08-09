@@ -218,6 +218,7 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
                                 ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
                             END
                         END AS status,
+                        COALESCE(fs.remarks,'No Remarks Found !') AS remarks,
                         fs.id AS form_status_lid
  
                      FROM ipr_details ipd

@@ -186,6 +186,7 @@ export const getBookChapterPublication = async ({
 							ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
 						END
 					END AS status,
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks,
 					fs.id AS form_status_lid
                  FROM book_chapter_details bcd
                  INNER JOIN school_details sd ON sd.book_chapter_id = bcd.id
