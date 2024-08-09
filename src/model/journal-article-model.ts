@@ -141,8 +141,9 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                          jpa.impact_factor,
                          jpa.publish_year,
                          jpa.total_authors,
-                         jpa.created_by
-                      FROM journal_paper_article jpa
+                         jpa.created_by,
+	                     jpa.form_status_lid
+                        FROM journal_paper_article jpa
                       WHERE jpa.active=TRUE
                    ),
                    school_details AS (
@@ -172,16 +173,6 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                       INNER JOIN policy_cadre pc ON pc.id = jpc.policy_cadre_lid
                       WHERE jpa.active=TRUE AND jpc.active=TRUE AND pc.active=TRUE
                       GROUP BY jpa.id
-                   ),
-                   form_status AS (
-                     SELECT 
-                     jpa.id AS paper_id,  
-                     fs.abbr  
-                     FROM journal_paper_article jpa
-                     INNER JOIN journal_form_status jfs ON jpa.id = jfs.journal_lid
-                     INNER JOIN form_status fs ON fs.id = jfs.status_lid 
-                     WHERE jfs.journal_lid = jpa.id AND jfs.active = TRUE 
-                     AND fs.active = TRUE
                    )
                    SELECT
                       pd.id,
@@ -193,12 +184,20 @@ export const journalPaginateModal = async ({ page , limit, sort, order, search, 
                       sd.nmims_school,
                       cd.nmims_campus,
                       pcd.policy_cadre,
-                      fst.abbr AS status
+                       CASE 
+                        WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                        ELSE CASE 
+                            WHEN fs.status_lid = 2 AND fs.level_lid = 1 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                            ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                        END
+                    END AS status,
+                    fs.id AS form_status_lid,
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                    FROM paper_details pd
                    INNER JOIN school_details sd ON pd.id = sd.paper_id
                    INNER JOIN campus_details cd ON pd.id = cd.paper_id
                    INNER JOIN policy_details pcd ON pd.id = pcd.paper_id
-                   INNER JOIN form_status fst ON pd.id = fst.paper_id
+                   LEFT JOIN form_status fs ON fs.id = pd.form_status_lid
                    WHERE pd.created_by = '${username}' {{whereClause}}
                    ORDER BY pd.id desc
  `,
@@ -551,7 +550,7 @@ export const checkFormStatusModel = async (journalId : number) => {
     return data;
 }
 
-export const journalFormInfiniteModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType) => {
+export const journalFormInfiniteModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username :string, tableId : number) => {
     console.log('admin filters ',filters)
       
       if(filters.campus === 'All'){
@@ -567,52 +566,121 @@ export const journalFormInfiniteModel = async ({ page, limit, sort, order, searc
       }
   
     const data = await infiniteScrollQueryBuilder<Session>({
-       baseQuery: ` SELECT 
-        DISTINCT u.id,
-	    jfs.id AS form_lid,
-		fs.abbr AS status,
-		jpa.journal_name AS form_name,
-        u.first_name,
-        u.last_name,
-        u.username
-      FROM public.user u 
-      INNER JOIN user_role ur ON ur.user_lid = u.id
-      INNER JOIN journal_form_status jfs ON jfs.faculty_lid = u.id
-	  INNER JOIN form_status fs ON fs.id = jfs.status_lid 
-	  INNER JOIN journal_paper_article jpa ON jpa.id = jfs.journal_lid
-      INNER JOIN user_campus uc ON uc.user_lid = u.id
-      INNER JOIN campus c ON uc.campus_lid = c.id
-      INNER JOIN user_organization uo ON uo.user_lid = u.id
-      INNER JOIN organization o ON uo.organization_lid = o.id
-      WHERE ur.role_lid = 2
-        AND jfs.level_lid = (
-            SELECT level 
-            FROM form_level 
-            WHERE role_lid = 3 AND active = TRUE
-        )
-        AND ur.active = TRUE
-        AND jfs.active = TRUE
-        AND c.active = TRUE
-        AND uc.active = TRUE
-        AND uo.active = TRUE
-        AND o.active = TRUE
+       baseQuery: ` WITH user_level AS (
+    SELECT fl.level, r.name, r.id AS role_id, u.username
+    FROM public.user u
+    INNER JOIN user_role ur ON u.id = ur.user_lid
+    INNER JOIN role r ON ur.role_lid = r.id
+    INNER JOIN form_level fl ON fl.role_lid = r.id
+    WHERE u.active = TRUE
+      AND ur.active = TRUE
+      AND fl.active = TRUE
+      AND u.username = '${username}'
+
+),
+admin_campus AS (
+    SELECT c.id AS campus_id
+    FROM public.user u
+    INNER JOIN user_campus uc ON u.id = uc.user_lid
+    INNER JOIN campus c ON uc.campus_lid = c.id
+    WHERE c.active = TRUE
+      AND uc.active = TRUE
+      AND u.username = '${username}'
+      AND u.active = TRUE
+),
+user_details AS (
+    SELECT u.id AS user_id, u.first_name, u.last_name, u.username, jfs.status_lid, jfs.level_lid, jfs.id AS form_id,jpa.journal_name AS form_name
+    FROM public.user u
+    INNER JOIN user_role ur ON u.id = ur.user_lid
+    INNER JOIN user_campus uc ON uc.user_lid = u.id
+    INNER JOIN campus c ON c.id = uc.campus_lid
+    INNER JOIN organization o ON o.id = c.organization_lid
+    INNER JOIN journal_form_status jfs ON jfs.faculty_lid = u.id
+INNER JOIN journal_paper_article jpa ON jpa.id = jfs.journal_lid
+    WHERE ur.role_lid = 2
+      AND u.active = TRUE
+      AND ur.active = TRUE
+      AND uc.active = TRUE
+      AND c.active = TRUE
+      AND o.active  = TRUE
+      AND uc.campus_lid IN (SELECT campus_id FROM admin_campus)
+    GROUP BY form_id, u.id, u.first_name, u.last_name, u.username, jfs.status_lid, jfs.level_lid,jpa.journal_name
+),
+user_status AS (
+    SELECT
+        ud.user_id,
+        ud.form_id,
+        CASE
+            WHEN ul.role_id = 3 THEN
+                CASE
+                    WHEN ud.status_lid = 1 AND ud.level_lid = 1 THEN (SELECT abbr FROM form_status WHERE abbr = 'pd' AND active = TRUE)
+                    WHEN ud.status_lid = 1 AND ud.level_lid = 2 THEN (SELECT abbr FROM form_status WHERE abbr = 'cp' AND active = TRUE)
+                    ELSE (SELECT abbr FROM form_status WHERE abbr = 're' AND active = TRUE)
+                END
+            ELSE
+                CASE
+                    WHEN ud.status_lid = 1 AND ud.level_lid = 2 THEN (SELECT abbr FROM form_status WHERE abbr = 'pd' AND active = TRUE)
+                    WHEN ud.status_lid = 1 AND ud.level_lid = 3 THEN (SELECT abbr FROM form_status WHERE abbr = 'cp' AND active = TRUE)
+                    ELSE (SELECT abbr FROM form_status WHERE abbr = 're' AND active = TRUE)
+                END
+        END AS form_abbr
+    FROM user_level ul, user_details ud  
+)
+SELECT
+    ul.level,
+    ul.name AS role_name,
+    ud.user_id,
+    ud.first_name,
+    ud.last_name,
+    ud.username,
+    ud.status_lid,
+    ud.level_lid,
+    ud.form_id,
+    ul.role_id,
+    us.form_abbr AS status,
+    ud.form_name
+FROM user_level ul, user_details ud
+INNER JOIN user_status us ON ud.user_id = us.user_id AND ud.form_id = us.form_id
+INNER JOIN user_campus uc ON uc.user_lid = ud.user_id 
+INNER JOIN campus c ON c.id = uc.campus_lid 
+INNER JOIN organization o ON o.id = c.organization_lid
+WHERE
+    CASE
+        WHEN ul.role_id = (SELECT role_lid FROM form_level WHERE abbr = 'adm' AND active = TRUE) THEN
+            (ud.status_lid = 3 AND ud.level_lid = 1) OR (ud.status_lid = 1 AND ud.level_lid = 1) OR (ud.status_lid = 1 AND ud.level_lid = 2)
+        ELSE
+            (ud.status_lid = 3 AND ud.level_lid = 2) OR (ud.status_lid = 1 AND ud.level_lid = 3) OR (ud.status_lid = 1 AND ud.level_lid = 2)  
+    END 
+GROUP BY 
+    ul.level,
+    ul.name,
+    ud.user_id,
+    ud.first_name,
+    ud.last_name,
+    ud.username,
+    ud.status_lid,
+    ud.level_lid,
+    ud.form_id,
+    ul.role_id,
+    us.form_abbr,
+    ud.form_name
   `,
   
        filters: {
           'c.id': filters.campus ,
           'o.id': filters.school ,
-          'jfs.status_lid' : filters.status
+          'ud.status_lid' : filters.status
        },
        
        cursor: {
-          column: 'u.id',
+          column: 'ud.user_id',
           value: Number(filters.cursor)
        },
        limit: limit.toString(),
        search: search || '',
-       searchColumns: ['u.username', 'u.first_name', 'u.last_name'],
+       searchColumns: ['ud.username', 'ud.first_name', 'ud.last_name'],
        sort: {
-          column: sort || 'u.id',
+          column: sort || 'ud.form_id',
           order: order || 'desc',
        },
     });

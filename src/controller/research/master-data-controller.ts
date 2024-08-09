@@ -6,8 +6,10 @@ import {
  import { getLogger } from '$config/logger-context';
  import { Request, Response, NextFunction } from 'express';
  import { validateWithZod } from '$middleware/validation.middleware';
- import { filesArraySchema, updMasterDetails } from '$validations/research.valid';
+ import { approvalObj, filesArraySchema, updMasterDetails } from '$validations/research.valid';
  import { masterDataObj } from '$validations/research.valid';
+import { adminApprovalModal } from '$model/master-data-model';
+import { getAdminLevel } from '$model/admin-model';
  
  
 
@@ -159,6 +161,25 @@ export const deleteMasterDataForm = async(req: Request, res: Response, next: Nex
    const data = await deleteMasterDataService(masterId,username);
    console.log('data respoinse in controller ===>>>>>', data);
 
+   return res.status(200).json(data);
+
+}
+
+export const adminApproval = async(req: Request, res: Response, next: NextFunction) =>  {
+
+   const approvalData = req.body.approval_data;
+   const tableId = req.query.tableId;
+   let userId = res.locals.username;
+   let result = validateWithZod(approvalObj,approvalData);
+   console.log('approval data ',JSON.stringify(approvalData))
+   let data;
+   let adminLevel = await getAdminLevel(userId);
+   let level = adminLevel.length > 0 ? adminLevel[0].level : 0
+   console.log('admin level ',JSON.stringify(adminLevel))
+
+   if(result.success){
+      data = await adminApprovalModal(userId, approvalData, Number(tableId),level);
+   }
    return res.status(200).json(data);
 
 }

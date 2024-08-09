@@ -83,15 +83,25 @@ export const ResearchSeminarPaginateModel = async ({ page, limit, sort, order, s
 					COALESCE(JSON_AGG(DISTINCT rs.school_name), '[]') AS nmims_school,
 					COALESCE(JSON_AGG(DISTINCT rc.campus_name), '[]') AS nmims_campus,
                     COALESCE(JSON_AGG(DISTINCT md.name), '[]') AS nmims_authors,
-                    r.created_by
+                    r.created_by,
+                    CASE 
+                        WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                        ELSE CASE 
+                            WHEN fs.status_lid = 2 AND fs.level_lid = 1 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                            ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                        END
+                    END AS status,
+                    fs.id AS form_status_lid,
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                 FROM research_seminar r
 				INNER JOIN research_seminar_school rs ON rs.research_seminar_lid = r.id
 				INNER JOIN research_seminar_campus rc ON rc.research_seminar_lid = r.id
                 INNER JOIN research_seminar_authors ra ON ra.research_seminar_lid = r.id
                 INNER JOIN master_input_data md ON md.id = ra.author_lid 
+                LEFT JOIN form_status fs ON fs.id = r.form_status_lid
                 WHERE r.created_by='${username}' AND r.active = TRUE AND ra.active = TRUE AND md.active = TRUE AND rs.active = TRUE AND rc.active = TRUE
                {{whereClause}}
-                GROUP BY r.id ORDER BY r.id desc`,
+                GROUP BY r.id,fs.id ORDER BY r.id desc`,
  
                 placeholders: [
                     {

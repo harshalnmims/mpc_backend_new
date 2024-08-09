@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import {inputService,inputViewService,getDashboardService,getresearchModulesService,getPublicationModulesService,getProfileService} from '$service/research/base.service'
+import {inputService,inputViewService,getDashboardService,getresearchModulesService,getPublicationModulesService,
+  getUserRoleService
+} from '$service/research/base.service'
 
 export const getInputData = async (req : Request,res : Response ,next : NextFunction) => {
    const data = await inputService();
@@ -42,3 +44,9 @@ export const logoutController = async (req : Request,res : Response ,next : Next
  export const testLogin = async (req : Request,res : Response ,next : NextFunction) => {
    return res.status(200).json({status:200,message:'Success'})
  }
+
+ export const userRoleController = async (req : Request,res : Response ,next : NextFunction) => {
+  let username = res.locals.username
+  const data = await getUserRoleService(username);
+  return res.status(200).json(data);
+}

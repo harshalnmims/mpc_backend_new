@@ -45,11 +45,11 @@ export const getBookPublicationService = async ({
    return data;
 };
 
-export const renderBookPublicationService = async () => {
-   const nmimsAuthors = await getMasterNmimsAuthors();
-   const allAuthors = await getMasterAllAuthors();
-   const school = await getSchool();
-   const campus = await getCampus();
+export const renderBookPublicationService = async (username:string) => {
+   const nmimsAuthors = await getMasterNmimsAuthors(username);
+   const allAuthors = await getMasterAllAuthors(username);
+   const school = await getSchool(username);
+   const campus = await getCampus(username);
    return {
       nmimsAuthors,
       allAuthors,
@@ -108,13 +108,13 @@ export const updateBookPublicationService = async (bookPublicationId : number, b
    return data;
 };
 
-export const bookPublicationEditViewService = async (bookPublicationId: number) => {
+export const bookPublicationEditViewService = async (bookPublicationId: number, username: string) => {
    console.log('bookPublicationId in services ===>>>>>', bookPublicationId);
    const bookPublicationData = await bookPublicationEditViewModel(bookPublicationId);
-   const nmimsAuthors = await getMasterNmimsAuthors();
-   const allAuthors = await getMasterAllAuthors();
-   const school = await getSchool();
-   const campus = await getCampus();
+   const nmimsAuthors = await getMasterNmimsAuthors(username);
+   const allAuthors = await getMasterAllAuthors(username);
+   const school = await getSchool(username);
+   const campus = await getCampus(username);
    return {
       bookPublicationData,
       nmimsAuthors,

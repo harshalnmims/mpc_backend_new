@@ -10,6 +10,8 @@ import { approvalObj, filesArraySchema } from '$validations/research.valid';
 import { journalPaper } from '$validations/research.valid';
 import AWS from 'aws-sdk';
 import { AwsData } from 'types/base.types';
+import { approvalUserListForAdmin } from '$model/master-data-model';
+import { getAdminLevel } from '$model/admin-model';
 
 
 
@@ -156,9 +158,12 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
  }
 
  export const journalRenderData = async (req : Request , res : Response , next  : NextFunction) => {
+   
+   let username = res.locals.username;
 
-   const data = await journalRenderService();
-   console.log('journal data ',JSON.stringify(data));
+   console.log('userlid ===>>>', res.locals)
+   const data = await journalRenderService(username);
+   console.log('journal data in controller',data);
    return res.status(200).json(data);
  }
 
@@ -178,7 +183,8 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 
  export const journalUpdateViewController = async (req : Request , res : Response , next  : NextFunction) => {
     const id  = req.query.id ;
-    const data = await journalUpdateViewService(Number(id));
+    let username = res.locals.username;
+    const data = await journalUpdateViewService(Number(id), username);
     return res.status(200).json(data);
  
  }
@@ -193,6 +199,7 @@ export const getJournalArticle = async (req: Request, res: Response, next: NextF
 export const journalFormInfiniteController  = async (req: Request, res: Response, next: NextFunction) => {
  
    const {
+      tableId = 0,
       page = 1,
       limit = 10,
       sort = '',
@@ -201,14 +208,16 @@ export const journalFormInfiniteController  = async (req: Request, res: Response
       ...filters
    } = { ...req.body, ...req.params, ...req.query };
 
-   const data = await journalFormInfiniteService({
+   let username = res.locals.username;
+
+   const data = await approvalUserListForAdmin({
       page,
       limit,
       search,
       sort,
       order,
       filters,
-   });
+   },username, tableId);
 
    return res.status(200).json(data);
 };
@@ -217,6 +226,7 @@ export const journalApprovalInsertController = async (req: Request, res: Respons
   const approvalData = req.body.approval_data;
   let userId = res.locals.username;
   let result = validateWithZod(approvalObj,approvalData);
+  console.log('approval data ',JSON.stringify(approvalData))
   let data;
   if(result.success){
    data = await journalApprovalInsertService(approvalData,userId);

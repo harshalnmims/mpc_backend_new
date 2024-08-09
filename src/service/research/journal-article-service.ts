@@ -106,18 +106,18 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
 
  }
 
- export const journalRenderService = async () => {
+ export const journalRenderService = async (username : string) => {
    
    const foreignAuthors =  await renderModal('fa');
    const StudentAuthors =  await renderModal('sa');
    const otherAuthors = await renderModal('oa');
    const policyCadre = await getPolicyCadre();
-   const nmimsAuthors = await getNmimsAuthors();
-   const allAuthors = await getAllAuthors();
+   const nmimsAuthors = await getNmimsAuthors(); 
+   const allAuthors = await getAllAuthors();  
    const abdcIndexed = await getAbdcIndexed();
    const paperType = await getPaperType();
-   const school = await getSchool();
-   const campus = await getCampus();
+   const school = await getSchool(username);
+   const campus = await getCampus(username);
    return {
       foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus
    };
@@ -140,7 +140,7 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
    await downloadFile(files, req,res);
  }
 
- export const journalUpdateViewService = async (journalId :number) => {
+ export const journalUpdateViewService = async (journalId :number, username:string) => {
 
    const journalData = await journalUpdateViewData(journalId);
    const foreignAuthors =  await renderModal('fa');
@@ -151,8 +151,8 @@ export const insertJournalArticleService = async (journalDetails: journalArticle
    const allAuthors = await getAllAuthors();
    const abdcIndexed = await getAbdcIndexed();
    const paperType = await getPaperType();
-   const school = await getSchool();
-   const campus = await getCampus();
+   const school = await getSchool(username);
+   const campus = await getCampus(username);
    return {
     foreignAuthors,StudentAuthors,otherAuthors,policyCadre,nmimsAuthors,allAuthors,abdcIndexed,paperType,school,campus,journalData
    };
@@ -172,7 +172,7 @@ export const journalFormInfiniteService = async ({
     order,
     search,
     ...filters
- }: paginationDefaultType) => {
+ }: paginationDefaultType,username:string, tableId: number) => {
    
     const data = await journalFormInfiniteModel({
        page,
@@ -181,7 +181,7 @@ export const journalFormInfiniteService = async ({
        order,
        search,
        ...filters,
-    });
+    },username, tableId);
  
     return data;
  };

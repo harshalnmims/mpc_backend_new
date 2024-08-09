@@ -45,12 +45,12 @@ export const getBookChapterService = async ({
    return data;
 };
 
-export const renderBookChapterLists = async () => {
-   const nmimsAuthors = await getMasterNmimsAuthors();
-   const allAuthors = await getMasterAllAuthors();
-   const school = await getSchool();
-   const campus = await getCampus();
-   const editor = await getEditors();
+export const renderBookChapterLists = async (username : string) => {
+   const nmimsAuthors = await getMasterNmimsAuthors(username);
+   const allAuthors = await getMasterAllAuthors(username);
+   const school = await getSchool(username);
+   const campus = await getCampus(username);
+   const editor = await getEditors(username);
    return {
       nmimsAuthors,
       allAuthors,
@@ -74,14 +74,14 @@ export const insertBookChapterService = async (bookChapterData: bookChapterDetai
     return data;
  }
 
-export const bookChapterPublicationEditViewService = async (booChapterId: number) => {
+export const bookChapterPublicationEditViewService = async (booChapterId: number, username: string) => {
    console.log('booChapterId in services ===>>>>>', booChapterId);
    const bookChapterPublicationData = await booChapterEditViewModel(booChapterId);
-   const nmimsAuthors = await getMasterNmimsAuthors();
-   const allAuthors = await getMasterAllAuthors();
-   const school = await getSchool();
-   const campus = await getCampus();
-   const editor = await getEditors();
+   const nmimsAuthors = await getMasterNmimsAuthors(username);
+   const allAuthors = await getMasterAllAuthors(username);
+   const school = await getSchool(username);
+   const campus = await getCampus(username);
+   const editor = await getEditors(username);
 
    return {
       bookChapterPublicationData,

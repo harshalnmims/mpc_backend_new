@@ -126,12 +126,22 @@ export const CaseStudyPaginateModel = async ({ page, limit, sort, order, search,
                     COALESCE(c.publisher, 'No Data Filled!') AS publisher,
                     COALESCE(c.publish_year, 0) AS publish_year,
                     COALESCE(c.volume_no, 'No Data Filled!') AS volume_no,
-                    COALESCE(JSON_AGG(DISTINCT md.name), '[]') AS all_authors
+                    COALESCE(JSON_AGG(DISTINCT md.name), '[]') AS all_authors,
+                     CASE 
+                        WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                        ELSE CASE 
+                            WHEN fs.status_lid = 2 AND fs.level_lid = 1 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                            ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                        END
+                    END AS status,
+                    fs.id AS form_status_lid,
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                 FROM case_study c
                 INNER JOIN case_study_authors ca ON ca.case_study_lid = c.id
                 INNER JOIN master_input_data md ON md.id = ca.author_lid 
+                LEFT JOIN form_status fs ON fs.id = c.form_status_lid
                 WHERE c.created_by='${username}' AND c.active = TRUE AND ca.active = TRUE AND md.active = TRUE  
-                {{whereClause}} GROUP BY c.id ORDER BY c.id desc`,
+                {{whereClause}} GROUP BY c.id, fs.id ORDER BY c.id desc`,
 
 placeholders: [
     {

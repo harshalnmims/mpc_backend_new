@@ -154,7 +154,8 @@ export const editedBookPaginateModel = async ({ page , limit, sort, order, searc
                         ebp.title,
                         ebp.isbn_no,
                         ebp.publisher,
-                        ebp.created_by
+                        ebp.created_by,
+                        ebp.form_status_lid
                     FROM edited_book_publication ebp
                     WHERE ebp.active = TRUE
                 ),
@@ -194,11 +195,20 @@ export const editedBookPaginateModel = async ({ page , limit, sort, order, searc
                     pd.publisher,
                     cd.campuses,
                     sd.schools,
-                    ad.authors
+                    ad.authors,
+					CASE 
+					WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+					ELSE CASE 
+						WHEN fs.status_lid = 2 AND fs.level_lid = 1 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+						ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+					END
+				END AS status,
+                COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                 FROM publication_details pd
                 INNER JOIN campus_details cd ON pd.id = cd.publication_id
                 INNER JOIN school_details sd ON pd.id = sd.publication_id
                 INNER JOIN author_details ad ON pd.id = ad.publication_id
+                LEFT JOIN form_status fs ON fs.id = pd.form_status_lid
                 WHERE pd.created_by='${username}'
                 {{whereClause}} ORDER BY pd.id desc`,
 

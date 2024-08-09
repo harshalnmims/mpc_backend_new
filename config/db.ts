@@ -1,6 +1,6 @@
 import postgres from 'postgres';
 import logger from '$config/logger';
-import { createClient, RedisClientType } from 'redis'
+import { formatQueryWithValues } from '$utils/db/query-logger';
 
 const sql = postgres({
    user: process.env.DB_USER,
@@ -9,11 +9,7 @@ const sql = postgres({
    port: parseInt(process.env.DB_PORT || '5432'),
    database: process.env.DB_NAME,
    debug(_, query, parameters, paramTypes) {
-      logger.info('Executing query:::', {
-         query: query,
-         parameters: parameters,
-         paramTypes: paramTypes,
-      });
+      logger.info('Executing query:::', formatQueryWithValues(query, parameters));
    },
 });
 

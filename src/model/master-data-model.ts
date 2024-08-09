@@ -2,9 +2,10 @@ import { paginationDefaultType } from 'types/db.default';
 import sql from '$config/db';
 import { infiniteScrollQueryBuilder, paginationQueryBuilder } from '$utils/db/query-builder';
 import { Session } from 'types/base.types';
-import { facultyDetails, facultyUpdateDetails, masterDataDetails, updMasterDetails } from 'types/research.types';
+import { ApprovalDetails, facultyDetails, facultyUpdateDetails, masterDataDetails, updMasterDetails } from 'types/research.types';
 import { number } from 'zod';
 import { paginationQueryBuilderWithPlaceholder } from '$utils/db/query-builder-placeholder';
+import { infiniteScrollQueryBuilderWithPlaceholder } from '$utils/db/query-builder-combine';
 
 
 export const masterPaginateModel = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username:string) => {
@@ -154,6 +155,143 @@ export const masterDataDelete = async(masterId : number,username:string) => {
 }; 
 }
 
+const tableObj : any = {
+    1 : 'journal_paper_article',
+    2 : "book_publication",
+    3 : "edited_book_publication",
+    4 : "book_chapter_publication",
+    5 : "conference",
+    6 : "research_project",
+    7 : "patent_submission_grant",
+    8 : "ipr",
+    9 : "research_award",
+    10 : "e_content_development",
+    11 : "research_seminar",
+    12 : "case_study",
+    13 : "teaching_excellance",
+    14 : "meeting_stackholders",
+    15 : "branding_advertisement"
+}
 
+
+export const approvalUserListForAdmin = async ({ page, limit, sort, order, search, filters }: paginationDefaultType,username :string, tableId : number) => {
+    console.log('admin filters ',filters)
+      
+      if(filters.campus === 'All'){
+        delete filters.campus
+      }
+  
+      if(filters.school === 'All'){
+        delete filters.school
+      }
+  
+      if(filters.status === 'All'){
+        delete filters.status
+      }
+
+       let adminQuery = `SELECT 
+                    pu.first_name, 
+                    pu.last_name, 
+                    pu.username,
+                    jpa.id as research_form_id,
+                    fs.id AS form_status_id,
+                    CASE
+                    WHEN fs.id IS NOT NULL THEN
+                    CASE 
+                    WHEN (fs.status_lid = 3 AND fs.level_lid = 1) THEN (SELECT abbr FROM status WHERE abbr = 're' AND active = true)
+                    WHEN (fs.status_lid = 1 AND fs.level_lid = 1) THEN (SELECT abbr FROM status WHERE abbr = 'pd' AND active = true)
+                    ELSE (SELECT abbr FROM status WHERE abbr = 'cp' AND active = true)
+                    END
+                    ELSE
+                    (SELECT abbr FROM status WHERE abbr = 'pd' AND active = true)
+                    END AS status,
+                    fs.remarks
+                    FROM 
+                    ${tableObj[tableId]} jpa
+                    INNER JOIN public.user pu ON pu.username = jpa.created_by
+                    INNER JOIN user_role ur ON ur.user_lid = pu.id 
+                    INNER JOIN user_campus uc ON uc.user_lid = pu.id
+                    INNER JOIN campus c ON c.id = uc.campus_lid
+                    INNER JOIN organization o ON o.id = c.organization_lid
+                    LEFT JOIN form_status fs ON jpa.form_status_lid = fs.id
+                    {{wherecond}}`
+  
+    const data = await infiniteScrollQueryBuilderWithPlaceholder({
+       baseQuery: `${adminQuery}`,
+       placeholders: [{
+            placeholder: '{{wherecond}}',
+            filters: {
+            'c.id': filters.campus ,
+            'o.id': filters.school ,
+            'fs.id' : filters.status
+            },
+            defaultFilters: `WHERE ur.role_lid = 2 AND uc.campus_lid IN 
+                                (SELECT DISTINCT uc.campus_lid FROM public.user u INNER JOIN user_campus uc ON u.id = uc.user_lid WHERE u.username='${username}' AND u.active = TRUE 
+                                AND uc.active = TRUE) 
+                                AND pu.active = TRUE AND ur.active = TRUE AND uc.active = TRUE AND c.active = TRUE AND o.active = TRUE 
+                                AND jpa.active = TRUE`,
+            searchColumns: ['pu.username', 'pu.first_name', 'pu.last_name'] ,                   
+            groupBy: ['jpa.id','pu.first_name',	'pu.last_name', 'pu.username','fs.id'],
+            
+        },
+       ],
+       cursor: {
+          column: 'jpa.id',
+          value: filters.cursor ? Number(filters.cursor) : null
+       },
+       search: search || '',
+    });
+  
+    return data;
+  };
+
+
+  export const adminApprovalModal = async (username: string, approvalJson: ApprovalDetails[], tableId: number,level:number) => {
+    console.log("approvalJson>>>>>>>>>>>>>>>>>>>>>>>>>>",approvalJson);
+    console.log("tableObj>>>>>>>>>>>>>>>>>>>>>>>>>>",tableObj[tableId]);
+    console.log("tableObj>>>>>>>>>>>>>>>>>>>>>>>>>>",tableId);
+    
+    if (!Array.isArray(approvalJson)) {
+        throw new Error("approvalJson should be an array");
+    }
+
+    for (const item of approvalJson) {
+        if (item.form_status_id !== 0) {
+            const data = await sql`
+                        UPDATE form_status set status_lid = ${item.form_status}, level_lid = ${level},
+                        remarks = ${item.remarks},
+                        modified_by =  ${username} WHERE id = ${item.form_status_id}
+                      `;
+        } else {
+            try {
+                const data = await sql.begin(async sql => {
+                    const [newFormStatus] = await sql`
+                        INSERT INTO form_status (status_lid, level_lid, created_by,remarks)
+                        VALUES (${item.form_status}, ${level}, ${username},${item.remarks})
+                        RETURNING id`;
+    
+                    await sql`
+                        UPDATE ${sql(tableObj[tableId])}
+                        SET form_status_lid = ${newFormStatus.id}
+                        WHERE id = ${item.form_lid}`;
+        
+                });
+                console.log(`Updated form_lid ${item.form_lid} successfully`);
+            } catch (error) {
+                console.error(`Error updating form_lid ${item.form_lid}:`, error);
+            }
+        }
+    }
+
+    return {status: '200', message: 'Status Updated Successfully'}
+
+}
+
+
+const getUserRole = async (username :string) => {
+   const data = await sql`SELECT r.role FROM public.user u INNER JOIN user_role ur ON u.id = ur.user_lid INNER JOIN role r ON r.id = ur.role_lid
+	WHERE u.username =${username} AND r.active = TRUE AND u.active = TRUE AND ur.active = TRUE `; 
+    return data;
+}
 
 

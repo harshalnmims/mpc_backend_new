@@ -68,7 +68,9 @@ export const insertConferenceForm = async (req: Request, res: Response, next: Ne
 
 export const renderConferenceLists = async (req: Request, res: Response, next: NextFunction) => {
    const logger = getLogger();
-   const data = await renderConferenceListsService();
+   let username = res.locals.username;
+
+   const data = await renderConferenceListsService(username);
    return res.status(200).json(data);
 };
 
@@ -76,8 +78,9 @@ export const conferenceEditFrom = async (req: Request, res: Response, next: Next
    const logger = getLogger();
    const id = req.query.id;
    const conferenceId = Number(id);
+   let username = res.locals.username;
 
-   const data = await conferenceEditViewService(conferenceId);
+   const data = await conferenceEditViewService(conferenceId, username);
 
    console.log('data response in controller ====>>>>', data);
    return res.status(200).json(data);

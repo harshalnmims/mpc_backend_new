@@ -449,7 +449,9 @@ export type updMasterDetails = {
 }
 
 export type ApprovalDetails = {
-   form_lid : number,
-   form_status : number,
-   level :number
+   form_lid: number,
+   form_status: number,
+   level: number,
+   form_status_id: number,
+   remarks : string
 }

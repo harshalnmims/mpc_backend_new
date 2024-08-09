@@ -8,9 +8,9 @@ export const renderModal = async (abbr : string) => {
     return data.count > 0 ? {
        status:200,
        message:data
-   } : {
+    } : {
        status:400,
-       message:'Failed To Fetch!'
+       message: []
    }
  }
  
@@ -20,9 +20,9 @@ export const renderModal = async (abbr : string) => {
     return data.count > 0 ? {
        status:200,
        message:data
-   } : {
+    } : {
        status:400,
-       message:'Failed To Fetch!'
+       message: []
    }
  }
 
@@ -33,9 +33,9 @@ export const renderModal = async (abbr : string) => {
     return data.count > 0 ? {
        status:200,
        message:data
-   } : {
+    } : {
        status:400,
-       message:'Failed To Fetch!'
+       message: []
    }
  }
 
@@ -46,9 +46,9 @@ export const getExternalAuthors = async () => {
     return data.count > 0 ? {
        status:200,
        message:data
-   } : {
+    } : {
        status:400,
-       message:'Failed To Fetch!'
+       message: []
    }
  } 
 
@@ -63,7 +63,7 @@ export const getExternalAuthors = async () => {
        message:data
    } : {
        status:400,
-       message:'Failed To Fetch!'
+       message: []
    }
  }
 
@@ -74,7 +74,7 @@ export const getExternalAuthors = async () => {
         message:data
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message: []
     }
  }
 
@@ -85,29 +85,55 @@ export const getExternalAuthors = async () => {
         message:data
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message: []
     }
  }
 
- export const getSchool = async () => {
-    const data = await sql`select * from nmims_school where active=TRUE`;
+//  export const getSchool = async () => {
+//     const data = await sql`select distinct o.organization_name from user_campus uc 
+//                             INNER JOIN campus c on c.id = uc.campus_lid
+//                             INNER JOIN organization o on o.id = c.organization_lid`;
+
+// console.log('campuss>>>>>>',data);
+
+
+//     return data.count > 0 ? {
+//         status:200,
+//         message:data
+//     } : {
+//         status:400,
+//         message: []
+//     }
+//  }
+
+ export const getSchool = async (username : string) => {
+    const data = await sql`select distinct o.organization_name from user_campus uc 
+        INNER JOIN campus c on c.id = uc.campus_lid
+        INNER JOIN organization o on o.id = c.organization_lid 
+        INNER JOIN public.user pu on pu.id = uc.user_lid  where pu.username=${username}`;
+
+console.log('campuss>>>>>>',data);
+
+
     return data.count > 0 ? {
         status:200,
         message:data
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message: []
     }
  }
 
- export const getCampus = async () => {
-    const data = await sql`select * from nmims_campus where active=TRUE`;
+ export const getCampus = async (username : string) => {
+    const data = await sql`select distinct c.campus_name from user_campus uc 
+        INNER JOIN campus c on c.id = uc.campus_lid
+        INNER JOIN public.user pu on pu.id = uc.user_lid  where pu.username= ${username}`;
     return data.count > 0 ? {
         status:200,
         message:data
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message: []
     }
  }
 
@@ -118,49 +144,55 @@ export const getExternalAuthors = async () => {
         message:data
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message: []
     }
  }
 
- export const getEditors = async () => {
+ export const getEditors = async (username : string) => {
     const data = await sql` SELECT DISTINCT mid.id, mid.name
-                            FROM master_input_data mid
-                            INNER JOIN master_inputs mi ON mid.input_type = mi.id
-                            WHERE mi.abbr='be' AND mid.active = true AND mi.active = true`;
+    FROM master_input_data mid
+    INNER JOIN master_inputs mi ON mid.input_type = mi.id
+    INNER JOIN public.user pu ON  pu.username = mid.created_by
+    WHERE mid.created_by = ${username} AND mi.abbr='be' AND mid.active = true AND mi.active = true`;
     return data.count > 0 ? {
         status:200,
         message:data
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message: []
     }
  }
 
-  export const getMasterAllAuthors = async () => {
+  export const getMasterAllAuthors = async (username : string) => {
     const data = await sql` SELECT DISTINCT mid.id, mid.name
                             FROM master_input_data mid
                             INNER JOIN master_inputs mi ON mid.input_type = mi.id
-                            WHERE mi.abbr='aa' AND mid.active = true AND mi.active = true`;
+                            INNER JOIN public.user pu ON  pu.username = mid.created_by
+                            WHERE mid.created_by = ${username} AND   mi.abbr='aa' AND mid.active = true AND mi.active = true`;
+
+                            console.log('backend Data :::',data);
+                            
     return data.count > 0 ? {
         status:200,
         message:data
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message:[]
     }
  }
 
-  export const getMasterNmimsAuthors = async () => {
+  export const getMasterNmimsAuthors = async (username : string) => {
     const data = await sql` SELECT DISTINCT mid.id, mid.name
                             FROM master_input_data mid
                             INNER JOIN master_inputs mi ON mid.input_type = mi.id
-                            WHERE mi.abbr='na' AND mid.active = true AND mi.active = true`;
+                            INNER JOIN public.user pu ON  pu.username = mid.created_by
+                            WHERE mid.created_by = ${username} AND mi.abbr='na' AND mid.active = true AND mi.active = true`;
     return data.count > 0 ? {
         status:200,
         message:data
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message: []
  } 
 }
 
@@ -174,7 +206,7 @@ export const getExternalAuthors = async () => {
        message:data
    } : {
        status:400,
-       message:'Failed To Fetch!'
+       message: []
    }
  }
 
@@ -187,7 +219,7 @@ export const getExternalAuthors = async () => {
        message:data
    } : {
        status:400,
-       message:'Failed To Fetch!'
+       message: []
    }
  }
 
@@ -206,7 +238,7 @@ export const getExternalAuthors = async () => {
 
         status:400,
 
-        message:'Failed To Fetch!'
+        message:[]
 
     }
 
@@ -227,7 +259,7 @@ export const getExternalAuthors = async () => {
 
         status:400,
 
-        message:'Failed To Fetch!'
+        message: []
 
     }
 
@@ -248,24 +280,25 @@ export const getExternalAuthors = async () => {
 
         status:400,
 
-        message:'Failed To Fetch!'
+        message: []
 
     }
 
  } 
 
 
- export const getApplicantNames = async () => {
+ export const getApplicantNames = async (username : string) => {
     const data = await sql` SELECT DISTINCT mid.id, mid.name
                             FROM master_input_data mid
                             INNER JOIN master_inputs mi ON mid.input_type = mi.id
-                            WHERE mi.abbr='ipr' AND mid.active = true AND mi.active = true`;
+                            INNER JOIN public.user pu ON  pu.username = mid.created_by
+                            WHERE  mid.created_by = ${username} AND  mi.abbr='ipr' AND mid.active = true AND mi.active = true`;
     return data.count > 0 ? {
         status:200,
         message:data
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message:[]
     }
  }  
 
@@ -284,7 +317,7 @@ export const getExternalAuthors = async () => {
 
         status:400,
 
-        message:'Failed To Fetch!'
+        message: []
 
     }
 
@@ -310,12 +343,12 @@ export const getExternalAuthors = async () => {
 
     } : {
         status:400,
-        message:'Failed To Fetch!'
+        message:[]
     }
  } 
   
  export const getFormLevels = async () => {
-    const data = await sql`SELECT * FROM form_status WHERE active = TRUE`;
+    const data = await sql`SELECT * FROM status WHERE active = TRUE AND abbr != 'pd'`;
     return data;
  }
 
@@ -362,5 +395,11 @@ export const getExternalAuthors = async () => {
     const data = await sql`SELECT * 
                             FROM public.user 
                             WHERE username = ${username} AND active = TRUE`;
+    return data;
+ }
+
+ export const getUserRoleModel = async (username :string) => {
+    const data = await sql`SELECT r.id,r.role FROM public.user u INNER JOIN user_role ur ON ur.user_lid = u.id 
+    INNER JOIN role r ON r.id = ur.role_lid WHERE u.username = ${username} AND u.active = TRUE AND ur.active = TRUE AND r.active = TRUE`;
     return data;
  }

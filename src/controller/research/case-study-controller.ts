@@ -111,8 +111,8 @@ export const deleteCaseStudyForm = async(req : Request, res : Response, next : N
 };
 
 export const CaseStudyRenderController = async (req : Request, res : Response, next : NextFunction) => {
-
-    const data = await CaseStudyRenderService();
+    let username = res.locals.username;
+    const data = await CaseStudyRenderService(username);
     return res.status(200).json(data)
 
 };
@@ -128,7 +128,9 @@ export const CaseStudyViewController = async (req : Request, res : Response, nex
 export const CaseStudyUpdateViewController = async (req : Request, res : Response, next : NextFunction) => {
 
     const id = req.query.id;
-    const data = await CaseStudyUpdateViewService(Number(id));
+    let username = res.locals.username;
+
+    const data = await CaseStudyUpdateViewService(Number(id), username);
     return res.status(200).json(data)
 
 };

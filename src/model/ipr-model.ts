@@ -151,7 +151,8 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
                              ipr.filed_date,
  
                              ipr.institute_affiliation,
-                             ipr.created_by
+                             ipr.created_by,
+                             ipr.form_status_lid
  
                          FROM ipr ipr
  
@@ -209,13 +210,23 @@ export const iprPaginateModel = async ({ page, limit, sort, order, search, filte
  
                          sd.nmims_school,
  
-                         cd.nmims_campus
+                         cd.nmims_campus,
+                         CASE 
+                            WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                            ELSE CASE 
+                                WHEN fs.status_lid = 2 AND fs.level_lid = 1 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                                ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                            END
+                        END AS status,
+                        COALESCE(fs.remarks,'No Remarks Found !') AS remarks,
+                        fs.id AS form_status_lid
  
                      FROM ipr_details ipd
  
                      INNER JOIN school_details sd ON ipd.id = sd.ipr_id
  
                      INNER JOIN campus_details cd ON ipd.id = cd.ipr_id
+                     LEFT JOIN form_status fs ON fs.id = ipd.form_status_lid
                      WHERE ipd.created_by='${username}'
                      {{whereClause}} ORDER BY ipd.id desc
  

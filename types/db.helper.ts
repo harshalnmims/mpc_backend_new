@@ -45,3 +45,22 @@ export type PaginationQueryBuilderTypeWithPlaceholder = {
    pageSize: number;
    search: string;
 }
+
+export type PlaceholderUpdated = {
+   placeholder: string;
+   filters?: { [key: string]: any };
+   defaultFilters?: string;
+   searchColumns?: string[];
+   groupBy?: string[];
+   having?: { [key: string]: any };
+   orderBy?: { column: string; order: 'asc' | 'desc' };
+}
+
+export type PaginationQueryBuilderTypeWithPlaceholderUpdated = {
+   baseQuery: string;
+   placeholders: Placeholder[]
+   page: number;
+   pageSize: number;
+   search: string;
+   totalCount: boolean;
+};

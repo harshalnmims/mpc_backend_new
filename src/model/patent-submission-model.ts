@@ -74,18 +74,28 @@ export const getPatentSubmissionModel = async ({
  
     const data = await paginationQueryBuilderWithPlaceholder<Session>({
        baseQuery: `
-             SELECT 
+                 SELECT 
                      psg.id,
                      psg.title,
                      psg.appln_no,
                      psg.publication_date,
                      ivt.invention_type,
                      ps.patent_status,
-                     psg.created_by
-                 FROM 
+                     psg.created_by,
+                      CASE 
+                        WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                        ELSE CASE 
+                            WHEN fs.status_lid = 2 AND fs.level_lid = 1 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                            ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                        END
+                    END AS status,
+                    fs.id AS form_status_lid,
+                    COALESCE(fs.remarks,'No Remarks Found !') AS remarks
+                    FROM 
                      patent_submission_grant psg
                      INNER JOIN invention_type ivt ON ivt.id = psg.invention_type AND ivt.active = TRUE
                      INNER JOIN patent_status ps ON ps.id = psg.patent_status AND ps.active = TRUE
+                     LEFT JOIN form_status fs ON fs.id = psg.form_status_lid
                  WHERE 
                      psg.active = TRUE AND psg.created_by='${username}' {{whereClause}} ORDER BY psg.id desc
          `,

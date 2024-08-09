@@ -87,11 +87,11 @@ export const insertResearchSeminarService = async (researchSeminarData : seminar
     return data;
  }
 
- export const researchSeminarRenderService = async() => {
-     const nmims_school = await getSchool();
-     const nmims_campus = await getCampus();
+ export const researchSeminarRenderService = async(username : string) => {
+     const nmims_school = await getSchool(username);
+     const nmims_campus = await getCampus(username);
      const abdcIndexed = await getAbdcIndexed();
-     const nmims_authors = await getMasterNmimsAuthors();
+     const nmims_authors = await getMasterNmimsAuthors(username);
 
      return {nmims_school,nmims_campus,abdcIndexed,nmims_authors};
  }
@@ -104,12 +104,12 @@ export const insertResearchSeminarService = async (researchSeminarData : seminar
    return {files:filesUrls,researchSeminarData:data};
 }
 
-export const researchSeminarUpdateViewService = async(seminarId : number) => {
+export const researchSeminarUpdateViewService = async(seminarId : number, username : string) => {
    const researchSeminarData = await researchSeminarUpdViewModel(seminarId);
-   const nmims_school = await getSchool();
-   const nmims_campus = await getCampus();
+   const nmims_school = await getSchool(username);
+   const nmims_campus = await getCampus(username);
    const abdcIndexed = await getAbdcIndexed();
-   const nmims_authors = await getMasterNmimsAuthors();
+   const nmims_authors = await getMasterNmimsAuthors(username);
 
    return {researchSeminarData,nmims_school,nmims_campus,abdcIndexed,nmims_authors};
 }

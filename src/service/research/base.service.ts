@@ -1,6 +1,6 @@
 import {
     inputRenderedData,getDashboardModel,getresearchModulesModel,
-    getPublicationModules, getProfileModules
+    getPublicationModules, getProfileModules,getUserRoleModel
  } from '$model/master-model';
 import { teachingViewData } from '$model/teaching.model';
 import { meetingViewData } from '$model/meeting.model';
@@ -37,5 +37,10 @@ export const getPublicationModulesService = async  (username :string) => {
 
 export const getProfileService = async  (username :string) => {
     const data = await getProfileModules(username);
+    return data;
+}
+
+export const getUserRoleService = async  (username :string) => {
+    const data = await getUserRoleModel(username);
     return data;
 }

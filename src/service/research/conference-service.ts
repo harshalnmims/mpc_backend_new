@@ -47,11 +47,11 @@ export const getConferenceService = async ({ page, limit, sort, order, search, .
    return data;
 };
 
-export const renderConferenceListsService = async () => {
+export const renderConferenceListsService = async (username : string) => {
    const nmimsAuthors = await getNmimsAuthors();
-   const masterAllAuthors = await getMasterAllAuthors();
-   const school = await getSchool();
-   const campus = await getCampus();
+   const masterAllAuthors = await getMasterAllAuthors(username);
+   const school = await getSchool(username);
+   const campus = await getCampus(username);
    const externalAuthors = await getExternalFaculty();
    const enternalAuthors = await getEnternalFaculty();
    const conferenceDocumentAbbr = await getConferenceDocumentsAbbr();
@@ -88,15 +88,15 @@ export const insertConferenceService = async (
    return data;
 };
 
-export const conferenceEditViewService = async (conferenceId: number) => {
+export const conferenceEditViewService = async (conferenceId: number, username:string) => {
    const logger = getLogger();
 
    console.log('conferenceId in service ====>>>>>', conferenceId);
 
    const conferenceDetails = await conferenceEditViewModel(conferenceId);
-   const masterAllAuthors = await getMasterAllAuthors();
-   const school = await getSchool();
-   const campus = await getCampus();
+   const masterAllAuthors = await getMasterAllAuthors(username);
+   const school = await getSchool(username);
+   const campus = await getCampus(username);
    const externalAuthors = await getExternalFaculty();
    const enternalAuthors = await getEnternalFaculty();
    const conferenceDocumentAbbr = await getConferenceDocumentsAbbr();

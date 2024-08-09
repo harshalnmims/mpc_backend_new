@@ -90,7 +90,8 @@ export const ResearchProjectPaginateModel = async ({
                                  rp.funding_amount,
                                  rp.funding_agency,
                                  rp.thrust_area,
-                                 rp.created_by
+                                 rp.created_by,
+                                 rp.form_status_lid
                              FROM research_project rp
                              WHERE rp.active = TRUE
                          ),
@@ -119,10 +120,20 @@ export const ResearchProjectPaginateModel = async ({
                              rpd.funding_agency,
                              rpd.thrust_area,
                              sd.nmims_school,
-                             cd.nmims_campus
+                             cd.nmims_campus,
+                             CASE 
+                                WHEN fs.status_lid = 3 THEN (SELECT abbr FROM status WHERE abbr = 're')  
+                                ELSE CASE 
+                                    WHEN fs.status_lid = 2 AND fs.level_lid = 1 THEN (SELECT abbr FROM status WHERE abbr = 'cp') 
+                                    ELSE (SELECT abbr FROM status WHERE abbr = 'pd')
+                                END
+                            END AS status,
+                            fs.id AS form_status_lid,
+                            COALESCE(fs.remarks,'No Remarks Found !') AS remarks
                          FROM research_project_details rpd
                          INNER JOIN school_details sd ON rpd.id = sd.research_project_id
                          INNER JOIN campus_details cd ON rpd.id = cd.research_project_id
+                         LEFT JOIN form_status fs ON fs.id = rpd.form_status_lid
                          WHERE rpd.created_by='${username}'
                          {{whereClause}} ORDER BY rpd.id desc`,
                          placeholders: [

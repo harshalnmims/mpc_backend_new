@@ -93,12 +93,12 @@ export const updateCaseStudyService = async (updateCaseStudyData : caseStudyDeta
     return data;
  };
 
- export const CaseStudyRenderService = async () => {
+ export const CaseStudyRenderService = async (username : string) => {
    
-    const nmims_campus = await getCampus();
-    const nmims_school = await getSchool();
-    const all_authors = await getMasterAllAuthors();
-    const nmims_authors = await getMasterNmimsAuthors();
+    const nmims_campus = await getCampus(username);
+    const nmims_school = await getSchool(username);
+    const all_authors = await getMasterAllAuthors(username);
+    const nmims_authors = await getMasterNmimsAuthors(username);
     return {nmims_campus,nmims_school,all_authors,nmims_authors};
  };
 
@@ -109,13 +109,13 @@ export const updateCaseStudyService = async (updateCaseStudyData : caseStudyDeta
     return {files : filesUrls , caseData : data};
  };
 
- export const CaseStudyUpdateViewService = async (caseStudyId:number) => {
+ export const CaseStudyUpdateViewService = async (caseStudyId:number, username: string) => {
    
     const caseData = await CaseStudyUpdateViewModel(caseStudyId); 
-    const nmims_campus = await getCampus();
-    const nmims_school = await getSchool();
-    const all_authors = await getMasterAllAuthors();
-    const nmims_authors = await getMasterNmimsAuthors();
+    const nmims_campus = await getCampus(username);
+    const nmims_school = await getSchool(username);
+    const all_authors = await getMasterAllAuthors(username);
+    const nmims_authors = await getMasterNmimsAuthors(username);
     return {caseData,nmims_campus,nmims_school,all_authors,nmims_authors};
  };
 
