@@ -357,3 +357,10 @@ export const getExternalAuthors = async () => {
                             (SELECT id FROM modules where abbr = 'bps' AND active = TRUE)`;
     return data;
  }
+
+ export const getProfileModules = async (username : string) => {
+    const data = await sql`SELECT * 
+                            FROM public.user 
+                            WHERE username = ${username} AND active = TRUE`;
+    return data;
+ }
