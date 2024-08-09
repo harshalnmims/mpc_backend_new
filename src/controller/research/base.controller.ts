@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import {inputService,inputViewService,getDashboardService,getresearchModulesService,getPublicationModulesService,
-  getUserRoleService
+  getUserRoleService,
+  getProfileService
 } from '$service/research/base.service'
 
 export const getInputData = async (req : Request,res : Response ,next : NextFunction) => {
